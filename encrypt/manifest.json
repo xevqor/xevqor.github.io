@@ -1,6 +1,6 @@
 {
   "name": "XEVQOR Encryption",
-  "short_name": "XEVQOR",
+  "short_name": "encrypt",
   "description": "AES-256 file encryption with .xqr format",
   "start_url": "./index.html",
   "scope": "./",
