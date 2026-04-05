@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>XEVQOR STEGANOGRAPHY | ELITE</title>
+
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+
+    <style>
+        :root { 
+            --bg: #000; 
+            --card: #050505; 
+            --gold: #d4af37; 
+            --gold-glow: rgba(212, 175, 55, 0.4); 
+            --cyan: #00e5ff; 
+            --alert: #ff3333; 
+            --border: #151515; 
+            --silver: #e0e0e0;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; height: 100dvh; background: var(--bg); font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; color: #ddd; padding: 15px; overflow: hidden; }
+
+        .vault { 
+            width: 100%; max-width: 600px; height: 90dvh; background: var(--card); padding: 25px; 
+            border-radius: 12px; border: 1px solid rgba(212,175,55,0.15); 
+            box-shadow: 0 0 60px rgba(212,175,55,0.08), inset 0 0 30px rgba(212,175,55,0.03); 
+            display: flex; flex-direction: column; position: relative; overflow-y: auto; scrollbar-width: none;
+        }
+        .vault::-webkit-scrollbar { display: none; }
+
+        .header-ambient {
+            width: 100%; height: 3px; margin-bottom: 20px;
+            background: radial-gradient(circle, var(--gold) 0%, rgba(212,175,55,0.6) 30%, transparent 80%);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        h1 { margin: 0; font-size: 1.2rem; letter-spacing: 5px; color: var(--gold); text-align: center; text-transform: uppercase; font-weight: 300; }
+        #xevqorClock { text-align: center; font-size: 9px; color: #666; letter-spacing: 2px; margin-top: 6px; font-weight: bold; text-transform: uppercase; }
+
+        .mode-switch { display: flex; gap: 8px; margin: 20px 0; }
+        .mode-btn { flex: 1; padding: 12px; background: #0a0a0a; color: #555; border: 1px solid #222; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; transition: 0.3s; border-radius: 4px; font-weight: bold; }
+        .mode-btn.active { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+
+        .section { margin-bottom: 12px; padding: 15px; border: 1px solid #111; background: #020202; border-radius: 6px; }
+        .label { font-size: 8px; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; display: block; font-weight: bold; }
+
+        .file-wrapper { position: relative; overflow: hidden; width: 100%; }
+        .btn-file { border: 1px solid var(--cyan); color: var(--cyan); background: #000; padding: 12px; border-radius: 4px; font-size: 10px; display: block; text-align: center; cursor: pointer; text-transform: uppercase; font-weight: 900; letter-spacing: 1px; }
+        .file-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+
+        input[type="password"], textarea, select { width: 100%; background: #000; color: #fff; border: 1px solid #1a1a1a; padding: 12px; box-sizing: border-box; font-family: inherit; outline: none; border-radius: 4px; font-size: 13px; transition: 0.3s; }
+        input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(212,175,55,0.1); }
+        textarea { height: 80px; resize: none; color: #eee; }
+
+        .pass-wrapper { position: relative; width: 100%; }
+        .eye-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--gold); cursor: pointer; font-size: 16px; opacity: 0.6; outline: none; }
+
+        .btn-exec { width: 100%; padding: 16px; background: #0a0a0a; border: 1px solid var(--gold); color: var(--gold); font-weight: 900; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; transition: 0.3s; border-radius: 4px; font-size: 12px; margin-top: 10px; outline: none; }
+        .btn-exec:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px var(--gold-glow); }
+
+        .btn-row { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-util { flex: 1; padding: 10px; background: transparent; color: #555; border: 1px solid #222; font-size: 9px; text-transform: uppercase; cursor: pointer; border-radius: 4px; font-weight: bold; outline: none; }
+        .btn-util:hover { color: var(--alert); border-color: var(--alert); }
+        .btn-copy { border: 1px solid var(--silver); color: var(--silver); }
+        .btn-copy:hover { color: #fff; border-color: #fff; background: rgba(255,255,255,0.05); }
+
+        #status { text-align: center; margin-top: 15px; font-size: 9px; letter-spacing: 1px; color: #444; text-transform: uppercase; font-weight: bold; }
+        .hidden { display: none !important; }
+        .file-name-display { font-size: 10px; color: var(--cyan); margin-top: 8px; text-align: center; display: block; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="vault">
+    <div class="header-ambient"></div>
+    <h1>XEVQOR STEGANOGRAPHY</h1>
+    <div id="xevqorClock">SYNCING CHRONOMETER...</div>
+
+    <div class="mode-switch">
+        <button class="mode-btn active" id="btn-hide" onclick="switchMode('hide')">INJECT MODE</button>
+        <button class="mode-btn" id="btn-extract" onclick="switchMode('extract')">EXTRACT MODE</button>
+    </div>
+
+    <div class="section">
+        <span class="label">Step 1: Carrier (Masking File)</span>
+        <div class="file-wrapper">
+            <span class="btn-file" id="carrierLabel">CHOOSE IMAGE/FILE</span>
+            <input type="file" id="carrierFile" onchange="updateFileName('carrierFile', 'carrierLabel', 'fileNameCarrier')">
+        </div>
+        <span id="fileNameCarrier" class="file-name-display"></span>
+    </div>
+
+    <div id="payloadArea" class="section">
+        <span class="label">Step 2: Secret Payload</span>
+        <select id="payloadType" onchange="updateUI()" style="margin-bottom: 10px;">
+            <option value="text">ENCRYPTED TEXT</option>
+            <option value="file">HIDDEN FILE</option>
+        </select>
+
+        <div id="textInputWrapper">
+            <textarea id="payloadText" placeholder="WRITE SECRET MESSAGE HERE..."></textarea>
+        </div>
+
+        <div id="fileInputWrapper" class="hidden">
+            <div class="file-wrapper">
+                <span class="btn-file" id="payloadLabel" style="border-color: var(--gold); color: var(--gold);">SELECT PAYLOAD FILE</span>
+                <input type="file" id="payloadFile" onchange="updateFileName('payloadFile', 'payloadLabel', 'fileNamePayload')">
+            </div>
+            <span id="fileNamePayload" class="file-name-display" style="color: var(--gold);"></span>
+        </div>
+    </div>
+
+    <div class="section">
+        <span class="label">Step 3: Master Vault Key</span>
+        <div class="pass-wrapper">
+            <input type="password" id="passphrase" placeholder="ENTER PASSKEY">
+            <button class="eye-btn" onclick="togglePass()" id="eyeIcon">👁️</button>
+        </div>
+    </div>
+
+    <button class="btn-exec" id="execBtn" onclick="process()">EXECUTE INJECTION</button>
+
+    <div class="btn-row">
+        <button id="copyBtn" class="btn-util btn-copy hidden" onclick="copyToClipboard()">COPY TEXT</button>
+        <button class="btn-util" onclick="wipeSystem()">WIPE SYSTEM</button>
+    </div>
+
+    <div id="status">SYSTEM STANDBY</div>
+</div>
+
+<script>
+    // ========== XEVQOR STEALTH SIGNATURE (8 BYTE) ==========
+    const SIG = "XEVQOR88";   // 8 karakter, menggantikan CHYPR168
+    let mode = 'hide';
+
+    function updateClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        document.getElementById('xevqorClock').innerText = timeStr.toUpperCase();
+    }
+    setInterval(updateClock, 1000); updateClock();
+
+    function togglePass() {
+        const p = document.getElementById("passphrase");
+        const i = document.getElementById("eyeIcon");
+        p.type = p.type === "password" ? "text" : "password";
+        i.innerText = p.type === "password" ? "👁️" : "🔒";
+    }
+
+    function switchMode(m) {
+        mode = m;
+        document.getElementById('btn-hide').classList.toggle('active', m === 'hide');
+        document.getElementById('btn-extract').classList.toggle('active', m === 'extract');
+        document.getElementById('payloadArea').classList.toggle('hidden', m === 'extract');
+        document.getElementById('execBtn').innerText = m === 'hide' ? 'EXECUTE INJECTION' : 'EXTRACT & REVEAL';
+        document.getElementById('copyBtn').classList.add('hidden');
+        updateStatus("READY FOR " + m.toUpperCase());
+    }
+
+    function updateUI() {
+        const type = document.getElementById('payloadType').value;
+        document.getElementById('textInputWrapper').classList.toggle('hidden', type !== 'text');
+        document.getElementById('fileInputWrapper').classList.toggle('hidden', type !== 'file');
+    }
+
+    function updateFileName(inputId, labelId, displayId) {
+        const input = document.getElementById(inputId);
+        const display = document.getElementById(displayId);
+        if (input.files.length > 0) {
+            display.innerText = "LOADED: " + input.files[0].name;
+            document.getElementById(labelId).innerText = "CHANGE FILE";
+        }
+    }
+
+    function updateStatus(msg, color = "#444") {
+        const s = document.getElementById('status');
+        s.innerText = msg; s.style.color = color;
+    }
+
+    function copyToClipboard() {
+        const text = document.getElementById('payloadText').value;
+        if(!text) return updateStatus("NOTHING TO COPY", "#ff3333");
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => {
+                updateStatus("COPIED TO CLIPBOARD", "#00ff41");
+            }).catch(() => fallbackCopy(text));
+        } else {
+            fallbackCopy(text);
+        }
+    }
+
+    function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            updateStatus("COPIED (XEVQOR BYPASS)", "#00ff41");
+        } catch (err) {
+            updateStatus("COPY FAILED", "#ff3333");
+        }
+        document.body.removeChild(textArea);
+    }
+
+    function wipeSystem() {
+        if(confirm("WIPE WORKSPACE?")) { location.reload(); }
+    }
+
+    async function deriveKey(pass, salt) {
+        const enc = new TextEncoder();
+        const baseKey = await crypto.subtle.importKey("raw", enc.encode(pass), "PBKDF2", false, ["deriveKey"]);
+        return crypto.subtle.deriveKey(
+            { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+            baseKey, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
+        );
+    }
+
+    async function process() {
+        const pass = document.getElementById('passphrase').value;
+        const carrier = document.getElementById('carrierFile').files[0];
+        if(!pass || !carrier) return alert("MISSING KEY OR CARRIER.");
+
+        try {
+            if(mode === 'hide') {
+                updateStatus("ENCRYPTING...", "#d4af37");
+                let pData, meta = {};
+
+                if(document.getElementById('payloadType').value === 'text') {
+                    const txt = document.getElementById('payloadText').value;
+                    if(!txt) throw new Error("EMPTY MESSAGE");
+                    pData = new TextEncoder().encode(txt);
+                    meta = { type: 'text' };
+                } else {
+                    const f = document.getElementById('payloadFile').files[0];
+                    if(!f) throw new Error("NO PAYLOAD FILE");
+                    pData = new Uint8Array(await f.arrayBuffer());
+                    meta = { type: 'file', name: f.name, mime: f.type };
+                }
+
+                const salt = crypto.getRandomValues(new Uint8Array(16));
+                const iv = crypto.getRandomValues(new Uint8Array(12));
+                const key = await deriveKey(pass, salt);
+                const metaEnc = new TextEncoder().encode(JSON.stringify(meta));
+                const metaLen = new Uint32Array([metaEnc.byteLength]);
+                const combined = new Uint8Array(4 + metaEnc.byteLength + pData.byteLength);
+                combined.set(new Uint8Array(metaLen.buffer), 0);
+                combined.set(metaEnc, 4);
+                combined.set(pData, 4 + metaEnc.byteLength);
+                const encrypted = await crypto.subtle.encrypt({name: "AES-GCM", iv}, key, combined);
+                const cBytes = new Uint8Array(await carrier.arrayBuffer());
+
+                const sigBytes = new TextEncoder().encode(SIG); 
+                const encLenView = new Uint32Array([encrypted.byteLength]);
+
+                const final = new Uint8Array(cBytes.byteLength + 16 + 12 + encrypted.byteLength + 4 + 8);
+
+                let pos = 0;
+                final.set(cBytes, pos); pos += cBytes.byteLength;
+                final.set(salt, pos); pos += 16;
+                final.set(iv, pos); pos += 12;
+                final.set(new Uint8Array(encrypted), pos); pos += encrypted.byteLength;
+                final.set(new Uint8Array(encLenView.buffer), pos); pos += 4;
+                final.set(sigBytes, pos);
+
+                const blob = new Blob([final], {type: carrier.type});
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = "XEVQOR_" + carrier.name;
+                a.click();
+                updateStatus("VAULT SECURED", "#00ff41");
+            } else {
+                updateStatus("DECRYPTING...", "#d4af37");
+                const buf = await carrier.arrayBuffer();
+                const L = buf.byteLength;
+
+                // Baca 8 byte terakhir sebagai signature
+                const magic = new TextDecoder().decode(buf.slice(L - 8));
+                if(magic !== SIG) throw new Error("INVALID XEVQOR SIGNATURE");
+
+                const encLen = new Uint32Array(buf.slice(L - 12, L - 8))[0];
+                const encStart = L - 12 - encLen;
+                const ivStart = encStart - 12;
+                const saltStart = ivStart - 16;
+
+                const salt = new Uint8Array(buf.slice(saltStart, ivStart));
+                const iv = new Uint8Array(buf.slice(ivStart, encStart));
+                const data = buf.slice(encStart, L - 12);
+
+                const key = await deriveKey(pass, salt);
+                const decrypted = await crypto.subtle.decrypt({name: "AES-GCM", iv}, key, data);
+
+                const mLen = new Uint32Array(decrypted.slice(0, 4))[0];
+                const meta = JSON.parse(new TextDecoder().decode(decrypted.slice(4, 4 + mLen)));
+                const secretData = decrypted.slice(4 + mLen);
+
+                if(meta.type === 'text') {
+                    document.getElementById('payloadArea').classList.remove('hidden');
+                    document.getElementById('payloadType').value = 'text';
+                    updateUI();
+                    document.getElementById('payloadText').value = new TextDecoder().decode(secretData);
+                    document.getElementById('copyBtn').classList.remove('hidden');
+                    updateStatus("MESSAGE REVEALED", "#00ff41");
+                } else {
+                    const blob = new Blob([secretData], {type: meta.mime});
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = "EXTRACTED_" + meta.name;
+                    a.click();
+                    updateStatus("FILE EXTRACTED", "#00ff41");
+                }
+            }
+        } catch (e) {
+            console.error(e);
+            updateStatus("ACCESS DENIED", "#ff3333");
+            alert("FAILURE: INCORRECT KEY OR CORRUPTED VAULT.");
+        }
+    }
+
+    // PWA Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('XEVQOR Stego Engine Online'))
+                .catch(err => console.error('Uplink Failed:', err));
+        });
+    }
+</script>
+</body>
+</html>
