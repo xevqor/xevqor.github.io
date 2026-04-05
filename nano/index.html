@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>XQR NANO SECURE - SQUEEZE PROTOCOL</title>
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="./icon-192.png">
+
+<style>
+    :root { 
+        --bg: #000; 
+        --card: #050505; 
+        --gold: #d4af37; 
+        --gold-glow: rgba(212, 175, 55, 0.4); 
+        --neon: #00ff41; 
+        --cyan: #00e5ff; 
+        --alert: #ff3333; 
+        --silver: #e0e0e0;
+    }
+
+    body { margin: 0; height: 100dvh; background: var(--bg); font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; color: #ddd; padding: 15px; box-sizing: border-box; overflow: hidden; }
+
+    .box { 
+        width: 100%; max-width: 500px; height: auto; background: var(--card); padding: 25px; 
+        border-radius: 12px; border: 1px solid rgba(212,175,55,0.15); 
+        box-shadow: 0 0 50px rgba(212,175,55,0.08), inset 0 0 30px rgba(212,175,55,0.03); 
+        display: flex; flex-direction: column; position: relative;
+    }
+
+    .header-ambient {
+        width: 100%; height: 3px; margin-bottom: 20px;
+        background: radial-gradient(circle, var(--gold) 0%, rgba(212,175,55,0.6) 30%, transparent 80%);
+        box-shadow: 0 0 15px var(--gold-glow);
+    }
+
+    h2 { margin: 0; font-weight: 300; letter-spacing: 5px; color: var(--gold); font-size: 1.1rem; text-align: center; text-transform: uppercase; }
+
+    #xqrClock { 
+        text-align: center; font-size: 8.5px; color: #666; letter-spacing: 2px; 
+        margin-top: 6px; font-weight: bold; text-transform: uppercase;
+    }
+
+    .main-area { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+
+    textarea { 
+        width: 100%; height: 140px; background: #020202; border: 1px solid #1a1a1a; 
+        color: var(--neon); padding: 15px; border-radius: 8px; resize: none; font-size: 13px; line-height: 1.6; 
+        outline: none; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); box-sizing: border-box;
+        transition: 0.3s ease;
+    }
+    textarea:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.1); }
+
+    .pass-wrapper { position: relative; width: 100%; }
+    input.pass-input { 
+        width: 100%; padding: 14px; background: #000; 
+        border: 1px solid rgba(212,175,55,0.3); color: var(--gold); border-radius: 6px; 
+        text-align: center; letter-spacing: 5px; outline: none; box-sizing: border-box;
+        box-shadow: 0 0 15px rgba(212,175,55,0.05); transition: 0.3s ease; font-family: inherit; font-size: 14px;
+    }
+    input:focus { border-color: var(--gold); box-shadow: 0 0 25px var(--gold-glow); }
+
+    .eye-btn {
+        position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+        background: transparent; border: none; color: var(--gold); cursor: pointer;
+        font-size: 16px; outline: none; opacity: 0.6; transition: 0.3s;
+    }
+    .eye-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--gold); }
+
+    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    button.action-btn { 
+        flex: 1; min-width: 80px; padding: 12px; background: #0a0a0a; border-radius: 6px; 
+        font-weight: 900; cursor: pointer; text-transform: uppercase; 
+        letter-spacing: 1px; transition: 0.3s ease; font-size: 10px; outline: none;
+    }
+    button:active { transform: translateY(2px); }
+
+    .btn-enc { border: 1px solid var(--gold); color: var(--gold); }
+    .btn-dec { border: 1px solid var(--neon); color: var(--neon); }
+
+    .action-row { display: flex; gap: 8px; width: 100%; margin-top: 4px; }
+    .btn-copy { border: 1px solid var(--silver); color: var(--silver); flex: 1; }
+    .btn-wipe { border: 1px solid var(--alert); color: var(--alert); flex: 1; }
+
+    button:hover { background: #111; color: #fff; }
+    .btn-enc:hover { box-shadow: 0 0 15px rgba(212,175,55,0.3); }
+    .btn-dec:hover { box-shadow: 0 0 15px rgba(0,255,65,0.3); }
+    .btn-copy:hover { box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+    .btn-wipe:hover { background: rgba(255,51,51,0.1); box-shadow: 0 0 15px rgba(255,51,51,0.3); }
+
+    .footer-status { font-size: 8px; color: #444; margin-top: 15px; display: flex; justify-content: space-between; border-top: 1px solid #111; padding-top: 10px; letter-spacing: 2px; text-transform: uppercase; }
+    #status { font-weight: bold; color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="box">
+    <div class="header-ambient"></div>
+    <h2>XQR NANO SECURE</h2>
+    <div id="xqrClock">SYNCING...</div>
+
+    <div class="main-area">
+        <div class="pass-wrapper">
+            <input type="password" id="pass" class="pass-input" placeholder="MASTER PASSKEY">
+            <button class="eye-btn" onclick="togglePass()" id="eyeIcon">👁️</button>
+        </div>
+
+        <textarea id="msg" placeholder="Type long message here... Will be squeezed & encrypted."></textarea>
+
+        <div class="btn-group">
+            <button class="action-btn btn-enc" onclick="process('enc')">ENCRYPT</button>
+            <button class="action-btn btn-dec" onclick="process('dec')">DECRYPT</button>
+        </div>
+
+        <div class="action-row">
+            <button class="action-btn btn-copy" onclick="copyToClipboard()">COPY RESULT</button>
+            <button class="action-btn btn-wipe" onclick="clearAll()">WIPE</button>
+        </div>
+    </div>
+
+    <div class="footer-status">
+        <span>AES-256 SQUEEZE PROTOCOL</span>
+        <span id="status">READY</span>
+    </div>
+</div>
+
+<script>
+    // LIVE CHRONOMETER
+    function updateClock() {
+        const now = new Date();
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        const dayName = days[now.getDay()];
+        const day = now.getDate();
+        const month = months[now.getMonth()];
+        const year = now.getFullYear();
+
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; 
+
+        const timeStr = `${dayName}, ${month} ${day} ${year} | ${hours}:${minutes}:${seconds} ${ampm}`;
+        document.getElementById('xqrClock').innerText = timeStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function togglePass() {
+        const p = document.getElementById("pass");
+        const i = document.getElementById("eyeIcon");
+        if (p.type === "password") { p.type = "text"; i.innerText = "🔒"; } 
+        else { p.type = "password"; i.innerText = "👁️"; }
+    }
+
+    function updateStatus(msg, color) {
+        const s = document.getElementById("status");
+        s.innerText = msg;
+        s.style.color = color || "var(--gold)";
+    }
+
+    async function compress(str) {
+        const stream = new Blob([str]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+        return new Uint8Array(await new Response(stream).arrayBuffer());
+    }
+
+    async function decompress(bytes) {
+        const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+        return await new Response(stream).text();
+    }
+
+    // XQR NANO SALT (diganti dari CHYPRIX)
+    async function deriveKey(p) {
+        const enc = new TextEncoder();
+        const salt = enc.encode("XQR_NANO_RESERVE_V1"); 
+        const keyMat = await crypto.subtle.importKey("raw", enc.encode(p), "PBKDF2", false, ["deriveKey"]);
+        return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" }, keyMat, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+    }
+
+    async function process(mode) {
+        const p = document.getElementById('pass').value;
+        const msgEl = document.getElementById('msg');
+        let m = msgEl.value.trim();
+        if(!p || !m) { alert("PASSKEY & MESSAGE REQUIRED, BOSS."); return; }
+
+        updateStatus("PROCESSING...", "#d4af37");
+
+        try {
+            const key = await deriveKey(p);
+
+            if (mode === 'enc') {
+                const compressedData = await compress(m); 
+                const iv = crypto.getRandomValues(new Uint8Array(12)); 
+                const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, compressedData);
+
+                const combined = new Uint8Array(12 + encrypted.byteLength);
+                combined.set(iv, 0);
+                combined.set(new Uint8Array(encrypted), 12);
+
+                msgEl.value = btoa(String.fromCharCode(...combined));
+                updateStatus("SQUEEZE SUCCESS", "var(--neon)");
+            } else {
+                const raw = atob(m);
+                const combined = new Uint8Array(raw.length);
+                for (let i = 0; i < raw.length; i++) combined[i] = raw.charCodeAt(i);
+
+                const iv = combined.slice(0, 12);
+                const data = combined.slice(12);
+
+                const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, data);
+                msgEl.value = await decompress(new Uint8Array(decrypted)); 
+                updateStatus("DECOMPRESS SUCCESS", "var(--cyan)");
+            }
+        } catch (e) {
+            updateStatus("ACCESS DENIED", "var(--alert)");
+            alert("FAILURE: INCORRECT PASSKEY OR INVALID FORMAT.");
+        }
+    }
+
+    function copyToClipboard() {
+        const text = document.getElementById('msg').value;
+        if(!text) return updateStatus("EMPTY VAULT", "var(--alert)");
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => { finishCopy(); }).catch(() => bruteForceCopy(text));
+        } else { bruteForceCopy(text); }
+    }
+
+    function bruteForceCopy(text) {
+        const dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        dummy.setSelectionRange(0, 99999);
+        try { document.execCommand("copy"); finishCopy(); } 
+        catch (err) { alert("Copy failed. Please copy manually."); }
+        document.body.removeChild(dummy);
+    }
+
+    function finishCopy() {
+        updateStatus("COPIED!", "#fff");
+        setTimeout(() => updateStatus("READY", "var(--gold)"), 2000);
+    }
+
+    function clearAll() {
+        document.getElementById('msg').value = "";
+        document.getElementById('pass').value = "";
+        updateStatus("WIPED", "var(--alert)");
+        setTimeout(() => updateStatus("READY", "var(--gold)"), 1500);
+    }
+</script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('XQR Nano Engine Online'))
+                .catch(err => console.error('Uplink Failed:', err));
+        });
+    }
+</script>
+
+</body>
+</html>
