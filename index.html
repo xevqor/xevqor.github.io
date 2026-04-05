@@ -1,204 +1,264 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CHYPRIX ENCRYPTION</title>
-<style>
-:root{--neon:#00e5ff;--bg:#020202;--card:#0a0a0a;--gold:#ffcc00;--alert:#ff3b3b;--ok:#00ff88}
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#050505,#000);font-family:Consolas,monospace;display:flex;align-items:center;justify-content:center;color:#ddd}
-.box{width:100%;max-width:440px;padding:26px;background:var(--card);border-radius:16px;border:1px solid #111;box-shadow:0 0 60px rgba(0,229,255,.06), inset 0 0 25px rgba(255,255,255,.02)}
-.topline{height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin-bottom:10px;box-shadow:0 0 12px var(--gold);animation:glow 2.5s infinite ease-in-out}
-@keyframes glow{0%{opacity:.4}50%{opacity:1}100%{opacity:.4}}
-h2{text-align:center;color:var(--gold);letter-spacing:3px}
-.clock{text-align:center;font-size:10px;color:var(--neon);margin-bottom:14px}.dropzone{position:relative;border:1px dashed #222;padding:14px;border-radius:8px;text-align:center;font-size:11px;color:#666;margin-bottom:10px;transition:.25s;animation:idleGlow 2.5s infinite} .dropzone::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(0,229,255,.15),transparent);opacity:0;transition:.4s} .dropzone:hover::after{opacity:1} .dropzone.active{color:var(--neon);border-color:var(--neon);box-shadow:0 0 15px rgba(0,229,255,.4)} @keyframes idleGlow{0%{box-shadow:0 0 0 rgba(0,229,255,0)}50%{box-shadow:0 0 12px rgba(0,229,255,.2)}100%{box-shadow:0 0 0 rgba(0,229,255,0)}}
-
-.filename{font-size:11px;color:var(--gold);text-align:center;margin-top:4px;opacity:0;transition:.3s} .filename.show{opacity:1;text-shadow:0 0 10px var(--gold),0 0 20px rgba(255,204,0,.3);letter-spacing:1px}
-
-input[type=file]{display:none}
-
-.input-box{position:relative;margin-top:12px} .input-box input{width:100%;padding:12px;background:#000;border:1px solid #111;color:var(--gold);border-radius:8px;text-align:center;font-size:12px;letter-spacing:2px;transition:.3s} .input-box.active input{border-color:var(--neon);box-shadow:0 0 10px rgba(0,229,255,.3), inset 0 0 5px rgba(0,229,255,.1)} .eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:12px;opacity:.5}
-
-.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px} button{padding:12px;font-size:11px;background:#080808;border:1px solid #222;color:#fff;border-radius:8px;cursor:pointer;transition:.15s} button:hover{box-shadow:0 0 8px rgba(255,255,255,.08)} button:active{transform:scale(.97)} .enc{border-color:var(--gold);color:var(--gold)} .dec{border-color:var(--neon);color:var(--neon)} .wipe{width:100%;margin-top:10px;background:#140000;border-color:#300000;color:var(--alert)}
-
-.progress{height:5px;background:#111;margin-top:14px;border-radius:4px;overflow:hidden;display:none} .fill{height:100%;width:0;background:var(--gold);transition:.1s} .status{font-size:11px;margin-top:8px;text-align:center;color:#666;letter-spacing:1px;animation:idleGlow 4s infinite} .percent{font-size:10px;color:#888;text-align:center;margin-top:2px} </style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#020202">
+  <meta name="description" content="XEVQOR Encryption - Secure file encryption with .xqr format">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230a0a0a' stroke='%23ffcc00' stroke-width='2'/%3E%3Ctext x='50' y='70' font-size='70' text-anchor='middle' fill='%23ffcc00' font-family='monospace'%3EX%3C/text%3E%3C/svg%3E">
+  <title>XEVQOR ENCRYPTION</title>
+  <style>
+    :root{--neon:#00e5ff;--bg:#020202;--card:#0a0a0a;--gold:#ffcc00;--alert:#ff3b3b;--ok:#00ff88}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#050505,#000);font-family:Consolas,monospace;display:flex;align-items:center;justify-content:center;color:#ddd}
+    .box{width:100%;max-width:440px;padding:26px;background:var(--card);border-radius:16px;border:1px solid #111;box-shadow:0 0 60px rgba(0,229,255,.06), inset 0 0 25px rgba(255,255,255,.02)}
+    .topline{height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin-bottom:10px;box-shadow:0 0 12px var(--gold);animation:glow 2.5s infinite ease-in-out}
+    @keyframes glow{0%{opacity:.4}50%{opacity:1}100%{opacity:.4}}
+    h2{text-align:center;color:var(--gold);letter-spacing:3px;margin:0 0 6px 0}
+    .clock{text-align:center;font-size:10px;color:var(--neon);margin-bottom:14px}
+    .dropzone{position:relative;border:1px dashed #222;padding:14px;border-radius:8px;text-align:center;font-size:11px;color:#666;margin-bottom:10px;transition:.25s;animation:idleGlow 2.5s infinite}
+    .dropzone::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(0,229,255,.15),transparent);opacity:0;transition:.4s}
+    .dropzone:hover::after{opacity:1}
+    .dropzone.active{color:var(--neon);border-color:var(--neon);box-shadow:0 0 15px rgba(0,229,255,.4)}
+    @keyframes idleGlow{0%{box-shadow:0 0 0 rgba(0,229,255,0)}50%{box-shadow:0 0 12px rgba(0,229,255,.2)}100%{box-shadow:0 0 0 rgba(0,229,255,0)}}
+    .filename{font-size:11px;color:var(--gold);text-align:center;margin-top:4px;opacity:0;transition:.3s}
+    .filename.show{opacity:1;text-shadow:0 0 10px var(--gold),0 0 20px rgba(255,204,0,.3);letter-spacing:1px}
+    input[type=file]{display:none}
+    .input-box{position:relative;margin-top:12px}
+    .input-box input{width:100%;padding:12px;background:#000;border:1px solid #111;color:var(--gold);border-radius:8px;text-align:center;font-size:12px;letter-spacing:2px;transition:.3s}
+    .input-box.active input{border-color:var(--neon);box-shadow:0 0 10px rgba(0,229,255,.3), inset 0 0 5px rgba(0,229,255,.1)}
+    .eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:12px;opacity:.5}
+    .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    button{padding:12px;font-size:11px;background:#080808;border:1px solid #222;color:#fff;border-radius:8px;cursor:pointer;transition:.15s}
+    button:hover{box-shadow:0 0 8px rgba(255,255,255,.08)}
+    button:active{transform:scale(.97)}
+    .enc{border-color:var(--gold);color:var(--gold)}
+    .dec{border-color:var(--neon);color:var(--neon)}
+    .wipe{width:100%;margin-top:10px;background:#140000;border-color:#300000;color:var(--alert)}
+    .progress{height:5px;background:#111;margin-top:14px;border-radius:4px;overflow:hidden;display:none}
+    .fill{height:100%;width:0;background:var(--gold);transition:.1s}
+    .status{font-size:11px;margin-top:8px;text-align:center;color:#666;letter-spacing:1px;animation:idleGlow 4s infinite}
+    .percent{font-size:10px;color:#888;text-align:center;margin-top:2px}
+  </style>
 </head>
 <body>
 <div class="box">
-<div class="topline"></div>
-<h2>CHYPRIX ENCRYPTION</h2>
-<div class="clock" id="clock"></div><div class="dropzone" id="drop">DROP FILE HERE OR TAP</div>
-<div class="filename" id="fname"></div>
-<input type="file" id="file"><div class="input-box" id="box1">
-<input type="password" id="pass" placeholder="">
-<span class="eye" onclick="toggle('pass')">👁</span>
-</div><div class="input-box" id="box2">
-<input type="password" id="pass2" placeholder="">
-<span class="eye" onclick="toggle('pass2')">👁</span>
-</div><div class="btns">
-<button class="enc" onclick="run('enc')">ENCRYPT FILE</button>
-<button class="dec" onclick="run('dec')">DECRYPT FILE</button>
-</div><button class="wipe" onclick="wipe()">WIPE SYSTEM</button>
+  <div class="topline"></div>
+  <h2>⛓️ XEVQOR ENCRYPTION</h2>
+  <div class="clock" id="clock"></div>
+  <div class="dropzone" id="drop">DROP FILE HERE OR TAP</div>
+  <div class="filename" id="fname"></div>
+  <input type="file" id="file">
+  <div class="input-box" id="box1">
+    <input type="password" id="pass" placeholder="">
+    <span class="eye" onclick="toggle('pass')">👁</span>
+  </div>
+  <div class="input-box" id="box2">
+    <input type="password" id="pass2" placeholder="">
+    <span class="eye" onclick="toggle('pass2')">👁</span>
+  </div>
+  <div class="btns">
+    <button class="enc" onclick="run('enc')">ENCRYPT FILE</button>
+    <button class="dec" onclick="run('dec')">DECRYPT FILE</button>
+  </div>
+  <button class="wipe" onclick="wipe()">WIPE SYSTEM</button>
+  <div class="progress" id="bar"><div class="fill" id="fill"></div></div>
+  <div class="status" id="status">IDLE</div>
+  <div class="percent" id="percent"></div>
+</div>
 
-<div class="progress" id="bar"><div class="fill" id="fill"></div></div>
-<div class="status" id="status">IDLE</div>
-<div class="percent" id="percent"></div>
-</div><script>
-const drop=document.getElementById('drop');
-const fileInput=document.getElementById('file');
-const fname=document.getElementById('fname');
-const box1=document.getElementById('box1');
-const box2=document.getElementById('box2');
+<script>
+  // ======================== XEVQOR CORE ENGINE (.xqr) ========================
+  const drop = document.getElementById('drop');
+  const fileInput = document.getElementById('file');
+  const fname = document.getElementById('fname');
+  const box1 = document.getElementById('box1');
+  const box2 = document.getElementById('box2');
+  const passInput = document.getElementById('pass');
+  const pass2Input = document.getElementById('pass2');
+  const statusDiv = document.getElementById('status');
+  const percentDiv = document.getElementById('percent');
+  const fillDiv = document.getElementById('fill');
+  const barDiv = document.getElementById('bar');
 
-function typeText(el,text){let i=0;el.placeholder="";let int=setInterval(()=>{if(i<text.length){el.placeholder+=text.charAt(i);i++;}else clearInterval(int)},20)}
-
-drop.onclick=()=>fileInput.click();
-fileInput.onchange=()=>{
- let f=fileInput.files[0];
- if(f){
-  drop.classList.add('active');
-  fname.innerText=f.name;
-  fname.classList.add('show');
-
-  box1.classList.add('active');
-  typeText(pass,"INSERT PASSPHRASE");
-
-  setTimeout(()=>{
-    box2.classList.add('active');
-    typeText(pass2,"VERIFY PASSPHRASE");
-  },600);
- }
-}
-
-function toggle(id){let e=document.getElementById(id);e.type=e.type==='password'?'text':'password'}
-
-function updateClock(){clock.innerText=new Date().toUTCString()}
-setInterval(updateClock,1000);updateClock();
-
-function wipe(){fileInput.value="";fname.innerText="";fname.classList.remove('show');drop.classList.remove('active');box1.classList.remove('active');box2.classList.remove('active');pass.value="";pass2.value="";status.innerText="IDLE";percent.innerText=""}
-
-
-// === ENGINE RESTORED (UNCHANGED LOGIC) ===
-const CHUNK_SIZE = 10 * 1024 * 1024;
-
-async function deriveKey(password, salt) {
- const enc = new TextEncoder();
- const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), {name: "PBKDF2"}, false, ["deriveKey"]);
- return crypto.subtle.deriveKey(
-  {name: "PBKDF2", salt, iterations: 120000, hash: "SHA-256"},
-  keyMaterial, {name: "AES-GCM", length: 256}, false, ["encrypt", "decrypt"]
- );
-}
-
-async function run(mode) {
- const fileEl = document.getElementById("file");
- const pass = document.getElementById("pass").value;
- const pass2 = document.getElementById("pass2").value;
- const status = document.getElementById("status");
- const pBar = document.getElementById("bar");
- const pFill = document.getElementById("fill");
- const percent = document.getElementById("percent");
-
- if(!fileEl.files[0] || !pass) return alert("INVALID INPUT");
- if(mode === 'enc' && pass !== pass2) return alert("VERIFY FAILED");
-
- const file = fileEl.files[0];
- let offset = 0;
- let key, salt;
- let outputChunks = [];
-
- status.innerText = "PROCESSING";
- pBar.style.display = "block";
-
- try {
-
- if (mode === 'enc') {
-  salt = crypto.getRandomValues(new Uint8Array(16));
-  key = await deriveKey(pass, salt);
-
-  outputChunks.push(new TextEncoder().encode("CPX1"));
-  outputChunks.push(salt);
-
-  const meta = JSON.stringify({ name: file.name });
-  const metaBytes = new TextEncoder().encode(meta);
-  const metaIv = crypto.getRandomValues(new Uint8Array(12));
-  const metaEnc = await crypto.subtle.encrypt({name: "AES-GCM", iv: metaIv}, key, metaBytes);
-
-  const lenBuf = new ArrayBuffer(4);
-  new DataView(lenBuf).setUint32(0, metaEnc.byteLength, true);
-
-  outputChunks.push(metaIv, new Uint8Array(lenBuf), new Uint8Array(metaEnc));
-
-  while (offset < file.size) {
-   const slice = file.slice(offset, offset + CHUNK_SIZE);
-   const iv = crypto.getRandomValues(new Uint8Array(12));
-   const encrypted = await crypto.subtle.encrypt({name: "AES-GCM", iv}, key, await slice.arrayBuffer());
-
-   outputChunks.push(iv, new Uint8Array(encrypted));
-   offset += CHUNK_SIZE;
-
-   let pct = Math.min(100, Math.floor(offset / file.size * 100));
-   pFill.style.width = pct + "%";
-   percent.innerText = pct + "%";
+  function typeText(el, text) {
+    let i = 0;
+    el.placeholder = "";
+    let int = setInterval(() => {
+      if (i < text.length) {
+        el.placeholder += text.charAt(i);
+        i++;
+      } else clearInterval(int);
+    }, 20);
   }
 
- } else {
-  const header = new TextDecoder().decode(await file.slice(0,4).arrayBuffer());
-  if(header !== "CPX1") throw "INVALID";
+  drop.onclick = () => fileInput.click();
+  fileInput.onchange = () => {
+    let f = fileInput.files[0];
+    if (f) {
+      drop.classList.add('active');
+      fname.innerText = f.name;
+      fname.classList.add('show');
+      box1.classList.add('active');
+      typeText(passInput, "INSERT PASSPHRASE");
+      setTimeout(() => {
+        box2.classList.add('active');
+        typeText(pass2Input, "VERIFY PASSPHRASE");
+      }, 600);
+    }
+  };
 
-  salt = new Uint8Array(await file.slice(4,20).arrayBuffer());
-  key = await deriveKey(pass, salt);
-
-  offset = 20;
-  let metaName = null;
-
-  try {
-   const metaIv = new Uint8Array(await file.slice(offset, offset+12).arrayBuffer()); offset+=12;
-   const lenBuf = await file.slice(offset, offset+4).arrayBuffer();
-   const metaLen = new DataView(lenBuf).getUint32(0,true); offset+=4;
-   const metaEnc = await file.slice(offset, offset+metaLen).arrayBuffer(); offset+=metaLen;
-
-   const metaDec = await crypto.subtle.decrypt({name:"AES-GCM", iv:metaIv}, key, metaEnc);
-   metaName = JSON.parse(new TextDecoder().decode(metaDec)).name;
-  } catch(e){}
-
-  while(offset < file.size) {
-   const iv = new Uint8Array(await file.slice(offset, offset+12).arrayBuffer()); offset+=12;
-   let ctSize = Math.min(CHUNK_SIZE+16, file.size-offset);
-   const ct = await file.slice(offset, offset+ctSize).arrayBuffer(); offset+=ctSize;
-
-   const decrypted = await crypto.subtle.decrypt({name:"AES-GCM", iv}, key, ct);
-   outputChunks.push(new Uint8Array(decrypted));
-
-   let pct = Math.min(100, Math.floor(offset / file.size * 100));
-   pFill.style.width = pct + "%";
-   percent.innerText = pct + "%";
+  function toggle(id) {
+    let e = document.getElementById(id);
+    e.type = e.type === 'password' ? 'text' : 'password';
   }
 
-  var original = metaName || file.name.replace(/\.cpx$/,'');
- }
+  function updateClock() {
+    document.getElementById('clock').innerText = new Date().toUTCString();
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
 
- const blob = new Blob(outputChunks, {type:"application/octet-stream"});
- const a = document.createElement("a");
- a.href = URL.createObjectURL(blob);
+  function wipe() {
+    fileInput.value = "";
+    fname.innerText = "";
+    fname.classList.remove('show');
+    drop.classList.remove('active');
+    box1.classList.remove('active');
+    box2.classList.remove('active');
+    passInput.value = "";
+    pass2Input.value = "";
+    statusDiv.innerText = "IDLE";
+    percentDiv.innerText = "";
+    barDiv.style.display = "none";
+    fillDiv.style.width = "0%";
+    fillDiv.style.background = "var(--gold)";
+  }
 
- if(mode==='enc'){
-  let base = file.name.replace(/\.[^/.]+$/,'');
-  a.download = base + ".cpx";
- } else {
-  a.download = "chyprix." + original;
- }
+  const CHUNK_SIZE = 10 * 1024 * 1024;
 
- a.click();
- status.innerText = "SUCCESS";
- pFill.style.background = "var(--ok)";
+  async function deriveKey(password, salt) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]);
+    return crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt, iterations: 120000, hash: "SHA-256" },
+      keyMaterial,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    );
+  }
 
- } catch(e) {
-  status.innerText = "FAIL / WRONG KEY";
-  pFill.style.background = "var(--alert)";
- }
-}
+  async function run(mode) {
+    const fileEl = document.getElementById("file");
+    const pass = document.getElementById("pass").value;
+    const pass2 = document.getElementById("pass2").value;
 
-</script></body>
+    if (!fileEl.files[0] || !pass) return alert("INVALID INPUT");
+    if (mode === 'enc' && pass !== pass2) return alert("VERIFY FAILED");
+
+    const file = fileEl.files[0];
+    let offset = 0;
+    let key, salt;
+    let outputChunks = [];
+
+    statusDiv.innerText = "PROCESSING";
+    barDiv.style.display = "block";
+    fillDiv.style.width = "0%";
+    fillDiv.style.background = "var(--gold)";
+
+    try {
+      if (mode === 'enc') {
+        salt = crypto.getRandomValues(new Uint8Array(16));
+        key = await deriveKey(pass, salt);
+        outputChunks.push(new TextEncoder().encode("XQR1"));   // signature .xqr
+        outputChunks.push(salt);
+
+        const meta = JSON.stringify({ name: file.name });
+        const metaBytes = new TextEncoder().encode(meta);
+        const metaIv = crypto.getRandomValues(new Uint8Array(12));
+        const metaEnc = await crypto.subtle.encrypt({ name: "AES-GCM", iv: metaIv }, key, metaBytes);
+
+        const lenBuf = new ArrayBuffer(4);
+        new DataView(lenBuf).setUint32(0, metaEnc.byteLength, true);
+        outputChunks.push(metaIv, new Uint8Array(lenBuf), new Uint8Array(metaEnc));
+
+        while (offset < file.size) {
+          const slice = file.slice(offset, offset + CHUNK_SIZE);
+          const iv = crypto.getRandomValues(new Uint8Array(12));
+          const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, await slice.arrayBuffer());
+          outputChunks.push(iv, new Uint8Array(encrypted));
+          offset += CHUNK_SIZE;
+          let pct = Math.min(100, Math.floor(offset / file.size * 100));
+          fillDiv.style.width = pct + "%";
+          percentDiv.innerText = pct + "%";
+        }
+
+        const blob = new Blob(outputChunks, { type: "application/octet-stream" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        let base = file.name.replace(/\.[^/.]+$/, '');
+        a.download = base + ".xqr";
+        a.click();
+        URL.revokeObjectURL(a.href);
+        statusDiv.innerText = "SUCCESS";
+        fillDiv.style.background = "var(--ok)";
+      } 
+      else {  // DECRYPT
+        const header = new TextDecoder().decode(await file.slice(0, 4).arrayBuffer());
+        if (header !== "XQR1") throw "INVALID XQR SIGNATURE";
+
+        salt = new Uint8Array(await file.slice(4, 20).arrayBuffer());
+        key = await deriveKey(pass, salt);
+        offset = 20;
+        let metaName = null;
+
+        try {
+          const metaIv = new Uint8Array(await file.slice(offset, offset + 12).arrayBuffer()); offset += 12;
+          const lenBuf = await file.slice(offset, offset + 4).arrayBuffer();
+          const metaLen = new DataView(lenBuf).getUint32(0, true); offset += 4;
+          const metaEnc = await file.slice(offset, offset + metaLen).arrayBuffer(); offset += metaLen;
+          const metaDec = await crypto.subtle.decrypt({ name: "AES-GCM", iv: metaIv }, key, metaEnc);
+          metaName = JSON.parse(new TextDecoder().decode(metaDec)).name;
+        } catch (e) { console.warn(e); }
+
+        while (offset < file.size) {
+          const iv = new Uint8Array(await file.slice(offset, offset + 12).arrayBuffer()); offset += 12;
+          let ctSize = Math.min(CHUNK_SIZE + 16, file.size - offset);
+          const ct = await file.slice(offset, offset + ctSize).arrayBuffer(); offset += ctSize;
+          const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
+          outputChunks.push(new Uint8Array(decrypted));
+          let pct = Math.min(100, Math.floor(offset / file.size * 100));
+          fillDiv.style.width = pct + "%";
+          percentDiv.innerText = pct + "%";
+        }
+
+        const originalName = metaName || file.name.replace(/\.xqr$/, '');
+        const blob = new Blob(outputChunks, { type: "application/octet-stream" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = originalName;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        statusDiv.innerText = "SUCCESS";
+        fillDiv.style.background = "var(--ok)";
+      }
+    } catch (err) {
+      console.error(err);
+      statusDiv.innerText = "FAIL / WRONG KEY";
+      fillDiv.style.background = "var(--alert)";
+    }
+  }
+
+  // PWA Registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').then(reg => {
+        console.log('SW registered:', reg);
+      }).catch(err => console.log('SW error:', err));
+    });
+  }
+</script>
+</body>
 </html>
