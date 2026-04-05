@@ -3,98 +3,101 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>XEVQOR NANO SECURE - SQUEEZE PROTOCOL</title>
+<title>XEVQOR NANO SECURE - PLATINUM SQUEEZE</title>
 
 <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0a0c0e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="./icon-192.png">
 
 <style>
     :root { 
-        --bg: #000; 
-        --card: #050505; 
-        --gold: #d4af37; 
-        --gold-glow: rgba(212, 175, 55, 0.4); 
-        --neon: #00ff41; 
-        --cyan: #00e5ff; 
-        --alert: #ff3333; 
-        --silver: #e0e0e0;
+        --platinum: #b8c7d9;
+        --silver: #9aaebf;
+        --ice: #c8d8e8;
+        --bg: #0f1215;
+        --card: #0a0c0e;
+        --border: #1e2428;
+        --text-dim: #8a9aa8;
+        --alert: #ff6b6b;
+        --ok: #6bcf9f;
     }
 
-    body { margin: 0; height: 100dvh; background: var(--bg); font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; color: #ddd; padding: 15px; box-sizing: border-box; overflow: hidden; }
+    body { margin: 0; height: 100dvh; background: radial-gradient(circle at 70% 20%, #0f1215, #030405); font-family: 'Montserrat', 'Courier New', monospace; display: flex; align-items: center; justify-content: center; color: #ddd; padding: 15px; box-sizing: border-box; overflow: hidden; }
 
     .box { 
         width: 100%; max-width: 500px; height: auto; background: var(--card); padding: 25px; 
-        border-radius: 12px; border: 1px solid rgba(212,175,55,0.15); 
-        box-shadow: 0 0 50px rgba(212,175,55,0.08), inset 0 0 30px rgba(212,175,55,0.03); 
+        border-radius: 1.8rem; border: 1px solid var(--border); 
+        box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(255,255,255,0.02); 
         display: flex; flex-direction: column; position: relative;
     }
 
     .header-ambient {
-        width: 100%; height: 3px; margin-bottom: 20px;
-        background: radial-gradient(circle, var(--gold) 0%, rgba(212,175,55,0.6) 30%, transparent 80%);
-        box-shadow: 0 0 15px var(--gold-glow);
+        width: 100%; height: 2px; margin-bottom: 20px;
+        background: linear-gradient(90deg, transparent, var(--platinum), var(--ice), var(--platinum), transparent);
+        box-shadow: 0 0 8px rgba(184,199,217,0.4);
     }
 
-    h2 { margin: 0; font-weight: 300; letter-spacing: 5px; color: var(--gold); font-size: 1.1rem; text-align: center; text-transform: uppercase; }
+    h2 { margin: 0; font-weight: 400; letter-spacing: 5px; color: var(--ice); font-size: 1.2rem; text-align: center; text-transform: uppercase; text-shadow: 0 0 4px rgba(200,216,232,0.3); }
 
     #xqrClock { 
-        text-align: center; font-size: 8.5px; color: #666; letter-spacing: 2px; 
+        text-align: center; font-size: 8.5px; color: #6a7a8a; letter-spacing: 2px; 
         margin-top: 6px; font-weight: bold; text-transform: uppercase;
     }
 
     .main-area { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 
     textarea { 
-        width: 100%; height: 140px; background: #020202; border: 1px solid #1a1a1a; 
-        color: var(--neon); padding: 15px; border-radius: 8px; resize: none; font-size: 13px; line-height: 1.6; 
-        outline: none; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); box-sizing: border-box;
-        transition: 0.3s ease;
+        width: 100%; height: 140px; background: #07090b; border: 1px solid var(--border); 
+        color: var(--ice); padding: 15px; border-radius: 1rem; resize: none; font-size: 13px; line-height: 1.6; 
+        outline: none; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); box-sizing: border-box;
+        transition: 0.3s ease; font-family: 'Montserrat', monospace;
     }
-    textarea:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.1); }
+    textarea:focus { border-color: var(--platinum); box-shadow: 0 0 12px rgba(184,199,217,0.2); }
 
     .pass-wrapper { position: relative; width: 100%; }
     input.pass-input { 
-        width: 100%; padding: 14px; background: #000; 
-        border: 1px solid rgba(212,175,55,0.3); color: var(--gold); border-radius: 6px; 
-        text-align: center; letter-spacing: 5px; outline: none; box-sizing: border-box;
-        box-shadow: 0 0 15px rgba(212,175,55,0.05); transition: 0.3s ease; font-family: inherit; font-size: 14px;
+        width: 100%; padding: 14px; background: #07090b; 
+        border: 1px solid rgba(184,199,217,0.4); color: var(--ice); border-radius: 2rem; 
+        text-align: center; letter-spacing: 3px; outline: none; box-sizing: border-box;
+        box-shadow: 0 0 12px rgba(0,0,0,0.3); transition: 0.3s ease; font-family: 'Montserrat', monospace; font-size: 14px;
     }
-    input:focus { border-color: var(--gold); box-shadow: 0 0 25px var(--gold-glow); }
+    input:focus { border-color: var(--platinum); box-shadow: 0 0 15px rgba(184,199,217,0.2); }
 
     .eye-btn {
-        position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-        background: transparent; border: none; color: var(--gold); cursor: pointer;
+        position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+        background: transparent; border: none; color: var(--platinum); cursor: pointer;
         font-size: 16px; outline: none; opacity: 0.6; transition: 0.3s;
     }
-    .eye-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--gold); }
+    .eye-btn:hover { opacity: 1; text-shadow: 0 0 6px var(--platinum); }
 
-    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
 
     button.action-btn { 
-        flex: 1; min-width: 80px; padding: 12px; background: #0a0a0a; border-radius: 6px; 
-        font-weight: 900; cursor: pointer; text-transform: uppercase; 
+        flex: 1; min-width: 80px; padding: 12px; background: #0a0c0e; border-radius: 2rem; 
+        font-weight: 600; cursor: pointer; text-transform: uppercase; 
         letter-spacing: 1px; transition: 0.3s ease; font-size: 10px; outline: none;
+        border: 1px solid rgba(184,199,217,0.5);
+        color: var(--ice);
     }
     button:active { transform: translateY(2px); }
 
-    .btn-enc { border: 1px solid var(--gold); color: var(--gold); }
-    .btn-dec { border: 1px solid var(--neon); color: var(--neon); }
+    .btn-enc { border-color: var(--platinum); color: var(--platinum); }
+    .btn-dec { border-color: var(--silver); color: var(--silver); }
 
-    .action-row { display: flex; gap: 8px; width: 100%; margin-top: 4px; }
-    .btn-copy { border: 1px solid var(--silver); color: var(--silver); flex: 1; }
-    .btn-wipe { border: 1px solid var(--alert); color: var(--alert); flex: 1; }
+    .action-row { display: flex; gap: 10px; width: 100%; margin-top: 6px; }
+    .btn-copy { border-color: #6a7a8a; color: #9aaebf; flex: 1; }
+    .btn-wipe { border-color: #7a5a5a; color: #ff8a8a; flex: 1; }
 
-    button:hover { background: #111; color: #fff; }
-    .btn-enc:hover { box-shadow: 0 0 15px rgba(212,175,55,0.3); }
-    .btn-dec:hover { box-shadow: 0 0 15px rgba(0,255,65,0.3); }
-    .btn-copy:hover { box-shadow: 0 0 15px rgba(255,255,255,0.2); }
-    .btn-wipe:hover { background: rgba(255,51,51,0.1); box-shadow: 0 0 15px rgba(255,51,51,0.3); }
+    button:hover { background: #111418; color: #fff; }
+    .btn-enc:hover { box-shadow: 0 0 14px rgba(184,199,217,0.3); background: rgba(184,199,217,0.1); }
+    .btn-dec:hover { box-shadow: 0 0 14px rgba(154,174,191,0.3); background: rgba(154,174,191,0.1); }
+    .btn-copy:hover { box-shadow: 0 0 12px rgba(200,216,232,0.2); }
+    .btn-wipe:hover { background: rgba(255,107,107,0.1); box-shadow: 0 0 12px rgba(255,107,107,0.2); }
 
-    .footer-status { font-size: 8px; color: #444; margin-top: 15px; display: flex; justify-content: space-between; border-top: 1px solid #111; padding-top: 10px; letter-spacing: 2px; text-transform: uppercase; }
-    #status { font-weight: bold; color: var(--gold); }
+    .footer-status { font-size: 8px; color: #5a6a7a; margin-top: 15px; display: flex; justify-content: space-between; border-top: 1px solid #1a1e22; padding-top: 10px; letter-spacing: 2px; text-transform: uppercase; }
+    #status { font-weight: bold; color: var(--platinum); }
 </style>
 </head>
 <body>
@@ -130,7 +133,6 @@
 </div>
 
 <script>
-    // LIVE CHRONOMETER
     function updateClock() {
         const now = new Date();
         const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -164,7 +166,7 @@
     function updateStatus(msg, color) {
         const s = document.getElementById("status");
         s.innerText = msg;
-        s.style.color = color || "var(--gold)";
+        s.style.color = color || "#b8c7d9";
     }
 
     async function compress(str) {
@@ -177,21 +179,20 @@
         return await new Response(stream).text();
     }
 
-    // XQR NANO SALT (diganti dari CHYPRIX)
     async function deriveKey(p) {
         const enc = new TextEncoder();
-        const salt = enc.encode("XQR_NANO_RESERVE_V1"); 
+        const salt = enc.encode("XEVQOR_NANO_V1"); 
         const keyMat = await crypto.subtle.importKey("raw", enc.encode(p), "PBKDF2", false, ["deriveKey"]);
-        return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" }, keyMat, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+        return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 120000, hash: "SHA-256" }, keyMat, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
     }
 
     async function process(mode) {
         const p = document.getElementById('pass').value;
         const msgEl = document.getElementById('msg');
         let m = msgEl.value.trim();
-        if(!p || !m) { alert("PASSKEY & MESSAGE REQUIRED, BOSS."); return; }
+        if(!p || !m) { alert("PASSKEY & MESSAGE REQUIRED."); return; }
 
-        updateStatus("PROCESSING...", "#d4af37");
+        updateStatus("PROCESSING...", "#b8c7d9");
 
         try {
             const key = await deriveKey(p);
@@ -206,7 +207,7 @@
                 combined.set(new Uint8Array(encrypted), 12);
 
                 msgEl.value = btoa(String.fromCharCode(...combined));
-                updateStatus("SQUEEZE SUCCESS", "var(--neon)");
+                updateStatus("SQUEEZE SUCCESS", "#6bcf9f");
             } else {
                 const raw = atob(m);
                 const combined = new Uint8Array(raw.length);
@@ -217,17 +218,17 @@
 
                 const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, data);
                 msgEl.value = await decompress(new Uint8Array(decrypted)); 
-                updateStatus("DECOMPRESS SUCCESS", "var(--cyan)");
+                updateStatus("DECOMPRESS SUCCESS", "#9aaebf");
             }
         } catch (e) {
-            updateStatus("ACCESS DENIED", "var(--alert)");
+            updateStatus("ACCESS DENIED", "#ff6b6b");
             alert("FAILURE: INCORRECT PASSKEY OR INVALID FORMAT.");
         }
     }
 
     function copyToClipboard() {
         const text = document.getElementById('msg').value;
-        if(!text) return updateStatus("EMPTY VAULT", "var(--alert)");
+        if(!text) return updateStatus("EMPTY VAULT", "#ff6b6b");
 
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(text).then(() => { finishCopy(); }).catch(() => bruteForceCopy(text));
@@ -246,15 +247,15 @@
     }
 
     function finishCopy() {
-        updateStatus("COPIED!", "#fff");
-        setTimeout(() => updateStatus("READY", "var(--gold)"), 2000);
+        updateStatus("COPIED!", "#b8c7d9");
+        setTimeout(() => updateStatus("READY", "#b8c7d9"), 2000);
     }
 
     function clearAll() {
         document.getElementById('msg').value = "";
         document.getElementById('pass').value = "";
-        updateStatus("WIPED", "var(--alert)");
-        setTimeout(() => updateStatus("READY", "var(--gold)"), 1500);
+        updateStatus("WIPED", "#ff6b6b");
+        setTimeout(() => updateStatus("READY", "#b8c7d9"), 1500);
     }
 </script>
 
@@ -262,7 +263,7 @@
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
-                .then(() => console.log('XQR Nano Engine Online'))
+                .then(() => console.log('XEVQOR Nano Engine Online'))
                 .catch(err => console.error('Uplink Failed:', err));
         });
     }
