@@ -1,327 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>XEVQOR | LUXURY ENCRYPTION</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0a0806">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: radial-gradient(circle at 20% 30%, #0e0c0a, #020101);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Montserrat', sans-serif;
-    padding: 1.5rem;
-  }
-  .vault-card {
-    max-width: 520px;
-    width: 100%;
-    background: rgba(15, 12, 10, 0.65);
-    backdrop-filter: blur(12px);
-    border-radius: 2rem;
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    box-shadow: 0 25px 45px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.1) inset;
-    padding: 2rem;
-    transition: all 0.3s ease;
-  }
-  .gold-line {
-    width: 80px;
-    height: 2px;
-    background: linear-gradient(90deg, #d4af37, #f5e7a3, #d4af37);
-    margin: 0 auto 1rem auto;
-    border-radius: 2px;
-  }
-  h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 600;
-    font-size: 2rem;
-    letter-spacing: 4px;
-    text-align: center;
-    color: #ecd67a;
-    text-shadow: 0 0 6px rgba(212,175,55,0.3);
-    margin-bottom: 0.5rem;
-  }
-  .clock {
-    text-align: center;
-    font-size: 0.7rem;
-    color: #aa9f7a;
-    font-weight: 300;
-    letter-spacing: 1px;
-    margin-bottom: 1.8rem;
-    border-bottom: 1px dashed rgba(212,175,55,0.3);
-    display: inline-block;
-    width: auto;
-    padding-bottom: 0.4rem;
-  }
-  .dropzone {
-    background: rgba(0,0,0,0.4);
-    border: 1px dashed rgba(212,175,55,0.5);
-    border-radius: 1rem;
-    padding: 1.2rem;
-    text-align: center;
-    font-size: 0.75rem;
-    color: #b9aa7a;
-    cursor: pointer;
-    transition: 0.2s;
-    margin-bottom: 0.8rem;
-  }
-  .dropzone.active {
-    border-color: #d4af37;
-    background: rgba(212,175,55,0.08);
-    box-shadow: 0 0 12px rgba(212,175,55,0.2);
-  }
-  .filename {
-    font-size: 0.7rem;
-    text-align: center;
-    color: #d4af37;
-    margin-top: 0.3rem;
-    opacity: 0;
-    transition: 0.2s;
-    font-weight: 500;
-  }
-  .filename.show { opacity: 1; }
-  input[type="file"] { display: none; }
-  .input-field {
-    margin-top: 1rem;
-    position: relative;
-  }
-  .input-field input {
-    width: 100%;
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(212,175,55,0.4);
-    border-radius: 2rem;
-    padding: 0.9rem 1.2rem;
-    color: #ecd67a;
-    font-family: 'Montserrat', monospace;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-    outline: none;
-    transition: 0.2s;
-  }
-  .input-field.active input {
-    border-color: #d4af37;
-    box-shadow: 0 0 12px rgba(212,175,55,0.15);
-  }
-  .eye {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    opacity: 0.6;
-    color: #d4af37;
-  }
-  .btn-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin: 1.5rem 0 1rem;
-  }
-  button {
-    background: rgba(0,0,0,0.6);
-    border: 1px solid rgba(212,175,55,0.6);
-    padding: 0.9rem;
-    border-radius: 2rem;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #ecd67a;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  button:hover {
-    background: #d4af37;
-    color: #0a0806;
-    border-color: #d4af37;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(212,175,55,0.2);
-  }
-  .wipe-btn {
-    width: 100%;
-    background: rgba(40,20,20,0.7);
-    border-color: #9e7a4a;
-    color: #e0b87a;
-    margin-top: 0.2rem;
-  }
-  .progress-bar {
-    height: 3px;
-    background: #2a241c;
-    border-radius: 3px;
-    margin-top: 1rem;
-    overflow: hidden;
-    display: none;
-  }
-  .progress-fill {
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(90deg, #d4af37, #f5e7a3);
-    transition: width 0.1s linear;
-  }
-  .status {
-    text-align: center;
-    font-size: 0.65rem;
-    margin-top: 0.8rem;
-    color: #aa9f7a;
-    font-weight: 300;
-  }
-  .percent {
-    text-align: center;
-    font-size: 0.6rem;
-    margin-top: 0.3rem;
-    color: #d4af37;
-  }
-  footer {
-    text-align: center;
-    font-size: 0.55rem;
-    margin-top: 1.5rem;
-    color: #5a4f32;
-    letter-spacing: 1px;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>XEVQOR CORE | PLATINUM SUITE</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a0c0e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 70% 20%, #0f1215, #030405);
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    :root {
+      --platinum: #b8c7d9;
+      --silver: #9aaebf;
+      --card-bg: #0a0c0e;
+      --border: #1e2428;
+      --text-dim: #8a9aa8;
+    }
+
+    .core {
+      max-width: 520px;
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 1.8rem;
+      border: 1px solid var(--border);
+      padding: 1.8rem;
+      position: relative;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.8), inset 0 0 30px rgba(255,255,255,0.02);
+    }
+
+    /* platinum line atas */
+    .core::before {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 2px;
+      margin: 0 auto 1.2rem auto;
+      border-radius: 2px;
+      background: linear-gradient(90deg,
+        rgba(184,199,217,0),
+        rgba(184,199,217,0.3),
+        rgba(184,199,217,0.8),
+        rgba(220,235,250,1),
+        rgba(184,199,217,0.8),
+        rgba(184,199,217,0.3),
+        rgba(184,199,217,0)
+      );
+      box-shadow: 0 0 8px rgba(184,199,217,0.4);
+    }
+
+    /* bottom glow platinum */
+    .core::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: linear-gradient(180deg, rgba(184,199,217,0), rgba(184,199,217,0.06), rgba(184,199,217,0.12));
+      border-radius: 0 0 1.8rem 1.8rem;
+      pointer-events: none;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid #181e22;
+    }
+
+    h1 {
+      font-size: 1.7rem;
+      letter-spacing: 6px;
+      font-weight: 400;
+      background: linear-gradient(135deg, var(--platinum), #ffffff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(184,199,217,0.2);
+    }
+
+    .subline {
+      font-size: 0.6rem;
+      color: #5c6c7a;
+      margin-top: 0.2rem;
+      letter-spacing: 1px;
+    }
+
+    .status {
+      margin-top: 0.5rem;
+      font-size: 0.6rem;
+      color: #6a7a88;
+    }
+
+    .status span {
+      color: #8fcbff;
+    }
+
+    /* grid 2 kolom */
+    .apps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.8rem 0;
+    }
+
+    .app-card {
+      background: #050708;
+      border: 1px solid var(--border);
+      border-radius: 1.2rem;
+      padding: 1rem 0.5rem;
+      text-align: center;
+      transition: 0.25s;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .app-card:hover {
+      border-color: var(--platinum);
+      background: #0c1014;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 0 15px rgba(184,199,217,0.1);
+    }
+
+    .app-name {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--platinum), #e0e8f0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .app-desc {
+      font-size: 0.55rem;
+      color: var(--text-dim);
+    }
+
+    .launch {
+      font-size: 0.7rem;
+      color: var(--platinum);
+      opacity: 0.7;
+    }
+
+    .footer {
+      margin-top: 1rem;
+      font-size: 0.55rem;
+      text-align: center;
+      color: #4a5a68;
+      border-top: 1px solid #181e22;
+      padding-top: 0.8rem;
+    }
+
+    @media (max-width: 480px) {
+      .core { padding: 1.2rem; }
+      h1 { font-size: 1.4rem; letter-spacing: 4px; }
+      .app-name { font-size: 0.85rem; }
+    }
+  </style>
 </head>
 <body>
-<div class="vault-card">
-  <div class="gold-line"></div>
-  <h1>XEVQOR</h1>
-  <div style="text-align: center;"><span class="clock" id="clock"></span></div>
-  <div class="dropzone" id="drop">⟡  DROP FILE OR TAP TO SELECT  ⟡</div>
-  <div class="filename" id="fname"></div>
-  <input type="file" id="file">
-  <div class="input-field" id="box1">
-    <input type="password" id="pass" placeholder="MASTER PASSPHRASE">
-    <span class="eye" onclick="toggle('pass')">👁</span>
-  </div>
-  <div class="input-field" id="box2">
-    <input type="password" id="pass2" placeholder="CONFIRM PASSPHRASE">
-    <span class="eye" onclick="toggle('pass2')">👁</span>
-  </div>
-  <div class="btn-group">
-    <button onclick="run('enc')">ENCRYPT</button>
-    <button onclick="run('dec')">DECRYPT</button>
-  </div>
-  <button class="wipe-btn" onclick="wipe()">WIPE SYSTEM</button>
-  <div class="progress-bar" id="bar"><div class="progress-fill" id="fill"></div></div>
-  <div class="status" id="status">IDLE</div>
-  <div class="percent" id="percent"></div>
-  <footer>XEVQOR • GOLDEN VAULT • AES-256</footer>
-</div>
-<script>
-  const drop = document.getElementById('drop');
-  const fileInput = document.getElementById('file');
-  const fname = document.getElementById('fname');
-  const box1 = document.getElementById('box1');
-  const box2 = document.getElementById('box2');
-  const pass = document.getElementById('pass');
-  const pass2 = document.getElementById('pass2');
-  const statusDiv = document.getElementById('status');
-  const percentDiv = document.getElementById('percent');
-  const fillDiv = document.getElementById('fill');
-  const barDiv = document.getElementById('bar');
 
-  function typeText(el, text) {
-    let i = 0; el.placeholder = "";
-    let int = setInterval(() => {
-      if (i < text.length) { el.placeholder += text.charAt(i); i++; } else clearInterval(int);
-    }, 20);
+<div class="core">
+  <div class="header">
+    <h1>XEVQOR CORE</h1>
+    <div class="subline">Platinum Control Interface</div>
+    <div class="status">
+      SYSTEM <span>ACTIVE</span> | UTC <span id="utc"></span>
+    </div>
+  </div>
+
+  <div class="apps-grid">
+    <div class="app-card" onclick="go('/encrypt/')">
+      <div class="app-name">ENCRYPT</div>
+      <div class="app-desc">AES-256 file vault</div>
+      <div class="launch">▶ LAUNCH</div>
+    </div>
+    <div class="app-card" onclick="go('/nano/')">
+      <div class="app-name">NANO</div>
+      <div class="app-desc">Squeeze & encrypt text</div>
+      <div class="launch">▶ LAUNCH</div>
+    </div>
+    <div class="app-card" onclick="go('/stego/')">
+      <div class="app-name">STEGO</div>
+      <div class="app-desc">Steganography phantom</div>
+      <div class="launch">▶ LAUNCH</div>
+    </div>
+    <div class="app-card" onclick="go('/keypass/')">
+      <div class="app-name">KEYPASS</div>
+      <div class="app-desc">Dual key generator</div>
+      <div class="launch">▶ LAUNCH</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    CORE ACTIVE | UTC <span id="clock"></span>
+  </div>
+</div>
+
+<script>
+  const BASE_URL = 'https://xevqor.github.io';
+  
+  function go(path) {
+    window.open(BASE_URL + path, '_blank');
   }
-  drop.onclick = () => fileInput.click();
-  fileInput.onchange = () => {
-    let f = fileInput.files[0];
-    if (f) {
-      drop.classList.add('active');
-      fname.innerText = f.name;
-      fname.classList.add('show');
-      box1.classList.add('active');
-      typeText(pass, "INSERT PASSPHRASE");
-      setTimeout(() => { box2.classList.add('active'); typeText(pass2, "VERIFY PASSPHRASE"); }, 600);
-    }
-  };
-  function toggle(id) { let e = document.getElementById(id); e.type = e.type === 'password' ? 'text' : 'password'; }
-  function updateClock() { document.getElementById('clock').innerText = new Date().toUTCString(); }
-  setInterval(updateClock, 1000); updateClock();
-  function wipe() {
-    fileInput.value = ""; fname.innerText = ""; fname.classList.remove('show'); drop.classList.remove('active');
-    box1.classList.remove('active'); box2.classList.remove('active'); pass.value = ""; pass2.value = "";
-    statusDiv.innerText = "IDLE"; percentDiv.innerText = ""; barDiv.style.display = "none"; fillDiv.style.width = "0%";
+
+  function formatUTC() {
+    const now = new Date();
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    
+    const dayName = days[now.getUTCDay()];
+    const day = now.getUTCDate();
+    const month = months[now.getUTCMonth()];
+    const year = now.getUTCFullYear();
+    
+    let hours = now.getUTCHours();
+    const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    
+    const formatted = `${dayName}, ${day} ${month} ${year} ${hours}:${minutes}:${seconds} ${ampm} UTC`;
+    document.getElementById('utc').innerText = formatted;
+    document.getElementById('clock').innerText = formatted;
   }
-  const CHUNK_SIZE = 10 * 1024 * 1024;
-  async function deriveKey(password, salt) {
-    const enc = new TextEncoder();
-    const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]);
-    return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 120000, hash: "SHA-256" }, keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+  formatUTC();
+  setInterval(formatUTC, 1000);
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('SW registered:', reg))
+        .catch(err => console.log('SW error:', err));
+    });
   }
-  async function run(mode) {
-    const file = fileInput.files[0];
-    const p = pass.value, p2 = pass2.value;
-    if (!file || !p) return alert("INVALID INPUT");
-    if (mode === 'enc' && p !== p2) return alert("VERIFY FAILED");
-    let offset = 0, key, salt, outputChunks = [];
-    statusDiv.innerText = "PROCESSING"; barDiv.style.display = "block";
-    try {
-      if (mode === 'enc') {
-        salt = crypto.getRandomValues(new Uint8Array(16));
-        key = await deriveKey(p, salt);
-        outputChunks.push(new TextEncoder().encode("XQR1"), salt);
-        const meta = JSON.stringify({ name: file.name });
-        const metaBytes = new TextEncoder().encode(meta);
-        const metaIv = crypto.getRandomValues(new Uint8Array(12));
-        const metaEnc = await crypto.subtle.encrypt({ name: "AES-GCM", iv: metaIv }, key, metaBytes);
-        const lenBuf = new ArrayBuffer(4);
-        new DataView(lenBuf).setUint32(0, metaEnc.byteLength, true);
-        outputChunks.push(metaIv, new Uint8Array(lenBuf), new Uint8Array(metaEnc));
-        while (offset < file.size) {
-          const slice = file.slice(offset, offset + CHUNK_SIZE);
-          const iv = crypto.getRandomValues(new Uint8Array(12));
-          const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, await slice.arrayBuffer());
-          outputChunks.push(iv, new Uint8Array(encrypted));
-          offset += CHUNK_SIZE;
-          let pct = Math.min(100, Math.floor(offset / file.size * 100));
-          fillDiv.style.width = pct + "%"; percentDiv.innerText = pct + "%";
-        }
-      } else {
-        const header = new TextDecoder().decode(await file.slice(0,4).arrayBuffer());
-        if (header !== "XQR1") throw "INVALID SIGNATURE";
-        salt = new Uint8Array(await file.slice(4,20).arrayBuffer());
-        key = await deriveKey(p, salt);
-        offset = 20; let metaName = null;
-        try {
-          const metaIv = new Uint8Array(await file.slice(offset, offset+12).arrayBuffer()); offset+=12;
-          const lenBuf = await file.slice(offset, offset+4).arrayBuffer();
-          const metaLen = new DataView(lenBuf).getUint32(0,true); offset+=4;
-          const metaEnc = await file.slice(offset, offset+metaLen).arrayBuffer(); offset+=metaLen;
-          const metaDec = await crypto.subtle.decrypt({ name:"AES-GCM", iv:metaIv }, key, metaEnc);
-          metaName = JSON.parse(new TextDecoder().decode(metaDec)).name;
-        } catch(e) {}
-        while (offset < file.size) {
-          const iv = new Uint8Array(await file.slice(offset, offset+12).arrayBuffer()); offset+=12;
-          let ctSize = Math.min(CHUNK_SIZE+16, file.size-offset);
-          const ct = await file.slice(offset, offset+ctSize).arrayBuffer(); offset+=ctSize;
-          const decrypted = await crypto.subtle.decrypt({ name:"AES-GCM", iv }, key, ct);
-          outputChunks.push(new Uint8Array(decrypted));
-          let pct = Math.min(100, Math.floor(offset / file.size * 100));
-          fillDiv.style.width = pct + "%"; percentDiv.innerText = pct + "%";
-        }
-        var original = metaName || file.name.replace(/\.xqr$/,'');
-      }
-      const blob = new Blob(outputChunks, {type:"application/octet-stream"});
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      if (mode === 'enc') { let base = file.name.replace(/\.[^/.]+$/,''); a.download = base + ".xqr"; }
-      else { a.download = "xevqor." + original; }
-      a.click(); statusDiv.innerText = "SUCCESS"; fillDiv.style.background = "linear-gradient(90deg, #d4af37, #f5e7a3)";
-    } catch(e) { statusDiv.innerText = "FAIL / WRONG KEY"; fillDiv.style.background = "#9e7a4a"; }
-  }
-  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 </script>
 </body>
 </html>
