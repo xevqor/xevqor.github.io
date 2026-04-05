@@ -3,70 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>XEVQOR KEYPASS - ARCHITECT FINALE</title>
+<title>XEVQOR KEYPASS - PLATINUM VAULT</title>
 <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0a0c0e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="./icon-192.png">
 
 <style>
     :root { 
-        --bg: #000; --card: #050505; --gold: #d4af37; --gold-glow: rgba(212, 175, 55, 0.4); 
-        --neon: #00ff41; --cyan: #00e5ff; --alert: #ff3333; --silver: #e0e0e0;
+        --platinum: #b8c7d9;
+        --silver: #9aaebf;
+        --ice: #c8d8e8;
+        --bg: #0f1215;
+        --card: #0a0c0e;
+        --border: #1e2428;
+        --text-dim: #8a9aa8;
+        --alert: #ff6b6b;
+        --ok: #6bcf9f;
     }
-    body { margin: 0; min-height: 100dvh; background: var(--bg); font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; color: #ddd; padding: 15px; box-sizing: border-box; }
+    body { margin: 0; min-height: 100dvh; background: radial-gradient(circle at 70% 20%, #0f1215, #030405); font-family: 'Montserrat', 'Courier New', monospace; display: flex; align-items: center; justify-content: center; color: #ddd; padding: 15px; box-sizing: border-box; }
 
     .vault { 
         width: 100%; max-width: 500px; background: var(--card); padding: 25px; 
-        border-radius: 12px; border: 1px solid rgba(212,175,55,0.25); 
-        box-shadow: 0 0 50px rgba(0,0,0,1); display: flex; flex-direction: column; position: relative;
+        border-radius: 1.8rem; border: 1px solid var(--border); 
+        box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(255,255,255,0.02); 
+        display: flex; flex-direction: column; position: relative;
     }
 
-    .header-ambient { width: 100%; height: 3px; margin-bottom: 20px; background: radial-gradient(circle, var(--gold) 0%, rgba(212, 175, 55, 0.6) 30%, transparent 80%); box-shadow: 0 0 15px var(--gold-glow); }
-    h2 { margin: 0; font-weight: 300; letter-spacing: 5px; color: var(--gold); font-size: 1.2rem; text-align: center; text-transform: uppercase; }
-    #xevqorClock { text-align: center; font-size: 9px; color: #888; letter-spacing: 1px; margin-top: 8px; font-weight: bold; text-transform: uppercase; }
+    .header-ambient { width: 100%; height: 2px; margin-bottom: 20px; background: linear-gradient(90deg, transparent, var(--platinum), var(--ice), var(--platinum), transparent); box-shadow: 0 0 8px rgba(184,199,217,0.4); }
+    h2 { margin: 0; font-weight: 400; letter-spacing: 5px; color: var(--ice); font-size: 1.3rem; text-align: center; text-transform: uppercase; text-shadow: 0 0 4px rgba(200,216,232,0.3); }
+    #xevqorClock { text-align: center; font-size: 9px; color: #6a7a8a; letter-spacing: 1px; margin-top: 8px; font-weight: bold; text-transform: uppercase; }
 
     .main-area { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 
     .input-box { display: flex; flex-direction: column; gap: 4px; position: relative; }
-    .input-box label { font-size: 8px; color: #444; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; padding-left: 5px; }
+    .input-box label { font-size: 8px; color: #6a7a8a; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; padding-left: 5px; }
 
-    input { width: 100%; background: #020202; border: 1px solid #1a1a1a; color: #fff; padding: 11px; padding-right: 40px; border-radius: 6px; font-size: 13px; outline: none; box-sizing: border-box; transition: 0.2s; font-family: 'Consolas', monospace; }
-    input:focus { border-color: var(--gold); }
+    input { width: 100%; background: #07090b; border: 1px solid var(--border); color: var(--ice); padding: 11px; padding-right: 40px; border-radius: 2rem; font-size: 13px; outline: none; box-sizing: border-box; transition: 0.2s; font-family: 'Montserrat', monospace; }
+    input:focus { border-color: var(--platinum); box-shadow: 0 0 12px rgba(184,199,217,0.2); }
 
-    .eye-btn { position: absolute; right: 10px; bottom: 6px; background: none; border: none; color: #333; cursor: pointer; padding: 5px; outline: none; }
-    .eye-btn:hover { color: var(--gold); }
+    .eye-btn { position: absolute; right: 16px; bottom: 6px; background: none; border: none; color: #6a7a8a; cursor: pointer; padding: 5px; outline: none; }
+    .eye-btn:hover { color: var(--platinum); }
 
     .dual-results { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 10px; }
     .res-card { 
-        background: #000; border: 1px dashed #333; padding: 12px 15px; border-radius: 8px; 
+        background: #07090b; border: 1px solid var(--border); padding: 12px 15px; border-radius: 1.2rem; 
         display: flex; align-items: center; justify-content: space-between; gap: 10px;
     }
     .res-content { flex: 1; text-align: left; overflow: hidden; }
-    .res-label { font-size: 8px; color: #444; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; display: block; }
-    .res-out { color: var(--gold); font-size: 0.95rem; letter-spacing: 1px; word-break: break-all; font-weight: bold; min-height: 20px; }
+    .res-label { font-size: 8px; color: #6a7a8a; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; display: block; }
+    .res-out { color: var(--platinum); font-size: 0.95rem; letter-spacing: 1px; word-break: break-all; font-weight: bold; min-height: 20px; }
 
     .mini-copy {
-        background: #0a0a0a; border: 1px solid #222; color: var(--silver);
-        padding: 8px; border-radius: 4px; cursor: pointer; font-size: 9px;
+        background: #0a0c0e; border: 1px solid var(--border); color: var(--silver);
+        padding: 8px; border-radius: 2rem; cursor: pointer; font-size: 9px;
         transition: 0.2s; display: flex; align-items: center; justify-content: center;
         min-width: 45px; height: 35px; text-transform: uppercase; font-weight: bold;
     }
-    .mini-copy:hover { border-color: var(--gold); color: var(--gold); background: #111; }
+    .mini-copy:hover { border-color: var(--platinum); color: var(--platinum); background: #111418; }
     .mini-copy:active { transform: scale(0.9); }
 
     .btn-group { display: flex; gap: 8px; margin-top: 15px; }
-    button.action-btn { flex: 1; padding: 14px; background: #0a0a0a; border-radius: 6px; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.2s ease; font-size: 10px; outline: none; border: 1px solid transparent; }
+    button.action-btn { flex: 1; padding: 14px; background: #0a0c0e; border-radius: 2rem; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.2s ease; font-size: 10px; outline: none; border: 1px solid rgba(184,199,217,0.4); }
 
-    .btn-gen { border: 1px solid var(--gold); color: var(--gold); width: 100%; }
-    .btn-wipe { border: 1px solid var(--alert); color: var(--alert); }
+    .btn-gen { border-color: var(--platinum); color: var(--platinum); width: 100%; }
+    .btn-wipe { border-color: #7a5a5a; color: var(--alert); }
 
-    button:hover { background: #111; color: #fff; }
-    .btn-gen:hover { box-shadow: 0 0 15px var(--gold-glow); }
+    button:hover { background: #111418; color: #fff; }
+    .btn-gen:hover { box-shadow: 0 0 14px rgba(184,199,217,0.3); background: rgba(184,199,217,0.1); }
+    .btn-wipe:hover { box-shadow: 0 0 12px rgba(255,107,107,0.2); background: rgba(255,107,107,0.1); }
 
-    .footer-status { font-size: 8px; color: #333; margin-top: 15px; display: flex; justify-content: space-between; border-top: 1px solid #111; padding-top: 10px; letter-spacing: 2px; text-transform: uppercase; }
-    #status { font-weight: bold; color: var(--gold); }
+    .footer-status { font-size: 8px; color: #5a6a7a; margin-top: 15px; display: flex; justify-content: space-between; border-top: 1px solid #1a1e22; padding-top: 10px; letter-spacing: 2px; text-transform: uppercase; }
+    #status { font-weight: bold; color: var(--platinum); }
 </style>
 </head>
 <body>
@@ -140,7 +149,8 @@
 
     function updateStatus(msg, color) {
         const s = document.getElementById("status");
-        s.innerText = msg; s.style.color = color || "var(--gold)";
+        s.innerText = msg;
+        s.style.color = color || "#b8c7d9";
     }
 
     function toggle(id, eyeId) {
@@ -156,9 +166,9 @@
 
     async function generate() {
         const k1 = document.getElementById('m1').value, k2 = document.getElementById('m2').value, lbl = document.getElementById('label').value;
-        if(!k1 || !k2 || !lbl) { updateStatus("FIELDS REQUIRED", "var(--alert)"); return; }
-        if(k1 !== k2) { updateStatus("MISMATCH DETECTED", "var(--alert)"); return; }
-        updateStatus("MUTATING...", "#d4af37");
+        if(!k1 || !k2 || !lbl) { updateStatus("FIELDS REQUIRED", "#ff6b6b"); return; }
+        if(k1 !== k2) { updateStatus("MISMATCH DETECTED", "#ff6b6b"); return; }
+        updateStatus("MUTATING...", "#b8c7d9");
 
         try {
             const encoder = new TextEncoder();
@@ -170,8 +180,8 @@
 
             document.getElementById('outA').innerText = raw;
             document.getElementById('outB').innerText = raw.substring(0, 29) + "@!7";
-            updateStatus("DUAL KEY REVEALED", "var(--neon)");
-        } catch (e) { updateStatus("FATAL ERROR", "var(--alert)"); }
+            updateStatus("DUAL KEY REVEALED", "#6bcf9f");
+        } catch (e) { updateStatus("FATAL ERROR", "#ff6b6b"); }
     }
 
     function copy(id, btn) {
@@ -181,15 +191,15 @@
         document.execCommand("copy"); document.body.removeChild(d);
 
         const oldText = btn.innerText;
-        btn.innerText = "DONE!"; btn.style.color = "var(--neon)";
+        btn.innerText = "DONE!"; btn.style.color = "#6bcf9f";
         updateStatus("COPIED!", "#fff"); 
-        setTimeout(() => { btn.innerText = oldText; btn.style.color = "var(--silver)"; updateStatus("READY", "var(--gold)"); }, 1500);
+        setTimeout(() => { btn.innerText = oldText; btn.style.color = "#9aaebf"; updateStatus("READY", "#b8c7d9"); }, 1500);
     }
 
     function clearAll() {
         document.getElementById('m1').value = ""; document.getElementById('m2').value = ""; document.getElementById('label').value = "";
         document.getElementById('outA').innerText = "LOCKED"; document.getElementById('outB').innerText = "LOCKED";
-        updateStatus("WIPED", "var(--alert)"); setTimeout(() => updateStatus("READY", "var(--gold)"), 1500);
+        updateStatus("WIPED", "#ff6b6b"); setTimeout(() => updateStatus("READY", "#b8c7d9"), 1500);
     }
 </script>
 
