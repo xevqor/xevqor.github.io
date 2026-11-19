@@ -1,1 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>XEVQOR NEBULA · PHANTOM PROTOCOL</title>
 
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+
+    <!-- Fonts: Cinzel untuk Judul, Montserrat untuk isi -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+
+    <style>
+        :root { 
+            --bg: #000000; 
+            --card: #050505;
+            --platinum: #e8ebf2; 
+            --platinum-glow: rgba(220, 225, 240, 0.15); 
+            --ice: #ffffff; 
+            --silver: #8a8c92;
+            --alert: #ff4d4d; 
+            --ok: #4dff88;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --input-bg: #000000;
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            margin: 0; min-height: 100dvh; 
+            background: #000000; 
+            font-family: 'Montserrat', sans-serif; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #f5f5f7; padding: 15px; overflow: auto; position: relative;
+        }
+
+        /* Ambient glow elegan di belakang card */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(100vw, 800px);
+            height: min(80vh, 700px);
+            background: radial-gradient(ellipse at center, rgba(220, 225, 240, 0.05) 0%, transparent 70%);
+            filter: blur(50px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .box { 
+            width: 100%; max-width: 700px; height: auto; 
+            background: var(--card); padding: 1.8rem; 
+            border-radius: 1.5rem; border: 1px solid var(--border-light); 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05); 
+            display: flex; flex-direction: column; position: relative; z-index: 1;
+        }
+
+        .header-ambient {
+            width: 100%; height: 1px; margin-bottom: 1.2rem;
+            background: linear-gradient(90deg, transparent, var(--platinum), transparent);
+            box-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+
+        h1 { 
+            margin: 0; font-size: 2rem; font-family: 'Cinzel', serif; font-weight: 500; letter-spacing: 6px; 
+            background: linear-gradient(180deg, #ffffff 0%, #a8adb8 100%);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+            text-align: center; text-transform: uppercase; 
+        }
+
+        #nexusClock { 
+            text-align: center; font-size: 0.55rem; color: var(--silver); letter-spacing: 3px; 
+            margin-top: 8px; font-weight: 500; text-transform: uppercase; 
+        }
+        
+        .main-area { flex: 1; display: flex; flex-direction: column; gap: 12px; margin-top: 1.5rem; }
+        
+        .label-text { 
+            font-size: 0.6rem; color: var(--silver); text-transform: uppercase; 
+            letter-spacing: 2px; font-weight: 500; margin-bottom: -4px; 
+        }
+
+        textarea, input { 
+            width: 100%; background: var(--input-bg); border: 1px solid #222; 
+            color: var(--platinum); padding: 1rem; border-radius: 1rem; 
+            font-size: 0.85rem; line-height: 1.5; outline: none; transition: 0.3s; 
+            font-family: 'Montserrat', monospace; 
+        }
+        
+        textarea { height: 80px; resize: vertical; }
+        textarea::placeholder, input::placeholder { color: #444; font-weight: 300; letter-spacing: 1px; }
+        
+        textarea:focus, input:focus { 
+            border-color: var(--platinum); box-shadow: 0 0 20px var(--platinum-glow); 
+        }
+        
+        .pass-wrapper { position: relative; width: 100%; }
+        input.pass-input { text-align: center; letter-spacing: 4px; }
+        
+        .eye-btn { 
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%); 
+            background: transparent; border: none; color: var(--silver); cursor: pointer; 
+            font-size: 1rem; opacity: 0.5; outline: none; transition: 0.2s; 
+        }
+        .eye-btn:hover { opacity: 1; color: var(--platinum); }
+
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px; }
+        
+        button.action-btn { 
+            flex: 1; min-width: 90px; padding: 0.9rem 0; background: transparent; 
+            border-radius: 2rem; font-weight: 500; cursor: pointer; 
+            text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s ease; 
+            font-size: 0.65rem; outline: none; border: 1px solid #333; color: var(--platinum);
+        }
+        
+        button.action-btn:hover { 
+            background: rgba(255,255,255,0.03); border-color: var(--platinum); color: #fff; 
+            box-shadow: 0 0 20px rgba(255,255,255,0.1); transform: translateY(-2px);
+        }
+        
+        button:active { transform: translateY(1px); }
+        
+        .btn-copy { border-color: rgba(255,255,255,0.15); }
+        
+        .btn-wipe { 
+            border-color: rgba(255, 77, 77, 0.4); color: var(--alert); 
+            width: 100%; flex: none; margin-top: 5px; 
+        }
+        
+        .btn-wipe:hover { 
+            background: rgba(255, 77, 77, 0.1); border-color: var(--alert); color: #fff; 
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.2);
+        }
+
+        .status-bar { 
+            font-size: 0.55rem; color: #444; margin-top: 1.5rem; display: flex; 
+            justify-content: space-between; border-top: 1px solid #111; 
+            padding-top: 1rem; letter-spacing: 2px; text-transform: uppercase; 
+        }
+        
+        #status { font-weight: 600; color: var(--silver); }
+
+        @media (max-width: 550px) {
+            .box { padding: 1.2rem; }
+            h1 { font-size: 1.5rem; letter-spacing: 4px; }
+            button.action-btn { font-size: 0.6rem; padding: 0.7rem 0; }
+            textarea { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <div class="header-ambient"></div>
+    <h1>XEVQOR NEBULA</h1>
+    <div id="nexusClock">SYNCING CHRONOMETER...</div>
+
+    <div class="main-area">
+        <div class="pass-wrapper">
+            <input type="password" id="pass" class="pass-input" placeholder="MASTER PASSKEY">
+            <button class="eye-btn" onclick="togglePass()" id="eyeIcon">👁️</button>
+        </div>
+
+        <div class="label-text">Public Mask (Invisible Carrier)</div>
+        <textarea id="inPublic" placeholder="Write normal message here..."></textarea>
+
+        <div class="label-text">Secret Phantom (Classified)</div>
+        <textarea id="inSecret" placeholder="Write message to be hidden..."></textarea>
+        
+        <div class="btn-group">
+            <button class="action-btn" onclick="run('inject')">INJECT PHANTOM</button>
+            <button class="action-btn" onclick="run('extract')">EXTRACT DATA</button>
+            <button class="action-btn btn-copy" onclick="doCopy()">COPY RESULT</button>
+            <button class="action-btn btn-wipe" onclick="location.reload()">WIPE</button>
+        </div>
+
+        <div class="label-text" style="color:var(--ice); margin-top:10px;">Terminal Output</div>
+        <textarea id="outFinal" readonly placeholder="Result will appear here..."></textarea>
+    </div>
+
+    <div class="status-bar">
+        <span>AES-GCM PHANTOM ENGINE</span>
+        <span id="status">READY</span>
+    </div>
+</div>
+
+<script>
+    const Z = { '0': '\u200B', '1': '\u200C' }; 
+
+    function updateClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        document.getElementById('nexusClock').innerText = timeStr.toUpperCase();
+    }
+    setInterval(updateClock, 1000); updateClock();
+
+    function togglePass() {
+        const p = document.getElementById("pass");
+        const i = document.getElementById("eyeIcon");
+        p.type = p.type === "password" ? "text" : "password";
+        i.innerText = p.type === "password" ? "👁️" : "🔒";
+    }
+
+    function updateStatus(msg, color) {
+        const s = document.getElementById("status");
+        s.innerText = msg; s.style.color = color || "var(--ice)";
+    }
+
+    async function deriveKey(password, salt) {
+        const enc = new TextEncoder();
+        const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), {name: "PBKDF2"}, false, ["deriveKey"]);
+        return crypto.subtle.deriveKey(
+            {name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256"},
+            keyMaterial, {name: "AES-GCM", length: 256}, false, ["encrypt", "decrypt"]
+        );
+    }
+
+    async function run(mode) {
+        const p = document.getElementById('pass').value;
+        const pub = document.getElementById('inPublic').value;
+        const sec = document.getElementById('inSecret').value;
+        const out = document.getElementById('outFinal');
+
+        if(!p) return alert("MASTER PASSKEY REQUIRED, BOSS.");
+
+        try {
+            if (mode === 'inject') {
+                if(!pub || !sec) return alert("BOTH MASK AND SECRET ARE REQUIRED.");
+                updateStatus("INJECTING PHANTOM...", "var(--platinum)");
+                
+                const enc = new TextEncoder();
+                const salt = crypto.getRandomValues(new Uint8Array(16));
+                const iv = crypto.getRandomValues(new Uint8Array(12));
+                const key = await deriveKey(p, salt);
+                
+                const encrypted = await crypto.subtle.encrypt({name: "AES-GCM", iv}, key, enc.encode(sec));
+                const combined = new Uint8Array(16 + 12 + encrypted.byteLength);
+                combined.set(salt, 0); combined.set(iv, 16); combined.set(new Uint8Array(encrypted), 28);
+                
+                let binStr = "";
+                for(let i=0; i<combined.length; i++) binStr += combined[i].toString(2).padStart(8, '0');
+                const hid = binStr.split('').map(b => Z[b]).join('');
+
+                const mid = Math.floor(pub.length / 2);
+                out.value = pub.slice(0, mid) + hid + pub.slice(mid);
+                updateStatus("MISSION ACCOMPLISHED", "#6bcf9f");
+
+            } else {
+                if(!pub) return alert("PASTE THE CARRIER TEXT INTO PUBLIC MASK FIELD.");
+                updateStatus("EXTRACTING DATA...", "var(--silver)");
+
+                const pat = new RegExp(`[${Z['0']}${Z['1']}]`, 'g');
+                const bits = pub.match(pat);
+                if(!bits) throw new Error("NO PHANTOM DATA DETECTED.");
+
+                const binStr = bits.map(b => b === Z['0'] ? '0' : '1').join('');
+                const byteArr = new Uint8Array(binStr.length / 8);
+                for(let i=0; i<byteArr.length; i++) byteArr[i] = parseInt(binStr.substr(i*8, 8), 2);
+
+                const salt = byteArr.slice(0, 16);
+                const iv = byteArr.slice(16, 28);
+                const data = byteArr.slice(28);
+
+                const key = await deriveKey(p, salt);
+                const decrypted = await crypto.subtle.decrypt({name: "AES-GCM", iv}, key, data);
+                
+                out.value = new TextDecoder().decode(decrypted);
+                updateStatus("SECRET UNCOVERED", "var(--platinum)");
+            }
+        } catch (e) {
+            updateStatus("ACCESS DENIED", "var(--alert)");
+            alert("FAILURE: INCORRECT PASSKEY OR DATA CORRUPTION.");
+        }
+    }
+
+    function doCopy() {
+        const text = document.getElementById("outFinal").value;
+        if(!text) return updateStatus("NOTHING TO COPY", "#ff6b6b");
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => { finishCopy(); }).catch(() => fallbackCopy(text));
+        } else { fallbackCopy(text); }
+    }
+    function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text; textArea.style.position = "fixed"; textArea.style.left = "-9999px";
+        document.body.appendChild(textArea); textArea.focus(); textArea.select();
+        try { document.execCommand('copy'); finishCopy(); } catch (err) { updateStatus("COPY FAILED", "#ff6b6b"); }
+        document.body.removeChild(textArea);
+    }
+    function finishCopy() { updateStatus("COPIED TO CLIPBOARD", "#fff"); setTimeout(() => updateStatus("READY", "var(--ice)"), 2000); }
+
+    // PWA REGISTRATION
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then(reg => console.log('XEVQOR Nebula SW Registered'));
+        });
+    }
+</script>
+</body>
+</html>
