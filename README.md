@@ -9,10 +9,12 @@
 
 To ensure high availability and censorship resistance, XEVQOR is accessible through the following verified endpoints:
 
-* **Primary Domain:** [https://xevqor.my.id](https://xevqor.my.id)
-* **GitHub Mirror:** [https://xevqor.github.io](https://xevqor.github.io)
-* **Cloudflare Mirror:** [https://pages.dev](https://pages.dev)
-* **Alternative Mirrors:** [xevqor.dpdns.org](https://dpdns.org) | [xevqor.eu.cc](https://eu.cc) | [xevqor.us.ci](https://us.ci)
+* **Primary Domain:** https://xevqor.my.id
+* **GitHub Mirror:** https://github.io
+* **Cloudflare Mirror:** https://pages.dev
+* **Alternative Mirror 1:** https://dpdns.org
+* **Alternative Mirror 2:** https://eu.cc
+* **Alternative Mirror 3:** https://us.ci
 
 ---
 
