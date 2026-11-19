@@ -116,7 +116,7 @@ True security relies on independent verification, not blind trust. You can audit
    Open your browser's Developer Tools (`F12` → **Network** tab) while operating any module to verify that zero outbound requests are ever made.
 2. **Clone & Run Locally:**
    ```bash
-   git clone [https://github.com/xevqor/xevqor.github.io.git](https://github.com/xevqor/xevqor.github.io.git)
+   git clone https://github.com/xevqor/xevqor.github.io.git
    cd xevqor.github.io
    ```
 3. **Launch Air-Gapped:**  
