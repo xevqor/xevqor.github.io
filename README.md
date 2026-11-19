@@ -3,8 +3,16 @@
 **Architecting Future Digital Systems**  
 *Absolute Privacy Protocol. 100% Zero-Knowledge Architecture.*
 
-🌐 **Official Website:** [https://xevqor.my.id](https://xevqor.my.id)  
-🪞 **GitHub Mirror:** [https://github.io](https://github.io)
+---
+
+## 🌐 Official Domains & Verified Mirrors
+
+To ensure high availability and censorship resistance, XEVQOR is accessible through the following verified endpoints:
+
+* **Primary Domain:** [https://xevqor.my.id](https://xevqor.my.id)
+* **GitHub Mirror:** [https://xevqor.github.io](https://xevqor.github.io)
+* **Cloudflare Mirror:** [https://pages.dev](https://pages.dev)
+* **Alternative Mirrors:** [xevqor.dpdns.org](https://dpdns.org) | [xevqor.eu.cc](https://eu.cc) | [xevqor.us.ci](https://us.ci)
 
 ---
 
