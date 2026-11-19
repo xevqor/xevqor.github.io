@@ -47,64 +47,64 @@ XEVQOR is a suite of client-side cryptographic and operational privacy utilities
 
 | Module | Endpoint | Primary Purpose |
 | :--- | :--- | :--- |
-| **KEYPASS** | `/keypass` | Hardware-grade random password generator using native CSPRNG. |
-| **HASH** | `/hash` | Cryptographic digest generator and file/text integrity verifier. |
-| **JWT** | `/jwt` | Local JSON Web Token decoder and security claim inspector. |
-| **BURN** | `/burn` | Ephemeral, self-contained encrypted note and secret payload builder. |
-| **NANO** | `/nano` | Lightweight payload encoding, compression, and compact formatting tool. |
-| **NEBULA** | `/nebula` | High-capacity file/stream encryption and chunked data processor. |
-| **ENCRYPT** | `/encrypt` | Symmetric authenticated text & payload encryption (`AES-256-GCM`). |
-| **STEGO** | `/stego` | Covert steganography utility for hiding secret text inside innocent carriers. |
-| **DICE** | `/dice` | High-entropy Diceware passphrase generator for human memorability. |
+| **KEYPASS** | `/keypass` | Deterministic dual-key password generator (PBKDF2). |
+| **HASH** | `/hash` | SHA-256/512 file and text cryptographic digest verifier. |
+| **JWT** | `/jwt` | Local JSON Web Token decoder and expiry inspector. |
+| **BURN** | `/burn` | Ephemeral, serverless self-destructing encrypted links. |
+| **NANO** | `/nano` | Deflate text compressor and AES-256-GCM Base64 cipher. |
+| **NEBULA** | `/nebula` | Phantom zero-width Unicode text steganography tool. |
+| **ENCRYPT** | `/encrypt` | Chunked `.xqr` file encryption vault (AES-256-GCM). |
+| **STEGO** | `/stego` | Binary carrier steganography for embedding files. |
+| **DICE** | `/dice` | High-entropy 3D cryptographic dice RNG (CSPRNG). |
 
 ---
 
 ## 🛠️ Detailed Utility Breakdown
 
-### 1. `KEYPASS` (`/keypass`) — Cryptographic Password Generator
-Generates high-entropy, unpredictable passwords directly inside your browser using the native `crypto.getRandomValues()` CSPRNG rather than weak `Math.random()` functions.
-* **What it's for:** Creating unique, brute-force-resistant passwords for critical accounts, vaults, and infrastructure.
-* **Key Capabilities:** Custom character length, granular symbol/number/case toggles, instant entropy strength feedback, and one-click clipboard copy with zero network transmission.
+### 1. `KEYPASS` (`/keypass`) — Deterministic Brain-Key Generator
+Generates high-entropy, dual-option (alphanumeric & mixed-symbol) passwords using `PBKDF2-SHA256` with 350,000 iterations. 
+* **What it's for:** Creating deterministic passwords from a "Brain Key" and "Identity Label". This means you can regenerate the exact same strong password without needing to store it anywhere.
+* **Key Capabilities:** 28-character outputs, dual-key logic (Alpha-only vs Mixed-symbol), and zero network transmission.
 
 ### 2. `HASH` (`/hash`) — Cryptographic Hash & Integrity Verifier
 Computes one-way cryptographic digests for text strings or local files using the browser's built-in `SubtleCrypto` engine.
 * **What it's for:** Verifying downloaded binaries, checking file integrity against tampering, or generating deterministic fingerprints without uploading sensitive data.
-* **Key Capabilities:** Supports industry-standard algorithms (`SHA-256`, `SHA-384`, `SHA-512`) and instant checksum comparison to confirm exact match or mismatch.
+* **Key Capabilities:** Supports industry-standard algorithms (`SHA-256`, `SHA-512`, `SHA-1`) for both text and dropped files.
 
 ### 3. `JWT` (`/jwt`) — Local JSON Web Token Inspector
 Decodes and inspects JSON Web Tokens (`Header`, `Payload`, and `Signature` segments) completely offline.
 * **What it's for:** Debugging authentication tokens, API keys, and session claims (`exp`, `iat`, `iss`, `sub`) safely without pasting live bearer tokens into third-party online decoders that log traffic.
-* **Key Capabilities:** Instant Base64URL decoding, human-readable timestamp conversion, and structured JSON inspection in local memory.
+* **Key Capabilities:** Instant Base64URL decoding, real-time expiration (`exp`) validation, and structured JSON inspection in local memory.
 
-### 4. `BURN` (`/burn`) — Ephemeral Encrypted Note & Payload Utility
+### 4. `BURN` (`/burn`) — Ephemeral Encrypted Link Utility
 Packages sensitive notes or secrets into self-contained, encrypted payloads designed for zero-footprint sharing.
-* **What it's for:** Sharing credentials, private keys, or sensitive instructions where the decryption secret stays encapsulated in the payload/link rather than stored on any central database.
-* **Key Capabilities:** Client-side encryption prior to sharing, zero server-side persistence, and ephemeral workflow hygiene.
+* **What it's for:** Sharing credentials or private instructions where the decryption secret is encapsulated in the URL fragment (`#`) rather than stored on any central database.
+* **Key Capabilities:** Deflate compression prior to AES-256-GCM encryption, zero server-side persistence, and ephemeral self-destructing mechanics.
 
-### 5. `NANO` (`/nano`) — Compact Data Encoding & Compression Tool
-Transforms, compresses, and encodes text or structured payloads into lightweight, transport-ready formats.
-* **What it's for:** Shrinking verbose strings, encoding data safely for URLs/configs (`Base64`, URI encoding), and preparing compact payloads with minimal overhead.
-* **Key Capabilities:** Fast client-side compression/decompression, clean encoding conversions, and instant size reduction metrics.
+### 5. `NANO` (`/nano`) — Compact Data Encoding & Cipher Tool
+Transforms, compresses, and encrypts text or structured payloads into lightweight, transport-ready formats.
+* **What it's for:** Shrinking verbose strings and locking them with a passphrase using `deflate-raw` compression and `AES-256-GCM` encryption.
+* **Key Capabilities:** Fast client-side compression, Base64 ciphertext output, and instant size reduction metrics.
 
-### 6. `NEBULA` (`/nebula`) — Chunked Stream & Heavy Payload Processor
-Engineered to process, transform, and protect larger files or high-volume data streams directly inside the browser without exhausting RAM.
-* **What it's for:** Handling sizeable local files or binary payloads that would normally crash standard single-buffer web tools.
-* **Key Capabilities:** **Chunked stream processing** splits input into manageable memory blocks sequentially, ensuring smooth performance and zero cloud upload exposure.
+### 6. `NEBULA` (`/nebula`) — Zero-Width Phantom Steganography
+Conceals secret messages inside ordinary, innocent-looking cover text using invisible Unicode characters so the existence of the hidden payload remains undetectable.
+* **What it's for:** Situations where standard ciphertext attracts unwanted attention—allowing covert data embedding inside plain sentences (U+200B and U+200C).
+* **Key Capabilities:** Seamless AES-GCM encrypted payload embedding and extraction with zero visual distortion to the cover text.
 
-### 7. `ENCRYPT` (`/encrypt`) — Authenticated Symmetric Vault (`AES-256-GCM`)
-Locks plaintext messages and sensitive payloads behind strong passphrase-derived symmetric cryptography.
-* **What it's for:** Securing private notes, backup seeds, or confidential communications before storing them in cloud drives or sending them over untrusted channels.
-* **Key Capabilities:** Uses **PBKDF2** key derivation with unique cryptographic salts and **AES-256-GCM** authenticated encryption—guaranteeing both confidentiality and tamper detection.
+### 7. `ENCRYPT` (`/encrypt`) — Chunked File Vault (`.xqr`)
+Locks large files and sensitive payloads behind strong passphrase-derived symmetric cryptography, processing data in 10MB chunks.
+* **What it's for:** Securing large backup files, images, or documents before storing them in cloud drives.
+* **Key Capabilities:** Uses `PBKDF2` key derivation and `AES-256-GCM` authenticated encryption, outputting a proprietary binary `.xqr` format.
 
-### 8. `STEGO` (`/stego`) — Covert Zero-Width & Carrier Steganography
-Conceals secret messages inside ordinary, innocent-looking cover text or media so the existence of the hidden payload itself remains undetectable.
-* **What it's for:** Situations where standard ciphertext attracts unwanted attention—allowing covert data embedding inside plain sentences using invisible Unicode zero-width characters.
-* **Key Capabilities:** Seamless payload embedding and extraction with zero visual distortion to the cover text.
+### 8. `STEGO` (`/stego`) — Binary Carrier Steganography
+Conceals encrypted text or hidden files inside ordinary cover media (like images or PDFs) without breaking the host file.
+* **What it's for:** Hiding sensitive files inside innocent-looking carriers before sending them over untrusted channels.
+* **Key Capabilities:** Signature-based (`XEVQOR88`) binary payload embedding and extraction with zero visual distortion to the carrier.
 
-### 9. `DICE` (`/dice`) — High-Entropy Diceware Passphrase Generator
-Constructs multi-word passphrases using cryptographically secure random selection from curated wordlists.
-* **What it's for:** Creating master passwords for disk encryption, cold storage, or password managers that are easy for humans to type and memorize yet mathematically infeasible to crack.
-* **Key Capabilities:** Configurable word count, custom separators, and true cryptographic randomness (`CSPRNG`).
+### 9. `DICE` (`/dice`) — Cryptographic 3D RNG
+Constructs visual 3D dice rolls using true cryptographic randomness (`window.crypto.getRandomValues`), mimicking hardware entropy.
+* **What it's for:** Generating verifiable random outcomes for games, decision-making, or cryptographic seed generation.
+* **Key Capabilities:** Configurable 1-3 dice, smooth 3D CSS animations, and Big/Small/Triple evaluation logic.
 
 ---
 
@@ -114,11 +114,10 @@ True security relies on independent verification, not blind trust. You can audit
 
 1. **Audit Zero Network Traffic:**  
    Open your browser's Developer Tools (`F12` → **Network** tab) while operating any module to verify that zero outbound requests are ever made.
-2. **Clone & Run Locally:**
-   ```bash
-   git clone https://github.com/xevqor/xevqor.github.io.git
-   cd xevqor.github.io
-   ```
+2. **Clone & Run Locally:**  
+   Open your terminal and type:  
+   `git clone https://github.com/xevqor/xevqor.github.io.git`  
+   `cd xevqor.github.io`
 3. **Launch Air-Gapped:**  
    Open `index.html` directly in any modern browser, or serve the folder via any lightweight local static server (`python3 -m http.server`, `npx serve`, etc.).
 
@@ -126,4 +125,15 @@ True security relies on independent verification, not blind trust. You can audit
 
 ## 💎 Support the Project
 
-XEVQOR is free, open-source, and completely ad-free. If these utilities strengthen your digital privacy and operational security, you can support ongoing development through the **Support Xevqor** portal on the main website.
+XEVQOR is free, open-source, and completely ad-free. If these utilities strengthen your digital privacy and operational security, you can support ongoing development through the **Support Xevqor** portal (Crypto / Web3) on the main website.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**. You are free to use, modify, and distribute the code for personal or commercial use.
+
+<div align="center">
+  <br>
+  <i>Engineered with precision. Zero-Knowledge by design.</i>
+</div>
