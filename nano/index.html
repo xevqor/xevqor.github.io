@@ -1,1 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NANO XEVQOR - PLATINUM SQUEEZE</title>
 
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="./icon-192.png">
+
+<!-- Fonts: Cinzel untuk judul, Montserrat untuk isi -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+    :root { 
+        --platinum: #e8ebf2;
+        --silver: #8a8c92;
+        --ice: #ffffff;
+        --bg: #000000;
+        --card: #050505;
+        --border: #1a1a1c;
+        --text-dim: #6a7a8a;
+        --alert: #ff4d4d;
+        --ok: #4dff88;
+        --input-bg: #000000;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body { 
+        margin: 0; height: 100dvh; 
+        background: #000000; 
+        font-family: 'Montserrat', sans-serif; 
+        display: flex; align-items: center; justify-content: center; 
+        color: #f5f5f7; padding: 15px; overflow: hidden; position: relative;
+    }
+
+    /* Ambient glow elegan di belakang card */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(100vw, 600px);
+        height: min(80vh, 600px);
+        background: radial-gradient(ellipse at center, rgba(220, 225, 240, 0.05) 0%, transparent 70%);
+        filter: blur(50px);
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .box { 
+        width: 100%; max-width: 500px; height: auto; background: var(--card); padding: 1.8rem; 
+        border-radius: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.08); 
+        box-shadow: 0 30px 60px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05); 
+        display: flex; flex-direction: column; position: relative; z-index: 1;
+    }
+
+    .header-ambient {
+        width: 100%; height: 1px; margin-bottom: 1.2rem;
+        background: linear-gradient(90deg, transparent, var(--platinum), transparent);
+        box-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+
+    h2 { 
+        margin: 0; font-family: 'Cinzel', serif; font-weight: 500; letter-spacing: 6px; 
+        background: linear-gradient(180deg, #ffffff 0%, #a8adb8 100%);
+        -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        font-size: 1.6rem; text-align: center; text-transform: uppercase; 
+    }
+
+    #xqrClock { 
+        text-align: center; font-size: 0.55rem; color: var(--silver); letter-spacing: 3px; 
+        margin-top: 8px; font-weight: 500; text-transform: uppercase;
+    }
+
+    .main-area { display: flex; flex-direction: column; gap: 12px; margin-top: 1.5rem; }
+
+    textarea { 
+        width: 100%; height: 140px; background: var(--input-bg); border: 1px solid #222; 
+        color: var(--platinum); padding: 1rem; border-radius: 1rem; resize: none; 
+        font-size: 0.85rem; line-height: 1.5; 
+        outline: none; transition: 0.3s ease; font-family: 'Montserrat', monospace;
+    }
+    textarea::placeholder { color: #444; font-weight: 300; letter-spacing: 1px; }
+    textarea:focus { border-color: var(--platinum); box-shadow: 0 0 20px rgba(255,255,255,0.1); }
+
+    .pass-wrapper { position: relative; width: 100%; }
+    
+    input.pass-input { 
+        width: 100%; padding: 0.9rem 1rem; background: var(--input-bg); 
+        border: 1px solid #222; color: var(--ice); border-radius: 1rem; 
+        text-align: center; letter-spacing: 4px; outline: none; 
+        transition: 0.3s ease; font-family: 'Montserrat', monospace; font-size: 0.9rem;
+    }
+    input::placeholder { color: #444; font-weight: 300; letter-spacing: 1px; }
+    input:focus { border-color: var(--platinum); box-shadow: 0 0 20px rgba(255,255,255,0.1); }
+
+    .eye-btn {
+        position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+        background: transparent; border: none; color: var(--silver); cursor: pointer;
+        font-size: 1rem; outline: none; opacity: 0.5; transition: 0.3s;
+    }
+    .eye-btn:hover { opacity: 1; color: var(--platinum); }
+
+    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    button.action-btn { 
+        flex: 1; min-width: 80px; padding: 0.9rem 0; background: transparent; 
+        border-radius: 2rem; font-weight: 500; cursor: pointer; 
+        text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s ease; 
+        font-size: 0.65rem; outline: none; border: 1px solid #333; color: var(--platinum);
+    }
+    button:active { transform: translateY(1px); }
+
+    .btn-enc { border-color: rgba(255,255,255,0.15); }
+    .btn-dec { border-color: rgba(255,255,255,0.15); }
+
+    .action-row { display: flex; gap: 10px; width: 100%; margin-top: 6px; }
+    .btn-copy { border-color: rgba(255,255,255,0.1); flex: 1; }
+    .btn-wipe { border-color: rgba(255, 77, 77, 0.4); color: var(--alert); flex: 1; }
+
+    button:hover { 
+        background: rgba(255,255,255,0.03); border-color: var(--platinum); color: #fff; 
+        box-shadow: 0 0 20px rgba(255,255,255,0.1); transform: translateY(-2px);
+    }
+    
+    .btn-wipe:hover { 
+        background: rgba(255, 77, 77, 0.1); border-color: var(--alert); color: #fff; 
+        box-shadow: 0 0 20px rgba(255, 77, 77, 0.2); 
+    }
+
+    .footer-status { 
+        font-size: 0.55rem; color: #444; margin-top: 1.5rem; display: flex; 
+        justify-content: space-between; border-top: 1px solid #111; 
+        padding-top: 1rem; letter-spacing: 2px; text-transform: uppercase; 
+    }
+    #status { font-weight: 600; color: var(--silver); }
+
+    @media (max-width: 500px) {
+        .box { padding: 1.2rem; }
+        h2 { font-size: 1.4rem; letter-spacing: 4px; }
+        button.action-btn { font-size: 0.6rem; padding: 0.7rem 0; }
+    }
+</style>
+</head>
+<body>
+
+<div class="box">
+    <div class="header-ambient"></div>
+    <h2>NANO XEVQOR</h2>
+    <div id="xqrClock">SYNCING...</div>
+
+    <div class="main-area">
+        <div class="pass-wrapper">
+            <input type="password" id="pass" class="pass-input" placeholder="MASTER PASSKEY">
+            <button class="eye-btn" onclick="togglePass()" id="eyeIcon">👁️</button>
+        </div>
+
+        <textarea id="msg" placeholder="Type long message here... Will be squeezed & encrypted."></textarea>
+
+        <div class="btn-group">
+            <button class="action-btn btn-enc" onclick="process('enc')">ENCRYPT</button>
+            <button class="action-btn btn-dec" onclick="process('dec')">DECRYPT</button>
+        </div>
+
+        <div class="action-row">
+            <button class="action-btn btn-copy" onclick="copyToClipboard()">COPY RESULT</button>
+            <button class="action-btn btn-wipe" onclick="clearAll()">WIPE</button>
+        </div>
+    </div>
+
+    <div class="footer-status">
+        <span>AES-256 SQUEEZE PROTOCOL</span>
+        <span id="status">READY</span>
+    </div>
+</div>
+
+<script>
+    function updateClock() {
+        const now = new Date();
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        const dayName = days[now.getDay()];
+        const day = now.getDate();
+        const month = months[now.getMonth()];
+        const year = now.getFullYear();
+
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; 
+
+        const timeStr = `${dayName}, ${month} ${day} ${year} | ${hours}:${minutes}:${seconds} ${ampm}`;
+        document.getElementById('xqrClock').innerText = timeStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function togglePass() {
+        const p = document.getElementById("pass");
+        const i = document.getElementById("eyeIcon");
+        if (p.type === "password") { p.type = "text"; i.innerText = "🔒"; } 
+        else { p.type = "password"; i.innerText = "👁️"; }
+    }
+
+    function updateStatus(msg, color) {
+        const s = document.getElementById("status");
+        s.innerText = msg;
+        s.style.color = color || "#b8c7d9";
+    }
+
+    async function compress(str) {
+        const stream = new Blob([str]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+        return new Uint8Array(await new Response(stream).arrayBuffer());
+    }
+
+    async function decompress(bytes) {
+        const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+        return await new Response(stream).text();
+    }
+
+    async function deriveKey(p) {
+        const enc = new TextEncoder();
+        const salt = enc.encode("XEVQOR_NANO_V1"); 
+        const keyMat = await crypto.subtle.importKey("raw", enc.encode(p), "PBKDF2", false, ["deriveKey"]);
+        return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 120000, hash: "SHA-256" }, keyMat, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+    }
+
+    async function process(mode) {
+        const p = document.getElementById('pass').value;
+        const msgEl = document.getElementById('msg');
+        let m = msgEl.value.trim();
+        if(!p || !m) { alert("PASSKEY & MESSAGE REQUIRED."); return; }
+
+        updateStatus("PROCESSING...", "#b8c7d9");
+
+        try {
+            const key = await deriveKey(p);
+
+            if (mode === 'enc') {
+                const compressedData = await compress(m); 
+                const iv = crypto.getRandomValues(new Uint8Array(12)); 
+                const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, compressedData);
+
+                const combined = new Uint8Array(12 + encrypted.byteLength);
+                combined.set(iv, 0);
+                combined.set(new Uint8Array(encrypted), 12);
+
+                msgEl.value = btoa(String.fromCharCode(...combined));
+                updateStatus("SQUEEZE SUCCESS", "#6bcf9f");
+            } else {
+                const raw = atob(m);
+                const combined = new Uint8Array(raw.length);
+                for (let i = 0; i < raw.length; i++) combined[i] = raw.charCodeAt(i);
+
+                const iv = combined.slice(0, 12);
+                const data = combined.slice(12);
+
+                const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, data);
+                msgEl.value = await decompress(new Uint8Array(decrypted)); 
+                updateStatus("DECOMPRESS SUCCESS", "#9aaebf");
+            }
+        } catch (e) {
+            updateStatus("ACCESS DENIED", "#ff6b6b");
+            alert("FAILURE: INCORRECT PASSKEY OR INVALID FORMAT.");
+        }
+    }
+
+    function copyToClipboard() {
+        const text = document.getElementById('msg').value;
+        if(!text) return updateStatus("EMPTY VAULT", "#ff6b6b");
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => { finishCopy(); }).catch(() => bruteForceCopy(text));
+        } else { bruteForceCopy(text); }
+    }
+
+    function bruteForceCopy(text) {
+        const dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        dummy.setSelectionRange(0, 99999);
+        try { document.execCommand("copy"); finishCopy(); } 
+        catch (err) { alert("Copy failed. Please copy manually."); }
+        document.body.removeChild(dummy);
+    }
+
+    function finishCopy() {
+        updateStatus("COPIED!", "#b8c7d9");
+        setTimeout(() => updateStatus("READY", "#b8c7d9"), 2000);
+    }
+
+    function clearAll() {
+        document.getElementById('msg').value = "";
+        document.getElementById('pass').value = "";
+        updateStatus("WIPED", "#ff6b6b");
+        setTimeout(() => updateStatus("READY", "#b8c7d9"), 1500);
+    }
+</script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('XEVQOR Nano Engine Online'))
+                .catch(err => console.error('Uplink Failed:', err));
+        });
+    }
+</script>
+
+</body>
+</html>
