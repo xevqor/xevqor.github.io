@@ -11,9 +11,6 @@
   <link rel="apple-touch-icon" href="./icon-192.png">
 
   <!-- Fonts: Cinzel untuk judul, Montserrat untuk teks -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
 
   <style>
     :root {
@@ -34,7 +31,7 @@
     body {
       margin: 0; min-height: 100dvh;
       background: #000000;
-      font-family: 'Montserrat', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, sans-serif;
       display: flex; align-items: center; justify-content: center;
       color: #f5f5f7; padding: 15px; overflow: auto; position: relative;
     }
@@ -67,7 +64,7 @@
     }
 
     h1 {
-      margin: 0; font-size: 2rem; font-family: 'Cinzel', serif; font-weight: 500; letter-spacing: 6px;
+      margin: 0; font-size: 2rem; font-family: 'Cinzel', 'Didot', 'Bodoni MT', 'Palatino Linotype', 'Book Antiqua', Georgia, serif, serif; font-weight: 500; letter-spacing: 6px;
       background: linear-gradient(180deg, #ffffff 0%, #a8adb8 100%);
       -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
       text-align: center; text-transform: uppercase;
@@ -85,7 +82,7 @@
       width: 100%; background: var(--input-bg); border: 1px solid #222;
       color: var(--platinum); padding: 1.2rem; border-radius: 1rem;
       font-size: 0.95rem; font-weight: 400; line-height: 1.6; outline: none; transition: 0.3s;
-      font-family: 'Montserrat', monospace; height: 120px; resize: vertical;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, monospace; height: 120px; resize: vertical;
     }
     textarea::placeholder { color: #444; font-weight: 300; letter-spacing: 1px; }
     textarea:focus { border-color: var(--platinum); box-shadow: 0 0 20px var(--platinum-glow); }
@@ -93,7 +90,7 @@
     input {
       width: 100%; background: var(--input-bg); border: 1px solid #222;
       color: var(--ice); padding: 0.9rem 1rem; border-radius: 1rem; font-size: 0.85rem;
-      line-height: 1.5; outline: none; transition: 0.3s; font-family: 'Montserrat', monospace;
+      line-height: 1.5; outline: none; transition: 0.3s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, monospace;
     }
     input:focus { border-color: var(--platinum); box-shadow: 0 0 20px var(--platinum-glow); }
     
@@ -154,7 +151,7 @@
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; display: none; align-items: center; justify-content: center; }
     .modal-card { width: min(90%, 360px); background: #050505; border: 1px solid #333; border-radius: 1.5rem; padding: 2rem 1.5rem; box-shadow: 0 25px 50px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05); text-align: center; }
     .modal-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-    .modal-title { color: var(--platinum); font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 0.8rem; }
+    .modal-title { color: var(--platinum); font-family: 'Cinzel', 'Didot', 'Bodoni MT', 'Palatino Linotype', 'Book Antiqua', Georgia, serif, serif; font-size: 1.2rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 0.8rem; }
     .modal-message { color: var(--silver); font-size: 0.8rem; margin-bottom: 1.5rem; word-break: break-word; line-height: 1.5; }
     .modal-btn { background: transparent; border: 1px solid #333; color: var(--platinum); padding: 0.7rem 2rem; border-radius: 2rem; font-weight: 500; text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; cursor: pointer; transition: 0.2s; }
     .modal-btn:hover { border-color: var(--platinum); color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.1); }
@@ -170,6 +167,8 @@
 
     @media (max-width: 500px) { .vault { padding: 1.5rem; } h1 { font-size: 1.5rem; letter-spacing: 4px; } }
   </style>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';" />
+  <meta name="referrer" content="no-referrer" />
 </head>
 <body>
 

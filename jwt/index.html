@@ -9,9 +9,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
 
   <style>
     :root {
@@ -32,7 +29,7 @@
     body {
       margin: 0; min-height: 100dvh;
       background: #000000;
-      font-family: 'Montserrat', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, sans-serif;
       display: flex; align-items: center; justify-content: center;
       color: #f5f5f7; padding: 15px; overflow: auto; position: relative;
     }
@@ -61,7 +58,7 @@
     }
 
     h1 {
-      margin: 0; font-family: 'Cinzel', serif; font-weight: 500; font-size: 2rem; letter-spacing: 6px;
+      margin: 0; font-family: 'Cinzel', 'Didot', 'Bodoni MT', 'Palatino Linotype', 'Book Antiqua', Georgia, serif, serif; font-weight: 500; font-size: 2rem; letter-spacing: 6px;
       background: linear-gradient(180deg, #ffffff 0%, #a8adb8 100%);
       -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
       text-align: center; text-transform: uppercase;
@@ -78,9 +75,9 @@
       width: 100%; height: 100px; background: var(--input-bg); border: 1px solid #222;
       color: var(--platinum); padding: 1rem; border-radius: 1rem; resize: vertical;
       font-size: 0.85rem; line-height: 1.5; outline: none; transition: 0.3s ease;
-      font-family: 'Fira Code', 'Montserrat', monospace; word-break: break-all;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, monospace; word-break: break-all;
     }
-    textarea::placeholder { color: #444; font-weight: 300; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; }
+    textarea::placeholder { color: #444; font-weight: 300; letter-spacing: 1px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, sans-serif; }
     textarea:focus { border-color: var(--platinum); box-shadow: 0 0 20px var(--platinum-glow); }
 
     .btn-group { display: flex; gap: 10px; }
@@ -121,7 +118,7 @@
     .btn-copy-small:hover { border-color: var(--platinum); color: var(--platinum); }
 
     pre {
-      margin: 0; font-family: 'Fira Code', monospace; font-size: 0.75rem; line-height: 1.5;
+      margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace, monospace; font-size: 0.75rem; line-height: 1.5;
       color: var(--platinum); white-space: pre-wrap; word-wrap: break-word; overflow-y: auto; max-height: 200px;
     }
 
@@ -144,6 +141,8 @@
     pre::-webkit-scrollbar { width: 4px; }
     pre::-webkit-scrollbar-thumb { background: var(--silver); border-radius: 10px; }
   </style>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';" />
+  <meta name="referrer" content="no-referrer" />
 </head>
 <body>
 
