@@ -4,10 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#000000" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
 
   <title>XEVQOR — Architecting Future Digital Systems</title>
-  <meta name="description" content="XEVQOR — Architecting Future Digital Systems. A 100% Zero-Knowledge, client-side cryptography and privacy suite featuring deterministic password generation (Keypass), SHA-256/512 file hashing (Hash), local JWT inspection (JWT), serverless self-destructing links (Burn), compressed AES-256 text encryption (Nano), zero-width Unicode steganography (Nebula), chunked .xqr file encryption (Encrypt), binary carrier steganography (Stego), and cryptographic 3D dice RNG (Dice)." />
-  <meta name="keywords" content="XEVQOR, zero knowledge, client-side cryptography, privacy tools, deterministic password generator, keypass, sha256 hash, jwt inspector, serverless burn notes, aes-256-gcm, nano compress, zero-width steganography, nebula, chunked file encryption, binary steganography, cryptographic rng" />
+  <meta name="description" content="XEVQOR — Architecting Future Digital Systems. A 100% Zero-Knowledge, open-source client-side cryptography and privacy suite auditable at https://xevqor.github.io, featuring deterministic password generation (Keypass), SHA-256/512 file hashing (Hash), local JWT inspection (JWT), serverless self-destructing links (Burn), compressed AES-256 text encryption (Nano), zero-width Unicode steganography (Nebula), chunked .xqr file encryption (Encrypt), binary carrier steganography (Stego), and cryptographic 3D dice RNG (Dice)." />
+  <meta name="keywords" content="XEVQOR, zero knowledge, open source cryptography, client-side cryptography, privacy tools, deterministic password generator, keypass, sha256 hash, jwt inspector, serverless burn notes, aes-256-gcm, nano compress, zero-width steganography, nebula, chunked file encryption, binary steganography, cryptographic rng, xevqor.github.io" />
   <meta name="author" content="XEVQOR" />
   <link rel="canonical" href="https://xevqor.my.id" />
 
@@ -15,11 +16,13 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://xevqor.my.id" />
   <meta property="og:title" content="XEVQOR — Architecting Future Digital Systems" />
-  <meta property="og:description" content="Elite digital systems, engineered with precision. 100% Zero-Knowledge client-side cryptography and privacy utilities running locally in your browser." />
+  <meta property="og:description" content="Elite digital systems, engineered with precision. 100% Zero-Knowledge, open-source client-side cryptography and privacy utilities running locally in your browser." />
+  <meta property="og:image" content="https://xevqor.my.id/icon-512.png" />
   <meta property="og:site_name" content="XEVQOR" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="XEVQOR — Architecting Future Digital Systems" />
-  <meta name="twitter:description" content="Elite digital systems, engineered with precision. 100% Zero-Knowledge client-side cryptography and privacy utilities running locally in your browser." />
+  <meta name="twitter:description" content="Elite digital systems, engineered with precision. 100% Zero-Knowledge, open-source client-side cryptography and privacy utilities running locally in your browser." />
+  <meta name="twitter:image" content="https://xevqor.my.id/icon-512.png" />
 
   <!-- Structured Data (JSON-LD) untuk AI & Mesin Pencari -->
   <script type="application/ld+json">
@@ -29,11 +32,15 @@
     "name": "XEVQOR",
     "alternateName": "XEVQOR Digital Systems",
     "url": "https://xevqor.my.id",
-    "image": "https://xevqor.my.id/favicon.svg",
+    "sameAs": [
+      "https://xevqor.github.io"
+    ],
+    "image": "https://xevqor.my.id/icon-512.png",
     "applicationCategory": "SecurityApplication",
     "operatingSystem": "All",
+    "isAccessibleForFree": true,
     "browserRequirements": "Requires JavaScript and Web Crypto API. Runs 100% locally in browser with zero server storage.",
-    "description": "XEVQOR — Architecting Future Digital Systems. A 100% Zero-Knowledge browser-based cryptography and privacy utility suite engineered with Web Crypto API (AES-256-GCM, PBKDF2, SHA-256/512). Zero tracking, zero backend storage, and zero data collection.",
+    "description": "XEVQOR — Architecting Future Digital Systems. A 100% Zero-Knowledge, open-source browser-based cryptography and privacy utility suite engineered with Web Crypto API (AES-256-GCM, PBKDF2, SHA-256/512). Zero tracking, zero backend storage, zero data collection, and publicly auditable source code at https://xevqor.github.io.",
     "featureList": [
       "Keypass (/keypass): Deterministic dual 28-character password generator derived from Brain Key and Identity Label using PBKDF2-SHA256 (350,000 iterations).",
       "Hash (/hash): Client-side cryptographic file and text integrity checksum generator supporting SHA-256, SHA-512, and SHA-1.",
@@ -53,8 +60,15 @@
   }
   </script>
 
-  <!-- Favicon -->
+  <!-- Favicon & PWA Manifest -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="XEVQOR" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -76,6 +90,20 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       position: relative;
+    }
+
+    /* Screen-Reader & Search Crawler Semantic Layer */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
     }
 
     /* Debu perak */
@@ -323,7 +351,7 @@
         0 2px 5px rgba(0, 0, 0, 0.5);
     }
 
-    /* ── DONATE SECTION ───────────────────────────────── */
+    /* ── DONATE & AUDIT SECTION ───────────────────────── */
     .donate-section {
       margin-top: clamp(24px, 4vh, 40px);
       width: min(100%, 340px);
@@ -373,10 +401,23 @@
       color: #555;
       text-align: center;
       letter-spacing: 1px;
-      line-height: 1.6;
+      line-height: 1.7;
       text-transform: uppercase;
       font-weight: 500;
       padding: 0 10px;
+    }
+
+    .audit-link {
+      color: #8c929e;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(220, 225, 240, 0.25);
+      padding-bottom: 1px;
+      transition: all 0.25s ease;
+    }
+
+    .audit-link:hover {
+      color: #ffffff;
+      border-bottom-color: #ffffff;
     }
 
     /* ── MODAL CRYPTO ─────────────────────────────────── */
@@ -583,10 +624,10 @@
   <div class="grain"></div>
 
   <!-- Modal Donasi Crypto -->
-  <div class="modal-overlay" id="donateModal">
+  <div class="modal-overlay" id="donateModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-card">
       <div class="modal-header">
-        <div class="modal-title">SUPPORT XEVQOR</div>
+        <div class="modal-title" id="modalTitle">SUPPORT XEVQOR</div>
         <button class="close-btn" onclick="closeModal()" aria-label="Close">&times;</button>
       </div>
       <div class="crypto-tabs" id="cryptoTabs"></div>
@@ -635,9 +676,30 @@
       <p class="disclaimer">
         Absolute Privacy Protocol. 100% Zero-Knowledge Architecture.<br />
         Zero tracking, zero data collection. Every process runs locally in your browser.<br />
-        What you do here, stays here.
+        What you do here, stays here.<br /><br />
+        100% Open-Source &amp; Verifiable. Audit the full source code at
+        <a href="https://xevqor.github.io" target="_blank" rel="noopener noreferrer" class="audit-link">xevqor.github.io</a>
       </p>
     </div>
+
+    <!-- Semantic Architecture Summary for Screen Readers & AI Search Parsers -->
+    <section class="sr-only" aria-label="XEVQOR Zero-Knowledge Cryptography Architecture">
+      <h2>XEVQOR — Client-Side Open-Source Zero-Knowledge Cryptography and Privacy Suite</h2>
+      <p>
+        XEVQOR (xevqor.my.id) is an independent, serverless, 100% zero-knowledge digital security platform engineered on the native browser Web Crypto API. All cryptographic key derivations, symmetric ciphers, binary stream chunks, steganographic carriers, and entropy calculations execute strictly inside local browser memory with zero backend servers, zero telemetry, zero cookies, and zero third-party data retention. All client-side source code running on xevqor.my.id is 100% open-source, deterministic, and publicly auditable at https://xevqor.github.io so any user or security researcher can independently verify zero telemetry and pure local execution.
+      </p>
+      <ul>
+        <li><strong>Keypass (/keypass):</strong> Deterministic dual 28-character cryptographic password generator derived locally from a user Brain Key and Identity Label via PBKDF2-SHA256 at 350,000 iterations without storing credentials.</li>
+        <li><strong>Hash (/hash):</strong> Client-side cryptographic file and text integrity checksum calculator supporting SHA-256, SHA-512, and SHA-1 algorithms directly in browser memory.</li>
+        <li><strong>JWT (/jwt):</strong> Offline Base64Url JSON Web Token header and payload decoder with real-time expiration (exp) timestamp verification.</li>
+        <li><strong>Burn (/burn):</strong> Serverless self-destructing encrypted notes combining deflate-raw compression and authenticated AES-256-GCM encryption stored exclusively inside local URL hash fragments (#) so servers never see ciphertext or keys.</li>
+        <li><strong>Nano (/nano):</strong> Platinum Squeeze deflate-raw text compressor paired with authenticated AES-256-GCM Base64 encryption for compact secure message transmission.</li>
+        <li><strong>Nebula (/nebula):</strong> Zero-width Unicode text steganography engine concealing AES-256-GCM encrypted payloads inside invisible Unicode characters (U+200B and U+200C) embedded within ordinary cover text.</li>
+        <li><strong>Encrypt (/encrypt):</strong> Chunked 10MB streaming AES-256-GCM file encryption vault designed for large files, generating portable binary .xqr encrypted archives locally.</li>
+        <li><strong>Stego (/stego):</strong> Binary carrier steganography vault encapsulating AES-256-GCM encrypted messages or arbitrary hidden files inside clean carrier files without altering host playback or viewing.</li>
+        <li><strong>Dice (/dice):</strong> Hardware-backed Cryptographically Secure Pseudo-Random Number Generator (CSPRNG) 3D dice simulator providing provably unbiased Big, Small, and Triple outcomes.</li>
+      </ul>
+    </section>
   </main>
 
   <script>
@@ -673,6 +735,10 @@
 
     modal.addEventListener('click', (e) => {
       if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
     });
 
     function renderTabs() {
@@ -829,6 +895,13 @@
       resize();
       loop();
     })();
+
+    // ================= PWA SERVICE WORKER =================
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
   </script>
 </body>
 </html>
