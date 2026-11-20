@@ -70,11 +70,6 @@
   <meta name="apple-mobile-web-app-title" content="XEVQOR" />
   <link rel="apple-touch-icon" href="/icon-192.png" />
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
-
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100dvh; width: 100%; overflow: hidden; }
@@ -86,7 +81,7 @@
       padding: 24px;
       background: #000;
       color: #f5f5f7;
-      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       position: relative;
@@ -161,7 +156,7 @@
       display: inline-flex;
       align-items: baseline;
       gap: clamp(0.04em, 0.8vw, 0.12em);
-      font-family: 'Cinzel', serif;
+      font-family: 'Cinzel', 'Didot', 'Bodoni MT', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
       font-weight: 500;
       font-size: clamp(2.2rem, 8vw, 6rem);
       line-height: 1.05;
@@ -315,7 +310,7 @@
       background: #121214;
       color: #9ea3af;
       border-radius: 14px;
-      font-family: 'Montserrat', sans-serif;
+      font-family: inherit;
       font-size: clamp(0.65rem, 2vw, 0.75rem);
       font-weight: 500;
       letter-spacing: 0.12em;
@@ -378,7 +373,7 @@
       border: 1px solid rgba(220, 225, 240, 0.3);
       color: #e8ebf2;
       border-radius: 14px;
-      font-family: 'Montserrat', sans-serif;
+      font-family: inherit;
       font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 0.15em;
@@ -465,7 +460,7 @@
     }
 
     .modal-title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Cinzel', 'Didot', 'Bodoni MT', Georgia, serif;
       font-size: 1.2rem;
       color: #fff;
       letter-spacing: 2px;
@@ -517,7 +512,7 @@
 
     .qr-container {
       background: #fff;
-      padding: 12px;
+      padding: 10px;
       border-radius: 12px;
       width: 200px;
       height: 200px;
@@ -527,10 +522,11 @@
       justify-content: center;
     }
 
-    .qr-container img {
+    .qr-container svg {
       width: 100%;
       height: 100%;
       display: block;
+      shape-rendering: crispEdges;
     }
 
     .address-box {
@@ -545,7 +541,7 @@
 
     .address-text {
       flex: 1;
-      font-family: monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 0.75rem;
       color: #b8c7d9;
       word-break: break-all;
@@ -631,9 +627,7 @@
         <button class="close-btn" onclick="closeModal()" aria-label="Close">&times;</button>
       </div>
       <div class="crypto-tabs" id="cryptoTabs"></div>
-      <div class="qr-container">
-        <img id="qrImage" src="" alt="Crypto Wallet QR Code" />
-      </div>
+      <div class="qr-container" id="qrContainer" aria-label="Crypto Wallet QR Code"></div>
       <div class="address-box">
         <div class="address-text" id="addressText">Loading...</div>
         <button class="copy-btn" id="copyBtn" onclick="copyAddress()">COPY</button>
@@ -703,6 +697,237 @@
   </main>
 
   <script>
+    // ================= OFFLINE CLIENT-SIDE QR SVG GENERATOR =================
+    const OfflineQR = (() => {
+      const EXP = new Uint8Array(512), LOG = new Uint8Array(256);
+      let x = 1;
+      for (let i = 0; i < 255; i++) {
+        EXP[i] = x;
+        LOG[x] = i;
+        x <<= 1;
+        if (x & 0x100) x ^= 0x11d;
+      }
+      for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255];
+
+      const mul = (a, b) => (a === 0 || b === 0) ? 0 : EXP[LOG[a] + LOG[b]];
+
+      function rsEncode(data, ecLen) {
+        let poly = [1];
+        for (let i = 0; i < ecLen; i++) {
+          const next = new Array(poly.length + 1).fill(0);
+          for (let j = 0; j < poly.length; j++) {
+            next[j] ^= poly[j];
+            next[j + 1] ^= mul(poly[j], EXP[i]);
+          }
+          poly = next;
+        }
+        const res = new Uint8Array(data.length + ecLen);
+        res.set(data);
+        for (let i = 0; i < data.length; i++) {
+          const c = res[i];
+          if (c !== 0) {
+            for (let j = 1; j < poly.length; j++) res[i + j] ^= mul(poly[j], c);
+          }
+        }
+        return res.slice(data.length);
+      }
+
+      // Single-block versions 1-5 (Error Correction Level L)
+      const SPECS = [
+        null,
+        { cap: 17, data: 19, ec: 7, align: [] },
+        { cap: 32, data: 34, ec: 10, align: [6, 18] },
+        { cap: 53, data: 55, ec: 15, align: [6, 22] },
+        { cap: 78, data: 80, ec: 20, align: [6, 26] },
+        { cap: 106, data: 108, ec: 26, align: [6, 30] }
+      ];
+
+      function formatBits(mask) {
+        const d = (1 << 3) | mask;
+        let rem = d << 10;
+        for (let i = 14; i >= 10; i--) {
+          if ((rem >> i) & 1) rem ^= 0x537 << (i - 10);
+        }
+        return ((d << 10) | rem) ^ 0x5412;
+      }
+
+      function applyFormat(grid, size, mask) {
+        const bits = formatBits(mask);
+        const c1 = [
+          [8, 0], [8, 1], [8, 2], [8, 3], [8, 4], [8, 5], [8, 7], [8, 8],
+          [7, 8], [5, 8], [4, 8], [3, 8], [2, 8], [1, 8], [0, 8]
+        ];
+        for (let i = 0; i < 15; i++) {
+          const v = (bits >> (14 - i)) & 1;
+          grid[c1[i][0]][c1[i][1]] = v;
+          if (i < 7) grid[size - 1 - i][8] = v;
+          else grid[8][size - 15 + i] = v;
+        }
+      }
+
+      function maskCond(m, r, c) {
+        switch (m) {
+          case 0: return ((r + c) & 1) === 0;
+          case 1: return (r & 1) === 0;
+          case 2: return (c % 3) === 0;
+          case 3: return ((r + c) % 3) === 0;
+          case 4: return (((r >> 1) + Math.floor(c / 3)) & 1) === 0;
+          case 5: return ((r * c) & 1) + ((r * c) % 3) === 0;
+          case 6: return ((((r * c) & 1) + ((r * c) % 3)) & 1) === 0;
+          default: return ((((r + c) & 1) + ((r * c) % 3)) & 1) === 0;
+        }
+      }
+
+      function score(grid, size) {
+        let pen = 0, dark = 0;
+        for (let r = 0; r < size; r++) {
+          let runR = 1, runC = 1;
+          for (let c = 0; c < size; c++) {
+            if (grid[r][c]) dark++;
+            if (c > 0) {
+              if (grid[r][c] === grid[r][c - 1]) {
+                runR++;
+                if (runR === 5) pen += 3;
+                else if (runR > 5) pen += 1;
+              } else runR = 1;
+              if (grid[c][r] === grid[c - 1][r]) {
+                runC++;
+                if (runC === 5) pen += 3;
+                else if (runC > 5) pen += 1;
+              } else runC = 1;
+            }
+            if (r < size - 1 && c < size - 1) {
+              const v = grid[r][c];
+              if (v === grid[r][c + 1] && v === grid[r + 1][c] && v === grid[r + 1][c + 1]) pen += 3;
+            }
+          }
+        }
+        pen += Math.floor(Math.abs((dark * 100) / (size * size) - 50) / 5) * 10;
+        return pen;
+      }
+
+      function toSVG(text) {
+        const bytes = new TextEncoder().encode(text);
+        let ver = 1;
+        while (ver < SPECS.length && bytes.length > SPECS[ver].cap) ver++;
+        const spec = SPECS[ver];
+
+        // Build byte-mode bitstream
+        const bits = [];
+        const pushBits = (val, len) => {
+          for (let i = len - 1; i >= 0; i--) bits.push((val >> i) & 1);
+        };
+        pushBits(0b0100, 4);
+        pushBits(bytes.length, 8);
+        for (let i = 0; i < bytes.length; i++) pushBits(bytes[i], 8);
+        const maxBits = spec.data * 8;
+        pushBits(0, Math.min(4, maxBits - bits.length));
+        while (bits.length & 7) bits.push(0);
+
+        const data = new Uint8Array(spec.data);
+        for (let i = 0; i < bits.length / 8; i++) {
+          let b = 0;
+          for (let j = 0; j < 8; j++) b = (b << 1) | bits[i * 8 + j];
+          data[i] = b;
+        }
+        const pads = [0xec, 0x11];
+        for (let i = bits.length / 8, p = 0; i < spec.data; i++, p ^= 1) data[i] = pads[p];
+
+        const ec = rsEncode(data, spec.ec);
+        const codewords = new Uint8Array(data.length + ec.length);
+        codewords.set(data);
+        codewords.set(ec, data.length);
+
+        const size = 17 + 4 * ver;
+        const base = Array.from({ length: size }, () => new Uint8Array(size));
+        const func = Array.from({ length: size }, () => new Uint8Array(size));
+
+        const setFunc = (r, c, v) => {
+          if (r >= 0 && r < size && c >= 0 && c < size) {
+            base[r][c] = v;
+            func[r][c] = 1;
+          }
+        };
+
+        const drawFinder = (r0, c0) => {
+          for (let dr = -1; dr <= 7; dr++) {
+            for (let dc = -1; dc <= 7; dc++) {
+              const on = dr >= 0 && dr <= 6 && dc >= 0 && dc <= 6 &&
+                (dr === 0 || dr === 6 || dc === 0 || dc === 6 || (dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4));
+              setFunc(r0 + dr, c0 + dc, on ? 1 : 0);
+            }
+          }
+        };
+
+        drawFinder(0, 0);
+        drawFinder(0, size - 7);
+        drawFinder(size - 7, 0);
+
+        if (spec.align.length) {
+          const last = spec.align[spec.align.length - 1];
+          for (let dr = -2; dr <= 2; dr++) {
+            for (let dc = -2; dc <= 2; dc++) {
+              const on = Math.abs(dr) === 2 || Math.abs(dc) === 2 || (dr === 0 && dc === 0);
+              setFunc(last + dr, last + dc, on ? 1 : 0);
+            }
+          }
+        }
+
+        for (let i = 8; i < size - 8; i++) {
+          setFunc(6, i, (i & 1) === 0 ? 1 : 0);
+          setFunc(i, 6, (i & 1) === 0 ? 1 : 0);
+        }
+        setFunc(size - 8, 8, 1);
+
+        // Reserve format info cells
+        for (let i = 0; i <= 8; i++) {
+          if (!func[8][i]) func[8][i] = 1;
+          if (!func[i][8]) func[i][8] = 1;
+        }
+        for (let i = 0; i < 8; i++) func[8][size - 1 - i] = 1;
+        for (let i = 0; i < 7; i++) func[size - 1 - i][8] = 1;
+
+        let bestGrid = null, bestScore = Infinity;
+        for (let m = 0; m < 8; m++) {
+          const g = base.map(row => new Uint8Array(row));
+          let bitIdx = 0, right = size - 1, up = true;
+          while (right >= 1) {
+            if (right === 6) right--;
+            for (let i = 0; i < size; i++) {
+              const r = up ? size - 1 - i : i;
+              for (let dx = 0; dx < 2; dx++) {
+                const c = right - dx;
+                if (!func[r][c]) {
+                  let bit = 0;
+                  if (bitIdx < codewords.length * 8) {
+                    bit = (codewords[bitIdx >> 3] >> (7 - (bitIdx & 7))) & 1;
+                    bitIdx++;
+                  }
+                  g[r][c] = maskCond(m, r, c) ? (bit ^ 1) : bit;
+                }
+              }
+            }
+            right -= 2;
+            up = !up;
+          }
+          applyFormat(g, size, m);
+          const s = score(g, size);
+          if (s < bestScore) { bestScore = s; bestGrid = g; }
+        }
+
+        let d = '';
+        for (let r = 0; r < size; r++) {
+          for (let c = 0; c < size; c++) {
+            if (bestGrid[r][c]) d += `M${c} ${r}h1v1h-1z`;
+          }
+        }
+        const vb = `-4 -4 ${size + 8} ${size + 8}`;
+        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" width="100%" height="100%" shape-rendering="crispEdges"><rect x="-4" y="-4" width="${size + 8}" height="${size + 8}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+      }
+
+      return { toSVG };
+    })();
+
     // ================= CRYPTO DATA =================
     const cryptoData = [
       { id: 'BTC', name: 'BTC', address: 'bc1qt9jjc2za9k9ms3ll2k5yv4285ptygv5jmd2s98' },
@@ -720,7 +945,7 @@
     const modal = document.getElementById('donateModal');
     const tabsContainer = document.getElementById('cryptoTabs');
     const addressText = document.getElementById('addressText');
-    const qrImage = document.getElementById('qrImage');
+    const qrContainer = document.getElementById('qrContainer');
     const copyBtn = document.getElementById('copyBtn');
 
     function openModal() {
@@ -763,7 +988,7 @@
       });
 
       addressText.innerText = coin.address;
-      qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(coin.address)}`;
+      qrContainer.innerHTML = OfflineQR.toSVG(coin.address);
       copyBtn.innerText = 'COPY';
       copyBtn.style.color = '#fff';
     }
