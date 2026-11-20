@@ -83,3 +83,17 @@ Licensed under the **MIT License**.
   <br>
   <i>Engineered with precision. 100% Client-Side & Zero-Server by design.</i>
 </div>
+
+---
+
+## Independent Public Security & Privacy Audits
+
+Live production (`https://xevqor.my.id/`) verified across independent public security, malware, TLS, and network-telemetry scanners:
+
+| Audit Platform | Verified Result | Permanent Public Report |
+| :--- | :--- | :--- |
+| **Mozilla HTTP Observatory** | **Grade A+ (`115/100` — `12/12` Tests Passed)**, SHA-256 CSP, 0 Cookies | [View Live Report](https://developer.mozilla.org/en-US/observatory/analyze?host=xevqor.my.id) |
+| **Security Headers (Snyk)** | **Grade A+** — All 6 HTTP security headers active, 0 warnings | [View Live Report](https://securityheaders.com/?q=https%3A%2F%2Fxevqor.my.id%2F&followRedirects=on) |
+| **urlscan.io (Public Sandbox)** | **1 Domain (`xevqor.my.id`), 2 Requests, 0 Cookies, 100% HTTPS** | [View Live Report](https://urlscan.io/result/01a1faa4-4259-760c-ac4d-81cb7561f052/) |
+| **VirusTotal Threat Intel** | **0 Malicious Flags** across global security vendors | [View Live Report](https://www.virustotal.com/gui/url/15d26cd0f18520bfc5b8e5c9b03983fc85ee717d83e98aa7c2510f8f5e28adbd) |
+| **Qualys SSL Labs** | Cloudflare Edge TLS 1.3 & 2-Year HSTS Preload | [View Live Report](https://www.ssllabs.com/ssltest/analyze.html?d=xevqor.my.id) |
