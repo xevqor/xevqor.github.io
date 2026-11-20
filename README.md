@@ -37,9 +37,10 @@ To guarantee uninterrupted availability, censorship resistance, and zero single 
 XEVQOR is a suite of client-side cryptographic and operational privacy utilities engineered with a strict **Zero-Knowledge Architecture**:
 
 * **100% Client-Side Execution:** All encryption, key derivation, hashing, token inspection, data compression, and steganography run locally inside your browser's memory using native **Web Crypto APIs**.
-* **Zero Tracking & Telemetry:** No analytics scripts, no cookies, no IP logging, no browser fingerprinting, and zero third-party requests.
+* **Zero Third-Party Requests:** No analytics scripts, no cookies, no external font CDNs, and no third-party QR APIs. All typography uses local system font stacks, and crypto donation QR codes are rendered locally in-memory via an embedded **Reed-Solomon SVG generator (`OfflineQR`)**.
+* **Browser-Enforced CSP Lockdown:** Enforces a strict `Content-Security-Policy` (`connect-src 'none'`, `form-action 'none'`, `object-src 'none'`) and `referrer="no-referrer"`, architecturally blocking outbound network calls at the browser engine level after initial load.
 * **Zero Data Collection:** There is no backend server or database. Your plaintext, passwords, keys, and files never leave your device.
-* **Offline Capable:** Once loaded in your browser, every single utility functions completely air-gapped without an internet connection.
+* **Offline Capable (PWA):** Backed by a strictly same-origin Service Worker (`sw.js`), allowing every single utility to function completely air-gapped without an internet connection.
 
 ---
 
@@ -112,13 +113,15 @@ Constructs visual 3D dice rolls using true cryptographic randomness (`window.cry
 
 True security relies on independent verification, not blind trust. You can audit the network activity or run the entire XEVQOR suite locally on your own machine:
 
-1. **Audit Zero Network Traffic:**  
-   Open your browser's Developer Tools (`F12` → **Network** tab) while operating any module to verify that zero outbound requests are ever made.
-2. **Clone & Run Locally:**  
+1. **Audit Zero Network Traffic & CSP:**  
+   Open your browser's Developer Tools (`F12` → **Network** tab) while operating any module—including opening the **Support Xevqor** QR modal—to verify that **zero outbound requests** are ever made and `connect-src 'none'` is enforced in `<head>`.
+2. **Test Air-Gapped Offline Execution:**  
+   Load `https://xevqor.my.id` once, turn on **Airplane Mode** (disconnect Wi-Fi/cellular), and run any of the 9 utilities to verify full offline operation via the local Service Worker cache.
+3. **Clone & Run Locally:**  
    Open your terminal and type:  
    `git clone https://github.com/xevqor/xevqor.github.io.git`  
    `cd xevqor.github.io`
-3. **Launch Air-Gapped:**  
+4. **Launch on Local Static Server:**  
    Open `index.html` directly in any modern browser, or serve the folder via any lightweight local static server (`python3 -m http.server`, `npx serve`, etc.).
 
 ---
