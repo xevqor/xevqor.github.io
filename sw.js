@@ -1,7 +1,6 @@
-const CACHE_NAME = 'xevqor-vault-v1';
+const CACHE_NAME = 'xevqor-vault-v2';
 
-// Daftar aset inti, ikon PWA & seluruh 9 modul utilitas XEVQOR
-const PRECACHE_URLS = [
+const CORE_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
@@ -19,94 +18,52 @@ const PRECACHE_URLS = [
   '/dice'
 ];
 
-// Hilangkan flag redirected agar kompatibel dengan Safari/WebKit & Cloudflare 308
-async function cleanResponse(response) {
-  if (!response || !response.redirected) return response;
-  const body = await response.blob();
-  return new Response(body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers: response.headers
-  });
-}
-
-// 1. Install: Simpan seluruh cangkang aplikasi, ikon & 9 modul secara tangguh
+// Install: Simpan seluruh cangkang PWA & 9 modul ke cache lokal
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return Promise.allSettled(
-        PRECACHE_URLS.map((url) =>
-          fetch(url, { cache: 'reload' }).then(async (response) => {
-            if (response && response.ok) {
-              const sanitized = await cleanResponse(response);
-              return cache.put(url, sanitized);
-            }
-          })
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.allSettled(
+        CORE_ASSETS.map((url) =>
+          cache.add(new Request(url, { cache: 'reload' }))
         )
-      );
-    }).then(() => self.skipWaiting())
+      )
+    )
   );
+  self.skipWaiting();
 });
 
-// 2. Activate: Bersihkan cache versi lama secara otomatis
+// Activate: Sapu bersih cache versi lama agar tidak ada sisa aset eksternal
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => name.startsWith('xevqor-vault-') && name !== CACHE_NAME)
-          .map((oldName) => caches.delete(oldName))
-      );
-    }).then(() => self.clients.claim())
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((key) => key !== CACHE_NAME)
+          .map((oldKey) => caches.delete(oldKey))
+      )
+    ).then(() => self.clients.claim())
   );
 });
 
-// 3. Fetch: Stale-While-Revalidate untuk kecepatan instan & mode 100% offline
+// Fetch: Hanya layani origin sendiri (Zero Third-Party Interception)
 self.addEventListener('fetch', (event) => {
-  const { request } = event;
-  if (request.method !== 'GET') return;
+  if (event.request.method !== 'GET') return;
 
-  const url = new URL(request.url);
+  const reqUrl = new URL(event.request.url);
+  if (reqUrl.origin !== self.location.origin) return;
 
-  // Lewati API QR eksternal agar tidak menyumbat cache saat offline
-  if (url.hostname === 'api.qrserver.com') return;
-
-  const isSameOrigin = url.origin === self.location.origin;
-  const isGoogleFont =
-    url.hostname === 'fonts.googleapis.com' ||
-    url.hostname === 'fonts.gstatic.com';
-
-  if (!isSameOrigin && !isGoogleFont) return;
-
+  // Network-First dengan fallback otomatis ke penyimpanan offline
   event.respondWith(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      // Normalisasi URL dengan/tanpa trailing slash agar cocok di Cloudflare & GitHub Pages
-      const cleanPath =
-        isSameOrigin && url.pathname.length > 1 && url.pathname.endsWith('/')
-          ? url.pathname.slice(0, -1)
-          : url.pathname;
-
-      const cachedResponse =
-        (await cache.match(request)) ||
-        (isSameOrigin ? await cache.match(cleanPath) : null);
-
-      const networkFetch = fetch(request)
-        .then(async (networkResponse) => {
-          if (networkResponse && networkResponse.ok) {
-            const sanitized = await cleanResponse(networkResponse.clone());
-            await cache.put(request, sanitized);
-          }
-          return networkResponse;
-        })
-        .catch(() => null);
-
-      // Sajikan dari cache seketika jika ada, atau tunggu jaringan/fallback offline
-      return (
-        cachedResponse ||
-        (await networkFetch) ||
-        (await cache.match('/index.html'))
-      );
-    })
+    fetch(event.request)
+      .then((networkRes) => {
+        if (networkRes && networkRes.status === 200 && networkRes.type === 'basic') {
+          const cloned = networkRes.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
+        }
+        return networkRes;
+      })
+      .catch(() =>
+        caches.match(event.request).then((cached) => cached || caches.match('/index.html'))
+      )
   );
 });
-
