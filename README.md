@@ -41,10 +41,10 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 
 ## Cryptographic Primitives & Audit Notes
 
-* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **350,000 iterations**) via `SubtleCrypto.deriveBits`. The UTF-8 *Identity Label* serves as the deterministic salt paired with the *Brain Key* to derive 28-character alphanumeric or mixed-symbol passwords without disk storage.
-* **Authenticated Encryption (`/encrypt`, `/nano`, `/burn`):** Uses `AES-256-GCM` with fresh 96-bit random IVs from `window.crypto.getRandomValues()`.
+* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **350,000 iterations**) via `SubtleCrypto.deriveBits`. The domain-prefixed UTF-8 *Identity Label* (`xevqor.keypass.v2:<label>`) serves as the deterministic salt paired with the *Brain Key* to derive 28-character passwords in memory, featuring a 45-second clipboard auto-wipe.
+* **Authenticated Encryption (`/encrypt`, `/nano`, `/burn`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 350,000 iterations in `/burn` & `/encrypt`). Because `/burn` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while link distribution remains the sender's responsibility.
 * **Entropy Source (`/dice`):** Uses OS-level CSPRNG (`window.crypto.getRandomValues()`) rather than `Math.random()`.
-* **Service Worker (`sw.js`):** Minimal `xevqor-vault-v2` cache-first handler restricted to same-origin `GET` requests.
+* **Service Worker (`sw.js`):** Minimal `xevqor-vault-v2` network-first handler with offline cache fallback, restricted to same-origin `GET` requests.
 
 ---
 
@@ -55,7 +55,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 | **KEYPASS** | `/keypass` | Deterministic dual-key password generator (`PBKDF2-SHA256`). |
 | **HASH** | `/hash` | `SHA-256` / `SHA-512` file and text digest verifier. |
 | **JWT** | `/jwt` | Offline JSON Web Token decoder and expiry inspector. |
-| **BURN** | `/burn` | Serverless encrypted links via URL fragment (`#`). |
+| **BURN** | `/burn` | Stateless encrypted links via URL fragment (`#`) with active address-bar scrubbing. |
 | **NANO** | `/nano` | `deflate-raw` compressor and `AES-256-GCM` cipher. |
 | **NEBULA** | `/nebula` | Zero-width Unicode (`U+200B`/`U+200C`) steganography. |
 | **ENCRYPT** | `/encrypt` | Chunked 10MB `.xqr` file vault (`AES-256-GCM`). |

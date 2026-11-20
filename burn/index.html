@@ -203,7 +203,7 @@
         <input type="password" id="openPass" class="pass-input" placeholder="DECRYPT KEY">
         <button class="eye-btn" onclick="togglePass('openPass', 'eye2')" id="eye2">👁️</button>
       </div>
-      <button class="btn-exec btn-red" style="margin-top:15px" onclick="burnAndShow()">OPEN & OBLITERATE</button>
+      <button class="btn-exec btn-red" style="margin-top:15px" onclick="burnAndShow()">DECRYPT & SCRUB URL</button>
       <div id="contentReveal"></div>
     </div>
 
@@ -268,35 +268,9 @@
     return await new Response(stream).text();
   }
 
-  // ========== CRYPTO ENGINE ==========
-  async function deriveKey(p) {
-    const enc = new TextEncoder();
-    const km = await crypto.subtle.importKey("raw", enc.encode(p), "PBKDF2", false, ["deriveKey"]);
-    return crypto.subtle.deriveKey(
-      { name: "PBKDF2", salt: enc.encode("SERVERLESS_SALT"), iterations: 100000, hash: "SHA-256" },
-      km, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
-    );
-  }
-
-  async function process(t, p, mode) {
-    const key = await deriveKey(p);
-    if (mode === 'enc') {
-      const compressedPayload = await compressData(t); // KOMPRESI SEBELUM ENKRIPSI
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const buf = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, compressedPayload);
-      const combined = new Uint8Array(12 + buf.byteLength);
-      combined.set(iv); combined.set(new Uint8Array(buf), 12);
-      return btoa(String.fromCharCode(...combined)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    } else {
-      try {
-        let base64 = t.replace(/-/g, '+').replace(/_/g, '/');
-        while (base64.length % 4) base64 += '=';
-        const combined = new Uint8Array(atob(base64).split('').map(c => c.charCodeAt(0)));
-        const dec = await crypto.subtle.decrypt({ name: "AES-GCM", iv: combined.slice(0, 12) }, key, combined.slice(12));
-        return await decompressData(new Uint8Array(dec)); // DEKOMPRESI SETELAH DEKRIPSI
-      } catch (e) { return null; }
-    }
-  }
+  // ========== CRYPTO ENGINE (16B SALT + 350K PBKDF2) ==========
+  async function deriveKey(p,salt){const enc=new TextEncoder();const km=await crypto.subtle.importKey("raw",enc.encode(p),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:350000,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);}
+  async function process(t,p,mode){if(mode==='enc'){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),key=await deriveKey(p,salt),cp=await compressData(t),buf=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,cp),c=new Uint8Array(28+buf.byteLength);c.set(salt,0);c.set(iv,16);c.set(new Uint8Array(buf),28);return btoa(String.fromCharCode(...c)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}try{let b=t.replace(/-/g,'+').replace(/_/g,'/');while(b.length%4)b+='=';const c=new Uint8Array(atob(b).split('').map(x=>x.charCodeAt(0)));if(c.length<29)return null;const key=await deriveKey(p,c.slice(0,16)),dec=await crypto.subtle.decrypt({name:"AES-GCM",iv:c.slice(16,28)},key,c.slice(28));return await decompressData(new Uint8Array(dec));}catch(e){return null;}}
 
   // ========== EXECUTION ==========
   async function generateLink() {
@@ -329,7 +303,7 @@
     
     // Hapus hash dari URL (Obliterate effect)
     history.replaceState(null, '', window.location.pathname);
-    document.getElementById('status').innerText = "OBLITERATED";
+    document.getElementById('status').innerText = "URL SCRUBBED";
     document.getElementById('readMode').querySelector('.btn-exec').style.display = 'none';
     document.getElementById('openPass').style.display = 'none';
     document.getElementById('eye2').style.display = 'none';
