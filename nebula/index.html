@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>XEVQOR NEBULA · PHANTOM PROTOCOL</title>
+    <title>XEVQOR NEBULA · ZERO-WIDTH CIPHER</title>
 
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#000000">
@@ -167,14 +167,14 @@
             <button class="eye-btn" onclick="togglePass()" id="eyeIcon">👁️</button>
         </div>
 
-        <div class="label-text">Public Mask (Invisible Carrier)</div>
+        <div class="label-text">Public Cover Text (Zero-Width Carrier)</div>
         <textarea id="inPublic" placeholder="Write normal message here..."></textarea>
 
-        <div class="label-text">Secret Phantom (Classified)</div>
+        <div class="label-text">Secret Message (AES-256-GCM)</div>
         <textarea id="inSecret" placeholder="Write message to be hidden..."></textarea>
         
         <div class="btn-group">
-            <button class="action-btn" onclick="run('inject')">INJECT PHANTOM</button>
+            <button class="action-btn" onclick="run('inject')">ENCODE ZERO-WIDTH</button>
             <button class="action-btn" onclick="run('extract')">EXTRACT DATA</button>
             <button class="action-btn btn-copy" onclick="doCopy()">COPY RESULT</button>
             <button class="action-btn btn-wipe" onclick="location.reload()">WIPE</button>
@@ -185,7 +185,7 @@
     </div>
 
     <div class="status-bar">
-        <span>AES-GCM PHANTOM ENGINE</span>
+        <span>AES-256-GCM ZERO-WIDTH ENGINE</span>
         <span id="status">READY</span>
     </div>
 </div>
@@ -216,7 +216,7 @@
         const enc = new TextEncoder();
         const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), {name: "PBKDF2"}, false, ["deriveKey"]);
         return crypto.subtle.deriveKey(
-            {name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256"},
+            {name: "PBKDF2", salt, iterations: 600000, hash: "SHA-256"},
             keyMaterial, {name: "AES-GCM", length: 256}, false, ["encrypt", "decrypt"]
         );
     }
@@ -247,8 +247,8 @@
                 for(let i=0; i<combined.length; i++) binStr += combined[i].toString(2).padStart(8, '0');
                 const hid = binStr.split('').map(b => Z[b]).join('');
 
-                const mid = Math.floor(pub.length / 2);
-                out.value = pub.slice(0, mid) + hid + pub.slice(mid);
+                const chars = Array.from(pub), mid = Math.floor(chars.length / 2);
+                out.value = chars.slice(0, mid).join('') + hid + chars.slice(mid).join('');
                 updateStatus("MISSION ACCOMPLISHED", "#6bcf9f");
 
             } else {
@@ -298,7 +298,7 @@
     // PWA REGISTRATION
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(reg => console.log('XEVQOR Nebula SW Registered'));
+            navigator.serviceWorker.register('/sw.js').then(reg => console.log('XEVQOR Nebula SW Registered'));
         });
     }
 </script>

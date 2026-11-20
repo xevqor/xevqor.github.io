@@ -191,7 +191,7 @@
             const salt = encoder.encode("xevqor.keypass.v2:" + l1);
             const buf = encoder.encode(k1);
             const bKey = await crypto.subtle.importKey("raw", buf, "PBKDF2", false, ["deriveBits"]);
-            const bits = await crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 350000, hash: "SHA-256"}, bKey, 1024);
+            const bits = await crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 600000, hash: "SHA-256"}, bKey, 1024);
             
             // Base string sekarang di-cut jadi 28 karakter sesuai standar optimal
             let raw = btoa(String.fromCharCode(...new Uint8Array(bits)))

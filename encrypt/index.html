@@ -344,7 +344,7 @@
   async function deriveKey(password, salt) {
     const enc = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]);
-    return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 350000, hash: "SHA-256" }, keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+    return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 600000, hash: "SHA-256" }, keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
   }
   async function run(mode) {
     const file = fileInput.files[0];
@@ -360,7 +360,7 @@
         salt = crypto.getRandomValues(new Uint8Array(16));
         key = await deriveKey(p, salt);
         outputChunks.push(new TextEncoder().encode("XQR2"), salt);
-        const metaBytes = new TextEncoder().encode(JSON.stringify({ name: file.name }));
+        const metaBytes = new TextEncoder().encode(JSON.stringify({ name: file.name, size: file.size }));
         const metaIv = crypto.getRandomValues(new Uint8Array(12));
         const metaEnc = await crypto.subtle.encrypt({ name: "AES-GCM", iv: metaIv, additionalData: metaAad }, key, metaBytes);
         const lenBuf = new ArrayBuffer(4); new DataView(lenBuf).setUint32(0, metaEnc.byteLength, true);
@@ -387,7 +387,7 @@
         const metaLen = new DataView(lenBuf).getUint32(0,true); offset+=4;
         const metaEnc = await file.slice(offset, offset+metaLen).arrayBuffer(); offset+=metaLen;
         const metaDec = await crypto.subtle.decrypt({ name:"AES-GCM", iv:metaIv, additionalData: metaAad }, key, metaEnc);
-        const metaName = JSON.parse(new TextDecoder().decode(metaDec)).name;
+        const metaObj = JSON.parse(new TextDecoder().decode(metaDec)); const metaName = metaObj.name; let totalDecrypted = 0;
         let idx = 0;
         while (offset < file.size) {
           const iv = new Uint8Array(await file.slice(offset, offset+12).arrayBuffer()); offset+=12;
@@ -395,11 +395,11 @@
           const isLast = (offset + ctSize >= file.size);
           const ct = await file.slice(offset, offset+ctSize).arrayBuffer(); offset+=ctSize;
           const decrypted = await crypto.subtle.decrypt({ name:"AES-GCM", iv, additionalData: aadChunk(idx++, isLast) }, key, ct);
-          outputChunks.push(new Uint8Array(decrypted));
+          outputChunks.push(new Uint8Array(decrypted)); totalDecrypted += decrypted.byteLength;
           let pct = Math.min(100, Math.floor(offset / file.size * 100));
           fillDiv.style.width = pct + "%"; percentDiv.innerText = pct + "%";
         }
-        var original = metaName || file.name.replace(/\.xqr$/,'');
+        if (typeof metaObj.size === 'number' && totalDecrypted !== metaObj.size) throw 'TRUNCATED'; var original = metaName || file.name.replace(/\.xqr$/,'');
       }
       const blob = new Blob(outputChunks, {type:"application/octet-stream"});
       const a = document.createElement("a");

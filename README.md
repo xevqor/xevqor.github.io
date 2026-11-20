@@ -3,7 +3,7 @@
 # X E V Q O R
 
 **Architecting Future Digital Systems**  
-*Client-Side Cryptographic Suite. 100% Zero-Knowledge Architecture.*
+*Client-Side Cryptographic Suite. Zero-Server Client-Side Architecture.*
 
 [![Architecture](https://img.shields.io/badge/Architecture-Zero--Knowledge-0a0a0a?style=flat-square&labelColor=000000)]()
 [![Execution](https://img.shields.io/badge/Execution-100%25_Client--Side-141414?style=flat-square&labelColor=000000)]()
@@ -41,8 +41,8 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 
 ## Cryptographic Primitives & Audit Notes
 
-* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **350,000 iterations**) via `SubtleCrypto.deriveBits`. The domain-prefixed UTF-8 *Identity Label* (`xevqor.keypass.v2:<label>`) serves as the deterministic salt paired with the *Brain Key* to derive 28-character passwords in memory, featuring a 45-second clipboard auto-wipe.
-* **Authenticated Encryption (`/encrypt`, `/nano`, `/burn`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 350,000 iterations in `/burn`, `/encrypt` & `/nano`). Because `/burn` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while link distribution remains the sender's responsibility.
+* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **600,000 iterations**) via `SubtleCrypto.deriveBits`. The domain-prefixed UTF-8 *Identity Label* (`xevqor.keypass.v2:<label>`) serves as the deterministic salt paired with the *Brain Key* to derive 28-character passwords in memory, featuring a 45-second clipboard auto-wipe.
+* **Authenticated Encryption (`/encrypt`, `/nano`, `/burn`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 600,000 iterations across all 6 encrypted modules). Because `/burn` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while link distribution remains the sender's responsibility.
 * **Entropy Source (`/dice`):** Uses OS-level CSPRNG (`window.crypto.getRandomValues()`) rather than `Math.random()`.
 * **Service Worker (`sw.js`):** Minimal `xevqor-vault-v2` network-first handler with offline cache fallback, restricted to same-origin `GET` requests.
 
@@ -59,7 +59,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 | **NANO** | `/nano` | `deflate-raw` compressor and `AES-256-GCM` cipher. |
 | **NEBULA** | `/nebula` | Zero-width Unicode (`U+200B`/`U+200C`) steganography. |
 | **ENCRYPT** | `/encrypt` | Chunked 10MB `.xqr` file vault (`AES-256-GCM`). |
-| **STEGO** | `/stego` | Binary carrier steganography (`XEVQOR88` signature). |
+| **STEGO** | `/stego` | Authenticated EOF binary container append (`XEVQOR88` trailer). |
 | **DICE** | `/dice` | 3D cryptographic dice RNG (`window.crypto.getRandomValues`). |
 
 ---
@@ -81,5 +81,5 @@ Licensed under the **MIT License**.
 
 <div align="center">
   <br>
-  <i>Engineered with precision. Zero-Knowledge by design.</i>
+  <i>Engineered with precision. 100% Client-Side & Zero-Server by design.</i>
 </div>
