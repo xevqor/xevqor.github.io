@@ -335,7 +335,9 @@
   function toggle(id) { let e = document.getElementById(id); e.type = e.type === 'password' ? 'text' : 'password'; }
   function updateClock() { document.getElementById('clock').innerText = new Date().toUTCString(); }
   setInterval(updateClock, 1000); updateClock();
+  let jobId = 0;
   function wipe() {
+    jobId++;
     fileInput.value = ""; fname.innerText = ""; fname.classList.remove('show'); drop.classList.remove('active');
     box1.classList.remove('active'); box2.classList.remove('active'); pass.value = ""; pass2.value = "";
     statusDiv.innerText = "IDLE"; percentDiv.innerText = ""; barDiv.style.display = "none"; fillDiv.style.width = "0%";
@@ -347,6 +349,7 @@
     return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 600000, hash: "SHA-256" }, keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
   }
   async function run(mode) {
+    const myJob = ++jobId;
     const file = fileInput.files[0];
     const p = pass.value, p2 = pass2.value;
     if (!file || !p) return alert("INVALID INPUT");
@@ -367,11 +370,13 @@
         outputChunks.push(metaIv, new Uint8Array(lenBuf), new Uint8Array(metaEnc));
         let idx = 0;
         while (offset < file.size) {
+          if (myJob !== jobId) { outputChunks.length = 0; return; }
           const slice = file.slice(offset, offset + CHUNK_SIZE);
           const isLast = (offset + CHUNK_SIZE >= file.size);
           const iv = crypto.getRandomValues(new Uint8Array(12));
           const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv, additionalData: aadChunk(idx++, isLast) }, key, await slice.arrayBuffer());
           outputChunks.push(iv, new Uint8Array(encrypted));
+          if (myJob !== jobId) { outputChunks.length = 0; return; }
           offset += CHUNK_SIZE;
           let pct = Math.min(100, Math.floor(offset / file.size * 100));
           fillDiv.style.width = pct + "%"; percentDiv.innerText = pct + "%";
@@ -390,17 +395,20 @@
         const metaObj = JSON.parse(new TextDecoder().decode(metaDec)); const metaName = metaObj.name; let totalDecrypted = 0;
         let idx = 0;
         while (offset < file.size) {
+          if (myJob !== jobId) { outputChunks.length = 0; return; }
           const iv = new Uint8Array(await file.slice(offset, offset+12).arrayBuffer()); offset+=12;
           let ctSize = Math.min(CHUNK_SIZE+16, file.size-offset);
           const isLast = (offset + ctSize >= file.size);
           const ct = await file.slice(offset, offset+ctSize).arrayBuffer(); offset+=ctSize;
           const decrypted = await crypto.subtle.decrypt({ name:"AES-GCM", iv, additionalData: aadChunk(idx++, isLast) }, key, ct);
           outputChunks.push(new Uint8Array(decrypted)); totalDecrypted += decrypted.byteLength;
+          if (myJob !== jobId) { outputChunks.length = 0; return; }
           let pct = Math.min(100, Math.floor(offset / file.size * 100));
           fillDiv.style.width = pct + "%"; percentDiv.innerText = pct + "%";
         }
         if (typeof metaObj.size === 'number' && totalDecrypted !== metaObj.size) throw 'TRUNCATED'; var original = metaName || file.name.replace(/\.xqr$/,'');
       }
+      if (myJob !== jobId) { outputChunks.length = 0; return; }
       const blob = new Blob(outputChunks, {type:"application/octet-stream"});
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);

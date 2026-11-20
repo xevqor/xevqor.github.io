@@ -215,7 +215,7 @@
         } catch (e) { updateStatus("FATAL ERROR", "#ff6b6b"); }
     }
 
-    let clipT=null;async function copy(id,btn){const t=document.getElementById(id).innerText;if(t==="LOCKED")return;if(navigator.clipboard)await navigator.clipboard.writeText(t);else{const d=document.createElement("textarea");document.body.appendChild(d);d.value=t;d.select();document.execCommand("copy");document.body.removeChild(d);}if(clipT)clearTimeout(clipT);clipT=setTimeout(()=>{if(navigator.clipboard)navigator.clipboard.writeText("").catch(()=>{});},45000);const o=btn.innerText;btn.innerText="DONE!";btn.style.color="#6bcf9f";updateStatus("COPIED (45S WIPE)","#fff");setTimeout(()=>{btn.innerText=o;btn.style.color="#9aaebf";updateStatus("READY","#b8c7d9");},1500);}
+    let clipT=null;async function copy(id,btn){const t=document.getElementById(id).innerText;if(t==="LOCKED")return;if(navigator.clipboard)await navigator.clipboard.writeText(t);else{const d=document.createElement("textarea");document.body.appendChild(d);d.value=t;d.select();document.execCommand("copy");document.body.removeChild(d);}if(clipT)clearTimeout(clipT);clipT=setTimeout(async()=>{try{if(navigator.clipboard&&navigator.clipboard.readText){const c=await navigator.clipboard.readText();if(c===t)await navigator.clipboard.writeText("");}else if(navigator.clipboard){await navigator.clipboard.writeText("");}}catch(e){}},45000);const o=btn.innerText;btn.innerText="DONE!";btn.style.color="#6bcf9f";updateStatus("COPIED (45S WIPE)","#fff");setTimeout(()=>{btn.innerText=o;btn.style.color="#9aaebf";updateStatus("READY","#b8c7d9");},1500);}
 
     function clearAll() {
         document.getElementById('m1').value = ""; document.getElementById('m2').value = ""; 
