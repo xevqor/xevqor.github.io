@@ -180,22 +180,22 @@
     <div id="xevqorClock">SYNCING CHRONOMETER...</div>
 
     <div class="mode-switch">
-        <button class="mode-btn active" id="btn-hide" onclick="switchMode('hide')">INJECT MODE</button>
-        <button class="mode-btn" id="btn-extract" onclick="switchMode('extract')">EXTRACT MODE</button>
+        <button class="mode-btn active" id="btn-hide" data-click="switchMode('hide')">INJECT MODE</button>
+        <button class="mode-btn" id="btn-extract" data-click="switchMode('extract')">EXTRACT MODE</button>
     </div>
 
     <div class="section">
         <span class="label">Step 1: Carrier (Masking File)</span>
         <div class="file-wrapper">
             <span class="btn-file" id="carrierLabel">CHOOSE IMAGE / FILE</span>
-            <input type="file" id="carrierFile" onchange="updateFileName('carrierFile', 'carrierLabel', 'fileNameCarrier')">
+            <input type="file" id="carrierFile" data-change="updateFileName('carrierFile', 'carrierLabel', 'fileNameCarrier')">
         </div>
         <span id="fileNameCarrier" class="file-name-display"></span>
     </div>
 
     <div id="payloadArea" class="section">
         <span class="label">Step 2: Secret Payload</span>
-        <select id="payloadType" onchange="updateUI()" style="margin-bottom: 10px;">
+        <select id="payloadType" data-change="updateUI()" style="margin-bottom: 10px;">
             <option value="text">ENCRYPTED TEXT</option>
             <option value="file">HIDDEN FILE</option>
         </select>
@@ -207,7 +207,7 @@
         <div id="fileInputWrapper" class="hidden">
             <div class="file-wrapper">
                 <span class="btn-file" id="payloadLabel" style="border-color: var(--platinum); color: var(--platinum);">SELECT PAYLOAD FILE</span>
-                <input type="file" id="payloadFile" onchange="updateFileName('payloadFile', 'payloadLabel', 'fileNamePayload')">
+                <input type="file" id="payloadFile" data-change="updateFileName('payloadFile', 'payloadLabel', 'fileNamePayload')">
             </div>
             <span id="fileNamePayload" class="file-name-display" style="color: var(--platinum);"></span>
         </div>
@@ -217,15 +217,15 @@
         <span class="label">Step 3: Master Vault Key</span>
         <div class="pass-wrapper">
             <input type="password" id="passphrase" class="pass-input" placeholder="ENTER PASSKEY">
-            <button class="eye-btn" onclick="togglePass()" id="eyeIcon">👁️</button>
+            <button class="eye-btn" data-click="togglePass()" id="eyeIcon">👁️</button>
         </div>
     </div>
 
-    <button class="btn-exec" id="execBtn" onclick="process()">EXECUTE INJECTION</button>
+    <button class="btn-exec" id="execBtn" data-click="process()">EXECUTE INJECTION</button>
 
     <div class="btn-row">
-        <button id="copyBtn" class="btn-util btn-copy hidden" onclick="copyToClipboard()">COPY TEXT</button>
-        <button class="btn-util" onclick="wipeSystem()">WIPE SYSTEM</button>
+        <button id="copyBtn" class="btn-util btn-copy hidden" data-click="copyToClipboard()">COPY TEXT</button>
+        <button class="btn-util" data-click="wipeSystem()">WIPE SYSTEM</button>
     </div>
 
     <div id="status">SYSTEM STANDBY</div>
@@ -432,6 +432,8 @@
                 .catch(err => console.error('Uplink Failed:', err));
         });
     }
+
+(function(){function run(el,code,ev){if(!code)return;if(code==="location.reload()"){location.reload();return;}if(code==="if(event.target===this)hideModal()"){if(ev.target===el){if(window.hideModal)window.hideModal();}return;}var m=code.match(/^([a-zA-Z0-9_]+)\((.*)\)$/);if(!m)return;if(typeof window[m[1]]!=="function")return;var raw=m[2].trim(),args=[];if(raw.length){var parts=raw.split(",");for(var j=0;j<parts.length;j++){var p=parts[j].trim();if(p==="this")args.push(el);else if(/^'.*'$/.test(p))args.push(p.slice(1,-1));else if(/^-?\d+(\.\d+)?$/.test(p))args.push(Number(p));}}window[m[1]].apply(el,args);}document.addEventListener("click",function(e){var t=e.target.closest("[data-click]");if(t)run(t,t.getAttribute("data-click"),e);});document.addEventListener("change",function(e){var t=e.target.closest("[data-change]");if(t)run(t,t.getAttribute("data-change"),e);});})();
 </script>
 </body>
 </html>
