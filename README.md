@@ -1,26 +1,85 @@
-# XEVQOR — Client-Side Cryptographic & Privacy Suite
+<div align="center">
 
-Zero-knowledge, stateless client-side cryptographic tools running 100% inside local browser memory via the native **Web Crypto API**. Zero servers, zero telemetry, zero external fonts, and zero outbound network requests (`connect-src 'none'`).
+# X E V Q O R
 
-- **Primary Production:** `https://xevqor.my.id`
-- **Public Mirror & Audit Source:** `https://xevqor.github.io` (`github.com/xevqor/xevqor.github.io`)
+**Architecting Future Digital Systems**  
+*Client-Side Cryptographic Suite. 100% Zero-Knowledge Architecture.*
 
-## Cryptographic Architecture & Modules
+[![Architecture](https://img.shields.io/badge/Architecture-Zero--Knowledge-0a0a0a?style=flat-square&labelColor=000000)]()
+[![Execution](https://img.shields.io/badge/Execution-100%25_Client--Side-141414?style=flat-square&labelColor=000000)]()
+[![Cryptography](https://img.shields.io/badge/Crypto-Web_Crypto_API-1a1a1a?style=flat-square&labelColor=000000)]()
+[![Telemetry](https://img.shields.io/badge/Telemetry-Zero_Tracking-222222?style=flat-square&labelColor=000000)]()
+[![Offline](https://img.shields.io/badge/Runtime-Offline_Capable-2b2b2b?style=flat-square&labelColor=000000)]()
 
-| Module | Primitive & Key Derivation | Notes |
+</div>
+
+---
+
+## Official Gateway & Mirror Network
+
+XEVQOR is deployed across independent edge networks serving the exact same static build (verifiable via SHA-256 checksum):
+
+| Endpoint | Network / Role |
+| :--- | :--- |
+| **https://xevqor.my.id** | Primary Official Gateway (Cloudflare Edge) |
+| **https://xevqormyid.pages.dev** | Cloudflare Pages Direct Mirror |
+| **https://xevqor.github.io** | GitHub Pages Auditable Source Mirror |
+
+---
+
+## Core Architecture & Privacy Guarantee
+
+> *"What you do here, stays here."*
+
+* **100% Client-Side Execution:** Key derivation, encryption, hashing, token inspection, compression, and steganography run locally in browser memory via the native **W3C Web Crypto API (`window.crypto.subtle`)**.
+* **Zero Third-Party Requests:** No analytics, no cookies, no external font CDNs, and no third-party QR APIs. Typography uses local system font stacks, and donation QR codes render locally via an embedded **Reed-Solomon SVG generator (`OfflineQR`)**.
+* **Browser-Enforced CSP Lockdown:** Enforces `Content-Security-Policy` (`connect-src 'none'`, `form-action 'none'`, `object-src 'none'`) and `referrer="no-referrer"`, blocking outbound network calls at the browser engine level after initial load.
+* **Zero Data Persistence:** No backend servers, no databases, and no `localStorage` credential retention. Inputs and keys stay strictly in volatile memory.
+* **Offline Capable (PWA):** Backed by a same-origin Service Worker (`sw.js`) for full air-gapped operation.
+
+---
+
+## Cryptographic Primitives & Audit Notes
+
+* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **350,000 iterations**) via `SubtleCrypto.deriveBits`. The UTF-8 *Identity Label* serves as the deterministic salt paired with the *Brain Key* to derive 28-character alphanumeric or mixed-symbol passwords without disk storage.
+* **Authenticated Encryption (`/encrypt`, `/nano`, `/burn`):** Uses `AES-256-GCM` with fresh 96-bit random IVs from `window.crypto.getRandomValues()`.
+* **Entropy Source (`/dice`):** Uses OS-level CSPRNG (`window.crypto.getRandomValues()`) rather than `Math.random()`.
+* **Service Worker (`sw.js`):** Minimal `xevqor-vault-v2` cache-first handler restricted to same-origin `GET` requests.
+
+---
+
+## Module Overview
+
+| Module | Endpoint | Purpose |
 | :--- | :--- | :--- |
-| **`/keypass`** | `PBKDF2-SHA256` (350,000 iterations) | Deterministic 28-char password generator using `Brain Key` as input keying material and domain-prefixed `Identity Label` (`xevqor.keypass.v2:<label>`) as salt, with 45-second clipboard auto-wipe. |
-| **`/burn`** | `AES-256-GCM` + `PBKDF2-SHA256` (350,000 iterations) | Stateless URL-fragment (`#`) encrypted notes with a fresh 128-bit (`16-byte`) CSPRNG salt and 96-bit (`12-byte`) IV per payload. Automatically scrubs the URL fragment from the active session address bar (`history.replaceState`) upon decryption; because the architecture is 100% serverless, link distribution remains the sender's responsibility. |
-| **`/encrypt`** | `AES-256-GCM` + `PBKDF2-SHA256` (350,000 iterations) | Streaming 10 MB chunked local file encryption with fresh CSPRNG salt and IV per archive. |
-| **`/stego`** | Binary EOF Wrapper (`XEVQOR88` marker) | Local polyglot/EOF payload embedding inside carrier files without server uploads. |
-| **`/nebula`** | Unicode Zero-Width Steganography | Client-side cover-text encoding using non-printing Unicode characters. |
-| **`/hash`** | `SHA-256` / `SHA-384` / `SHA-512` | Local file and text checksum verification via `crypto.subtle.digest`. |
-| **`/jwt`** | Local Base64URL Decoder | Offline inspection of JWT headers and claims without transmitting tokens. |
-| **`/nano`** | Ephemeral Scratchpad | Volatile in-memory workspace wiped on tab close or reload. |
-| **`/dice`** | `crypto.getRandomValues` CSPRNG | Hardware-backed unbiased entropy generator. |
+| **KEYPASS** | `/keypass` | Deterministic dual-key password generator (`PBKDF2-SHA256`). |
+| **HASH** | `/hash` | `SHA-256` / `SHA-512` file and text digest verifier. |
+| **JWT** | `/jwt` | Offline JSON Web Token decoder and expiry inspector. |
+| **BURN** | `/burn` | Serverless encrypted links via URL fragment (`#`). |
+| **NANO** | `/nano` | `deflate-raw` compressor and `AES-256-GCM` cipher. |
+| **NEBULA** | `/nebula` | Zero-width Unicode (`U+200B`/`U+200C`) steganography. |
+| **ENCRYPT** | `/encrypt` | Chunked 10MB `.xqr` file vault (`AES-256-GCM`). |
+| **STEGO** | `/stego` | Binary carrier steganography (`XEVQOR88` signature). |
+| **DICE** | `/dice` | 3D cryptographic dice RNG (`window.crypto.getRandomValues`). |
 
-## Security & Offline Guarantees
+---
 
-- **Strict Content Security Policy:** All HTML entry points enforce `connect-src 'none'`, `form-action 'none'`, `object-src 'none'`, and `referrer="no-referrer"`.
-- **Offline PWA Runtime (`sw.js`):** Uses a **network-first with offline cache fallback** strategy (`xevqor-vault-v2`) restricted strictly to same-origin assets, purging legacy caches on activation.
-- **License:** MIT License. Verify production parity anytime by comparing SHA-256 checksums across `xevqor.my.id` and `xevqor.github.io`.
+## How to Verify & Self-Host
+
+1. **Audit Zero Network Traffic & CSP:** Open DevTools (`F12` -> **Network**) while operating any utility—including the **Support Xevqor** QR modal—to verify zero outbound requests and `connect-src 'none'`.
+2. **Verify Production-to-Mirror Parity:**
+   `curl -sL https://xevqor.my.id | sha256sum`
+   `curl -sL https://xevqor.github.io | sha256sum`
+3. **Test Air-Gapped Offline Execution:** Load `https://xevqor.my.id` once, enable **Airplane Mode**, and run any of the 9 tools via Service Worker cache.
+4. **Clone & Self-Host:** `git clone https://github.com/xevqor/xevqor.github.io.git && cd xevqor.github.io` and serve via any static HTTP server (`python3 -m http.server`).
+
+---
+
+## License
+
+Licensed under the **MIT License**.
+
+<div align="center">
+  <br>
+  <i>Engineered with precision. Zero-Knowledge by design.</i>
+</div>
