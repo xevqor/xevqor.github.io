@@ -42,7 +42,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 ## Cryptographic Primitives & Audit Notes
 
 * **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **350,000 iterations**) via `SubtleCrypto.deriveBits`. The domain-prefixed UTF-8 *Identity Label* (`xevqor.keypass.v2:<label>`) serves as the deterministic salt paired with the *Brain Key* to derive 28-character passwords in memory, featuring a 45-second clipboard auto-wipe.
-* **Authenticated Encryption (`/encrypt`, `/nano`, `/burn`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 350,000 iterations in `/burn` & `/encrypt`). Because `/burn` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while link distribution remains the sender's responsibility.
+* **Authenticated Encryption (`/encrypt`, `/nano`, `/burn`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 350,000 iterations in `/burn`, `/encrypt` & `/nano`). Because `/burn` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while link distribution remains the sender's responsibility.
 * **Entropy Source (`/dice`):** Uses OS-level CSPRNG (`window.crypto.getRandomValues()`) rather than `Math.random()`.
 * **Service Worker (`sw.js`):** Minimal `xevqor-vault-v2` network-first handler with offline cache fallback, restricted to same-origin `GET` requests.
 

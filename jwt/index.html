@@ -250,10 +250,10 @@
         const now = new Date();
         
         if (expDate > now) {
-          badge.innerText = "🟢 TOKEN IS VALID until " + expDate.toLocaleString();
+          badge.innerText = "🟢 NOT EXPIRED (UNVERIFIED SIGNATURE) until " + expDate.toLocaleString();
           badge.className = "exp-valid";
         } else {
-          badge.innerText = "🔴 TOKEN IS EXPIRED on " + expDate.toLocaleString();
+          badge.innerText = "🔴 TOKEN EXPIRED (UNVERIFIED SIGNATURE) on " + expDate.toLocaleString();
           badge.className = "exp-invalid";
         }
       } else {

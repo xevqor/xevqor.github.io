@@ -227,52 +227,8 @@
         return await new Response(stream).text();
     }
 
-    async function deriveKey(p) {
-        const enc = new TextEncoder();
-        const salt = enc.encode("XEVQOR_NANO_V1"); 
-        const keyMat = await crypto.subtle.importKey("raw", enc.encode(p), "PBKDF2", false, ["deriveKey"]);
-        return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 120000, hash: "SHA-256" }, keyMat, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
-    }
-
-    async function process(mode) {
-        const p = document.getElementById('pass').value;
-        const msgEl = document.getElementById('msg');
-        let m = msgEl.value.trim();
-        if(!p || !m) { alert("PASSKEY & MESSAGE REQUIRED."); return; }
-
-        updateStatus("PROCESSING...", "#b8c7d9");
-
-        try {
-            const key = await deriveKey(p);
-
-            if (mode === 'enc') {
-                const compressedData = await compress(m); 
-                const iv = crypto.getRandomValues(new Uint8Array(12)); 
-                const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, compressedData);
-
-                const combined = new Uint8Array(12 + encrypted.byteLength);
-                combined.set(iv, 0);
-                combined.set(new Uint8Array(encrypted), 12);
-
-                msgEl.value = btoa(String.fromCharCode(...combined));
-                updateStatus("SQUEEZE SUCCESS", "#6bcf9f");
-            } else {
-                const raw = atob(m);
-                const combined = new Uint8Array(raw.length);
-                for (let i = 0; i < raw.length; i++) combined[i] = raw.charCodeAt(i);
-
-                const iv = combined.slice(0, 12);
-                const data = combined.slice(12);
-
-                const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, data);
-                msgEl.value = await decompress(new Uint8Array(decrypted)); 
-                updateStatus("DECOMPRESS SUCCESS", "#9aaebf");
-            }
-        } catch (e) {
-            updateStatus("ACCESS DENIED", "#ff6b6b");
-            alert("FAILURE: INCORRECT PASSKEY OR INVALID FORMAT.");
-        }
-    }
+    async function deriveKey(p,salt){const enc=new TextEncoder();const km=await crypto.subtle.importKey("raw",enc.encode(p),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:350000,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);}
+    async function process(mode){const p=document.getElementById('pass').value,msgEl=document.getElementById('msg'),m=mode==='enc'?msgEl.value:msgEl.value.trim();if(!p||!m){alert("PASSKEY & MESSAGE REQUIRED.");return;}updateStatus("PROCESSING...","#b8c7d9");try{if(mode==='enc'){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),key=await deriveKey(p,salt),cd=await compress(m),enc=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,cd),c=new Uint8Array(28+enc.byteLength);c.set(salt,0);c.set(iv,16);c.set(new Uint8Array(enc),28);let b='';for(let x of c)b+=String.fromCharCode(x);msgEl.value=btoa(b);updateStatus("SQUEEZE SUCCESS","#6bcf9f");}else{const raw=atob(m),c=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)c[i]=raw.charCodeAt(i);if(c.length<29)throw 1;const key=await deriveKey(p,c.slice(0,16)),dec=await crypto.subtle.decrypt({name:"AES-GCM",iv:c.slice(16,28)},key,c.slice(28));msgEl.value=await decompress(new Uint8Array(dec));updateStatus("DECOMPRESS SUCCESS","#9aaebf");}}catch(e){updateStatus("ACCESS DENIED","#ff6b6b");alert("FAILURE: INCORRECT PASSKEY OR INVALID FORMAT.");}}
 
     function copyToClipboard() {
         const text = document.getElementById('msg').value;
@@ -310,7 +266,7 @@
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
+            navigator.serviceWorker.register('/sw.js')
                 .then(() => console.log('XEVQOR Nano Engine Online'))
                 .catch(err => console.error('Uplink Failed:', err));
         });

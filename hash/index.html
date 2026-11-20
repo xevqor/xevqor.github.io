@@ -357,8 +357,8 @@
     try {
       if (selectedFile) {
         data = await selectedFile.arrayBuffer();
-      } else if (msgEl.value.trim()) {
-        data = new TextEncoder().encode(msgEl.value.trim());
+      } else if (msgEl.value.length > 0) {
+        data = new TextEncoder().encode(msgEl.value);
       } else {
         alert("NO INPUT DETECTED.");
         updateStatus("READY", "var(--platinum)");
@@ -421,7 +421,7 @@
   // PWA Service Worker Registration (subfolder ./hash)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./hash/sw.js')
+      navigator.serviceWorker.register('/sw.js')
         .then(reg => console.log('XEVQOR Hash SW registered:', reg))
         .catch(err => console.log('SW error:', err));
     });

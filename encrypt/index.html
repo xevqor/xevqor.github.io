@@ -344,7 +344,7 @@
   async function deriveKey(password, salt) {
     const enc = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]);
-    return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 120000, hash: "SHA-256" }, keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+    return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 350000, hash: "SHA-256" }, keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
   }
   async function run(mode) {
     const file = fileInput.files[0];
@@ -354,21 +354,23 @@
     let offset = 0, key, salt, outputChunks = [];
     statusDiv.innerText = "PROCESSING"; barDiv.style.display = "block";
     try {
+      const aadChunk=(i,last)=>{const b=new Uint8Array(5);new DataView(b.buffer).setUint32(0,i,true);b[4]=last?1:0;return b;};
+      const metaAad=new TextEncoder().encode("XQR2:META");
       if (mode === 'enc') {
         salt = crypto.getRandomValues(new Uint8Array(16));
         key = await deriveKey(p, salt);
-        outputChunks.push(new TextEncoder().encode("XQR1"), salt);
-        const meta = JSON.stringify({ name: file.name });
-        const metaBytes = new TextEncoder().encode(meta);
+        outputChunks.push(new TextEncoder().encode("XQR2"), salt);
+        const metaBytes = new TextEncoder().encode(JSON.stringify({ name: file.name }));
         const metaIv = crypto.getRandomValues(new Uint8Array(12));
-        const metaEnc = await crypto.subtle.encrypt({ name: "AES-GCM", iv: metaIv }, key, metaBytes);
-        const lenBuf = new ArrayBuffer(4);
-        new DataView(lenBuf).setUint32(0, metaEnc.byteLength, true);
+        const metaEnc = await crypto.subtle.encrypt({ name: "AES-GCM", iv: metaIv, additionalData: metaAad }, key, metaBytes);
+        const lenBuf = new ArrayBuffer(4); new DataView(lenBuf).setUint32(0, metaEnc.byteLength, true);
         outputChunks.push(metaIv, new Uint8Array(lenBuf), new Uint8Array(metaEnc));
+        let idx = 0;
         while (offset < file.size) {
           const slice = file.slice(offset, offset + CHUNK_SIZE);
+          const isLast = (offset + CHUNK_SIZE >= file.size);
           const iv = crypto.getRandomValues(new Uint8Array(12));
-          const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, await slice.arrayBuffer());
+          const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv, additionalData: aadChunk(idx++, isLast) }, key, await slice.arrayBuffer());
           outputChunks.push(iv, new Uint8Array(encrypted));
           offset += CHUNK_SIZE;
           let pct = Math.min(100, Math.floor(offset / file.size * 100));
@@ -376,23 +378,23 @@
         }
       } else {
         const header = new TextDecoder().decode(await file.slice(0,4).arrayBuffer());
-        if (header !== "XQR1") throw "INVALID SIGNATURE";
+        if (header !== "XQR2") throw "INVALID SIGNATURE";
         salt = new Uint8Array(await file.slice(4,20).arrayBuffer());
         key = await deriveKey(p, salt);
-        offset = 20; let metaName = null;
-        try {
-          const metaIv = new Uint8Array(await file.slice(offset, offset+12).arrayBuffer()); offset+=12;
-          const lenBuf = await file.slice(offset, offset+4).arrayBuffer();
-          const metaLen = new DataView(lenBuf).getUint32(0,true); offset+=4;
-          const metaEnc = await file.slice(offset, offset+metaLen).arrayBuffer(); offset+=metaLen;
-          const metaDec = await crypto.subtle.decrypt({ name:"AES-GCM", iv:metaIv }, key, metaEnc);
-          metaName = JSON.parse(new TextDecoder().decode(metaDec)).name;
-        } catch(e) {}
+        offset = 20;
+        const metaIv = new Uint8Array(await file.slice(offset, offset+12).arrayBuffer()); offset+=12;
+        const lenBuf = await file.slice(offset, offset+4).arrayBuffer();
+        const metaLen = new DataView(lenBuf).getUint32(0,true); offset+=4;
+        const metaEnc = await file.slice(offset, offset+metaLen).arrayBuffer(); offset+=metaLen;
+        const metaDec = await crypto.subtle.decrypt({ name:"AES-GCM", iv:metaIv, additionalData: metaAad }, key, metaEnc);
+        const metaName = JSON.parse(new TextDecoder().decode(metaDec)).name;
+        let idx = 0;
         while (offset < file.size) {
           const iv = new Uint8Array(await file.slice(offset, offset+12).arrayBuffer()); offset+=12;
           let ctSize = Math.min(CHUNK_SIZE+16, file.size-offset);
+          const isLast = (offset + ctSize >= file.size);
           const ct = await file.slice(offset, offset+ctSize).arrayBuffer(); offset+=ctSize;
-          const decrypted = await crypto.subtle.decrypt({ name:"AES-GCM", iv }, key, ct);
+          const decrypted = await crypto.subtle.decrypt({ name:"AES-GCM", iv, additionalData: aadChunk(idx++, isLast) }, key, ct);
           outputChunks.push(new Uint8Array(decrypted));
           let pct = Math.min(100, Math.floor(offset / file.size * 100));
           fillDiv.style.width = pct + "%"; percentDiv.innerText = pct + "%";
@@ -407,7 +409,7 @@
       a.click(); statusDiv.innerText = "SUCCESS"; fillDiv.style.background = "linear-gradient(90deg, #e8ebf2, #ffffff)";
     } catch(e) { statusDiv.innerText = "FAIL / WRONG KEY"; fillDiv.style.background = "#ff4d4d"; }
   }
-  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
+  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
 </script>
 </body>
 </html>
