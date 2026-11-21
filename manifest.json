@@ -38,7 +38,7 @@
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Burn Notes",
+      "name": "Cipherlink",
       "short_name": "Cipherlink",
       "description": "Serverless stateless URL-fragment encrypted links",
       "url": "/cipherlink",
