@@ -68,13 +68,13 @@
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-ohLNM+Gh4/9f1XfyC5dKPcvsNUTuR6AvEVBkXDveTow=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /encrypt
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-C38YRB4P9bC6Sr2PxbRhh55wwvP7yY3BdBm+tsSKjFk=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-nldCwyr/SakGMwn93TkZRfRtZnvrWJ2GGVYdTfpSeho=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /encrypt/
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-C38YRB4P9bC6Sr2PxbRhh55wwvP7yY3BdBm+tsSKjFk=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-nldCwyr/SakGMwn93TkZRfRtZnvrWJ2GGVYdTfpSeho=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /encrypt/index.html
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-C38YRB4P9bC6Sr2PxbRhh55wwvP7yY3BdBm+tsSKjFk=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-nldCwyr/SakGMwn93TkZRfRtZnvrWJ2GGVYdTfpSeho=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /stego
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-v/0JOY71NaDqSCOP9tAMLeGn7Iea1oMBu+q/eELSVaA=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'

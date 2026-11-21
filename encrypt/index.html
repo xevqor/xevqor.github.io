@@ -412,7 +412,7 @@
       const blob = new Blob(outputChunks, {type:"application/octet-stream"});
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      if (mode === 'enc') { let base = file.name.replace(/\.[^/.]+$/,''); a.download = base + ".xqr"; }
+      if (mode === 'enc') { let base = file.name.replace(/\.[^/.]+$/,''); a.download = 'xevqorvault' + String(100000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900000)) + '.xqr'; }
       else { a.download = "xevqor." + original; }
       a.click(); statusDiv.innerText = "SUCCESS"; fillDiv.style.background = "linear-gradient(90deg, #e8ebf2, #ffffff)";
     } catch(e) { statusDiv.innerText = "DECRYPT FAILED — WRONG KEY OR CORRUPTED FILE"; fillDiv.style.background = "#ff4d4d"; }
