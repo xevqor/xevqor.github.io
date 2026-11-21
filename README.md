@@ -17,11 +17,11 @@
 
 ## Official Gateway & Mirror Network
 
-XEVQOR is deployed across independent edge networks serving the exact same static build (verifiable via SHA-256 checksum):
+XEVQOR is deployed across independent edge networks serving the exact same static build (verifiable via `SHA256SUMS.txt`):
 
 | Endpoint | Network / Role |
 | :--- | :--- |
-| **https://xevqor.my.id** | Primary Official Gateway (Cloudflare Edge) |
+| **https://xevqor.my.id** | Primary Official Gateway (Cloudflare Edge + Strict `_headers`) |
 | **https://xevqormyid.pages.dev** | Cloudflare Pages Direct Mirror |
 | **https://xevqor.github.io** | GitHub Pages Auditable Source Mirror |
 
@@ -31,20 +31,20 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 
 > *"What you do here, stays here."*
 
-* **100% Client-Side Execution:** Key derivation, encryption, hashing, token inspection, compression, and steganography run locally in browser memory via the native **W3C Web Crypto API (`window.crypto.subtle`)**.
+* **100% Client-Side Execution:** Key derivation, encryption, hashing, token inspection, compression, and binary/Unicode payload encoding run locally in browser memory via the native **W3C Web Crypto API (`window.crypto.subtle`)**.
 * **Zero Third-Party Requests:** No analytics, no cookies, no external font CDNs, and no third-party QR APIs. Typography uses local system font stacks, and donation QR codes render locally via an embedded **Reed-Solomon SVG generator (`OfflineQR`)**.
 * **Browser-Enforced CSP Lockdown:** Enforces `Content-Security-Policy` (`connect-src 'none'`, `form-action 'none'`, `object-src 'none'`) and `referrer="no-referrer"`, blocking outbound network calls at the browser engine level after initial load.
-* **Zero Data Persistence:** No backend servers, no databases, and no `localStorage` credential retention. Inputs and keys stay strictly in volatile memory.
-* **Offline Capable (PWA):** Backed by a same-origin Service Worker (`sw.js`) for full air-gapped operation.
+* **Zero Data Persistence:** No backend servers, no databases, and no `localStorage` credential retention. Inputs and keys stay strictly in volatile browser tab RAM.
+* **Offline Capable (PWA):** Backed by a same-origin Service Worker (`sw.js`) caching static app-shell assets for air-gapped operation without caching user secrets or URL `#` fragments.
 
 ---
 
 ## Cryptographic Primitives & Audit Notes
 
-* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **600,000 iterations**) via `SubtleCrypto.deriveBits`. The domain-prefixed UTF-8 *Identity Label* (`xevqor.keypass.v2:<label>`) serves as the deterministic salt paired with the *Brain Key* to derive 28-character passwords in memory, featuring a 45-second clipboard auto-wipe.
-* **Authenticated Encryption (`/encrypt`, `/nano`, `/cipherlink`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 600,000 iterations across all 6 encrypted modules). Because `/cipherlink` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while link distribution remains the sender's responsibility.
-* **Entropy Source (`/dice`):** Uses OS-level CSPRNG (`window.crypto.getRandomValues()`) rather than `Math.random()`.
-* **Service Worker (`sw.js`):** Minimal `xevqor-vault-v2` network-first handler with offline cache fallback, restricted to same-origin `GET` requests.
+* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **600,000 iterations**) via `SubtleCrypto.deriveBits`. The case-normalized (`lowercase`) domain-prefixed UTF-8 *Identity Label* (`xevqor.keypass.v2:<label>`) serves as the deterministic salt paired with the *Brain Key* to derive 28-character passwords in memory (Output B is a deterministic remapped variant of Output A), featuring a 45-second clipboard auto-wipe.
+* **Authenticated Encryption (`/encrypt`, `/nano`, `/cipherlink`, `/stego`, `/nebula`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 600,000 iterations across all 5 AEAD encryption modules and Keypass). Because `/cipherlink` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while distributed copies remain the sender's responsibility.
+* **Entropy Source (`/dice`):** Uses OS-level CSPRNG (`window.crypto.getRandomValues()`) with unbiased rejection sampling (`uint32 < 4294967292`) rather than `Math.random()`.
+* **Service Worker (`sw.js`):** Same-origin `GET` cache handler (`xevqor-vault-v2-cl`) restricted strictly to static UI shell assets.
 
 ---
 
@@ -52,15 +52,15 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 
 | Module | Endpoint | Purpose |
 | :--- | :--- | :--- |
-| **KEYPASS** | `/keypass` | Deterministic dual-key password generator (`PBKDF2-SHA256`). |
-| **HASH** | `/hash` | `SHA-256` / `SHA-512` file and text digest verifier. |
-| **JWT** | `/jwt` | Offline JSON Web Token decoder and expiry inspector. |
-| **BURN** | `/cipherlink` | Stateless encrypted links via URL fragment (`#`) with active address-bar scrubbing. |
-| **NANO** | `/nano` | `deflate-raw` compressor and `AES-256-GCM` cipher. |
-| **NEBULA** | `/nebula` | Zero-width Unicode (`U+200B`/`U+200C`) steganography. |
-| **ENCRYPT** | `/encrypt` | Chunked 10MB `.xqr` file vault (`AES-256-GCM`). |
-| **STEGO** | `/stego` | Authenticated EOF binary container append (`XEVQOR88` trailer). |
-| **DICE** | `/dice` | 3D cryptographic dice RNG (`window.crypto.getRandomValues`). |
+| **KEYPASS** | `/keypass` | Deterministic password generator (`PBKDF2-SHA256`, primary + remapped output). |
+| **HASH** | `/hash` | `SHA-256`, `SHA-512`, and `SHA-1 (Legacy Checksum)` file and text digest verifier. |
+| **JWT** | `/jwt` | Offline JSON Web Token decoder and expiry inspector (`unverified signature`). |
+| **CIPHERLINK** | `/cipherlink` | Stateless encrypted links via URL fragment (`#`) with active address-bar scrubbing. |
+| **NANO** | `/nano` | `deflate-raw` compressor and `AES-256-GCM` text cipher. |
+| **NEBULA** | `/nebula` | Zero-width Unicode (`U+200B`/`U+200C`) covert text carrier. |
+| **ENCRYPT** | `/encrypt` | Chunked 10MB STREAM-AEAD `.xqr` file vault (`AES-256-GCM`). |
+| **STEGO** | `/stego` | Authenticated EOF binary container append (`XEVQOR88` trailer, non-LSB). |
+| **DICE** | `/dice` | Unbiased 3D cryptographic dice RNG (`window.crypto.getRandomValues`). |
 
 ---
 
@@ -68,21 +68,13 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 
 1. **Audit Zero Network Traffic & CSP:** Open DevTools (`F12` -> **Network**) while operating any utility—including the **Support Xevqor** QR modal—to verify zero outbound requests and `connect-src 'none'`.
 2. **Verify Production-to-Mirror Parity:**
-   `curl -sL https://xevqor.my.id | sha256sum`
-   `curl -sL https://xevqor.github.io | sha256sum`
+
+       curl -sL https://xevqor.my.id | sha256sum
+       curl -sL https://xevqor.github.io | sha256sum
+       sha256sum -c SHA256SUMS.txt
+
 3. **Test Air-Gapped Offline Execution:** Load `https://xevqor.my.id` once, enable **Airplane Mode**, and run any of the 9 tools via Service Worker cache.
 4. **Clone & Self-Host:** `git clone https://github.com/xevqor/xevqor.github.io.git && cd xevqor.github.io` and serve via any static HTTP server (`python3 -m http.server`).
-
----
-
-## License
-
-Licensed under the **MIT License**.
-
-<div align="center">
-  <br>
-  <i>Engineered with precision. 100% Client-Side & Zero-Server by design.</i>
-</div>
 
 ---
 
@@ -122,3 +114,14 @@ To maintain strict cryptographic transparency, **XEVQOR** explicitly defines wha
 | `/hash/` | **Hash** | Local `crypto.subtle.digest` calculator for **SHA-256**, **SHA-512**, and **SHA-1 (Legacy Non-Security Checksum)**. |
 | `/jwt/` | **JWT** | Local Base64URL header/payload decoder (`UNVERIFIED SIGNATURE` — does not perform cryptographic signature verification). |
 | `/dice/` | **Dice** | Unbiased CSPRNG (`crypto.getRandomValues` with rejection sampling `uint32 < 4294967292`). |
+
+---
+
+## License
+
+Licensed under the **MIT License**.
+
+<div align="center">
+  <br>
+  <i>Engineered with precision. 100% Client-Side & Zero-Server by design.</i>
+</div>
