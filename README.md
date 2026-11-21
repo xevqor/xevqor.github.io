@@ -44,7 +44,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 * **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **600,000 iterations**) via `SubtleCrypto.deriveBits`. The case-normalized (`lowercase`) domain-prefixed UTF-8 *Identity Label* (`xevqor.keypass.v2:<label>`) serves as the deterministic salt paired with the *Brain Key* to derive 28-character passwords in memory (Output B is a deterministic remapped variant of Output A), featuring a 45-second clipboard auto-wipe.
 * **Authenticated Encryption (`/encrypt`, `/nano`, `/cipherlink`, `/stego`, `/nebula`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 600,000 iterations across all 5 AEAD encryption modules and Keypass). Because `/cipherlink` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while distributed copies remain the sender's responsibility.
 * **Entropy Source (`/dice`):** Uses OS-level CSPRNG (`window.crypto.getRandomValues()`) with unbiased rejection sampling (`uint32 < 4294967292`) rather than `Math.random()`.
-* **Service Worker (`sw.js`):** Same-origin `GET` cache handler (`xevqor-vault-v2-cl`) restricted strictly to static UI shell assets.
+* **Service Worker (`sw.js`):** Same-origin `GET` cache handler (`xevqor-vault-v2-cl`) caches same-origin HTTP 200 GET responses for offline availability (never caching URL # fragments or user secrets).
 
 ---
 
@@ -58,9 +58,9 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 | **CIPHERLINK** | `/cipherlink` | Stateless encrypted links via URL fragment (`#`) with active address-bar scrubbing. |
 | **NANO** | `/nano` | `deflate-raw` compressor and `AES-256-GCM` text cipher. |
 | **NEBULA** | `/nebula` | Zero-width Unicode (`U+200B`/`U+200C`) covert text carrier. |
-| **ENCRYPT** | `/encrypt` | Chunked 10MB Chunked AES-256-GCM `.xqr` file vault (`AES-256-GCM`). |
+| **ENCRYPT** | `/encrypt` | 10MB Chunked AES-256-GCM `.xqr` file vault (`AES-256-GCM`). |
 | **STEGO** | `/stego` | Authenticated EOF binary container append (`XEVQOR88` trailer, non-LSB). |
-| **DICE** | `/dice` | Unbiased 3D cryptographic dice RNG (`window.crypto.getRandomValues`). |
+| **DICE** | `/dice` | Multifunctional unbiased 3D CSPRNG dice (faces, sum, mean, Shannon entropy bits & roll history). |
 
 ---
 
@@ -98,7 +98,7 @@ To maintain strict cryptographic transparency, **XEVQOR** explicitly defines wha
 
 ### Hosting Perimeter & Zero-Persistence Scope
 - **Cloudflare Edge (`https://xevqor.my.id/`) vs. GitHub Mirror (`https://xevqor.github.io/`):** Both serve bit-identical static files (`SHA256SUMS.txt`). Production enforces strict HTTP response headers via `_headers` (**CSP Level 3 SHA-256 script hashes**, `COOP: same-origin`, `COEP: require-corp`, `HSTS Preload`, `X-Frame-Options: DENY`), whereas GitHub Pages enforces sandbox isolation via the in-document `<meta>` Content-Security-Policy (`connect-src 'none'`).
-- **Zero User-Data Persistence:** No passphrases, files, or messages are ever transmitted to a server or written to cookies, `localStorage`, or `IndexedDB`. The Service Worker (`sw.js`) caches static UI shell assets strictly for offline availability and never caches user inputs or URL `#` fragments.
+- **Zero User-Data Persistence:** No passphrases, files, or messages are ever transmitted to a server or written to cookies, `localStorage`, or `IndexedDB`. The Service Worker (`sw.js`) caches same-origin HTTP 200 GET responses for offline availability and never caches user inputs or URL `#` fragments.
 - **Passphrase Responsibility:** Encrypted modules use **PBKDF2-SHA256 (600,000 iterations)** + **AES-256-GCM**. While 600k iterations resist casual brute force, weak or dictionary passwords remain vulnerable to offline GPU cracking if ciphertext is captured.
 
 ### Per-Module Cryptographic Boundaries
@@ -106,11 +106,11 @@ To maintain strict cryptographic transparency, **XEVQOR** explicitly defines wha
 | Route | Module | Honest Technical Definition & Operational Boundary |
 | :--- | :--- | :--- |
 | `/encrypt/` | **Encrypt (`XQR2`)** | Splits files into **10 MB chunks** using **Chunked AES-256-GCM (`AES-256-GCM`)**, authenticating chunk order, EOF, original filename, and exact size. Bounded by browser tab RAM; decrypted files download with `xevqor.` prefix. |
-| `/cipherlink/` | **Cipherlink** | **Stateless URL-Fragment Cipher (`deflate-raw` + `AES-256-GCM`).** Payload stays in the URL `#` fragment (never sent to servers) and scrubs the address bar via `history.replaceState` upon decryption. **Does not delete messages remotely**—copies in chat logs, clipboards, or screenshots persist. |
-| `/stego/` | **Stego** | **EOF Container Injection (`XEVQOR88` + `AES-256-GCM`).** Appends authenticated ciphertext after the carrier file's EOF marker (not pixel-level LSB steganography). Must be sent as an uncompressed file/document; apps that re-encode images strip the payload. Auto-clears clipboard after 45s. |
-| `/nebula/` | **Nebula** | **Zero-Width Unicode Carrier (`U+200B` / `U+200C`).** Embeds ~360 invisible characters per plaintext byte at cover text midpoint. Fails if transmitted through channels that sanitize or normalize invisible Unicode. |
+| `/cipherlink/` | **Cipherlink** | **Stateless URL-Fragment Cipher (`deflate-raw` + `AES-256-GCM`).** Payload stays in the URL `#` fragment (never sent to servers), trims passphrase whitespace (`.trim()`), and scrubs the address bar via `history.replaceState` upon decryption. **Does not delete messages remotely**—copies in chat logs, clipboards, or screenshots persist. |
+| `/stego/` | **Stego** | **EOF Container Injection (`XEVQOR88` + `AES-256-GCM`).** Appends authenticated ciphertext after the carrier file's EOF marker (not pixel-level LSB steganography). Must be sent as an uncompressed file/document; apps that re-encode images strip the payload. Auto-clears clipboard after 45s (when browser clipboard read/write permission is granted). |
+| `/nebula/` | **Nebula** | **Zero-Width Unicode Carrier (`U+200B` / `U+200C`).** Embeds 8 invisible characters per byte (352-character fixed overhead for salt + IV + GCM tag; total 8 × (plaintext bytes + 44)) at cover text midpoint. Fails if transmitted through channels that sanitize or normalize invisible Unicode. |
 | `/nano/` | **Nano** | Compresses plaintext via `deflate-raw`, encrypts with `AES-256-GCM`, and encodes as compact Base64. |
-| `/keypass/` | **Keypass** | Deterministic `PBKDF2-SHA256` (600,000 iterations). Service labels are case-normalized (`lowercase`); **Output B** is a deterministic character-remapped variant of Output A (same primary entropy). Auto-clears clipboard after 45s. |
+| `/keypass/` | **Keypass** | Deterministic `PBKDF2-SHA256` (600,000 iterations). Service labels are case-normalized (`lowercase`); **Output B** is a deterministic character-remapped variant of Output A (same primary entropy). Auto-clears clipboard after 45s (when browser clipboard read/write permission is granted). |
 | `/hash/` | **Hash** | Local `crypto.subtle.digest` calculator for **SHA-256**, **SHA-512**, and **SHA-1 (Legacy Non-Security Checksum)**. |
 | `/jwt/` | **JWT** | Local Base64URL header/payload decoder (`UNVERIFIED SIGNATURE` — does not perform cryptographic signature verification). |
 | `/dice/` | **Dice** | Unbiased CSPRNG (`crypto.getRandomValues` with rejection sampling `uint32 < 4294967292`). |
