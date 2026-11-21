@@ -41,7 +41,7 @@
       "name": "Burn Notes",
       "short_name": "Cipherlink",
       "description": "Serverless stateless URL-fragment encrypted links",
-      "url": "/burn",
+      "url": "/cipherlink",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {

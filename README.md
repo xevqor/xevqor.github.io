@@ -26,7 +26,7 @@
 | Route | Module | What It Actually Does & Threat-Model Boundaries |
 | :--- | :--- | :--- |
 | `/encrypt/` | **Encrypt (`XQR2`)** | Splits files into **10 MB chunks** encrypted with **STREAM-AEAD** (`AES-256-GCM`), authenticating chunk index, EOF marker, original filename, and exact file size. Processed in browser tab RAM; outputs `<basename>.xqr` and restores as `xevqor.<filename>`. |
-| `/burn/` | **Cipherlink** | **Stateless URL-Fragment Encryption.** Encrypts text with `deflate-raw` + `AES-256-GCM` into the URL `#` fragment (never sent to servers) and scrubs the address bar via `history.replaceState` upon decryption. **Does not delete messages remotely**—copies in chat logs, clipboards, or screenshots persist. |
+| `/cipherlink/` | **Cipherlink** | **Stateless URL-Fragment Encryption.** Encrypts text with `deflate-raw` + `AES-256-GCM` into the URL `#` fragment (never sent to servers) and scrubs the address bar via `history.replaceState` upon decryption. **Does not delete messages remotely**—copies in chat logs, clipboards, or screenshots persist. |
 | `/stego/` | **Stego** | **EOF Container Injection (`XEVQOR88`).** Appends `AES-256-GCM` ciphertext after the carrier file's EOF marker (not pixel-level LSB steganography). Must be sent as an uncompressed file/document; apps that re-encode images strip the payload. Auto-clears copied output after 45s. |
 | `/nebula/` | **Nebula** | **Zero-Width Unicode Carrier.** Encodes `AES-256-GCM` ciphertext into `U+200B` / `U+200C` characters (~360 invisible characters per plaintext byte) at the midpoint of cover text. Fails if pasted through platforms that sanitize invisible Unicode. |
 | `/nano/` | **Nano** | Compresses text with `deflate-raw`, encrypts via `AES-256-GCM`, and outputs compact Base64 text. |

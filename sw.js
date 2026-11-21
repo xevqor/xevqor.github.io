@@ -1,4 +1,4 @@
-const CACHE_NAME = 'xevqor-vault-v2';
+const CACHE_NAME = 'xevqor-vault-v2-cl';
 
 const CORE_ASSETS = [
   '/',
@@ -10,7 +10,7 @@ const CORE_ASSETS = [
   '/keypass',
   '/hash',
   '/jwt',
-  '/burn',
+  '/cipherlink',
   '/nano',
   '/nebula',
   '/encrypt',
