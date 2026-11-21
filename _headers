@@ -23,13 +23,13 @@
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-rNKN1iSBVCc6zmAWQCPrFVa+4LeBEPznV2nZcDLfPxU=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /hash
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-RqJpkSabvc2K6Fz911Izg9cKku5OjjnDEKBGlIrxCks=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-IayxVQVXsnOlzQ2ra/WBsXWorfjUNUongM88rcNiWnU=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /hash/
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-RqJpkSabvc2K6Fz911Izg9cKku5OjjnDEKBGlIrxCks=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-IayxVQVXsnOlzQ2ra/WBsXWorfjUNUongM88rcNiWnU=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /hash/index.html
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-RqJpkSabvc2K6Fz911Izg9cKku5OjjnDEKBGlIrxCks=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-IayxVQVXsnOlzQ2ra/WBsXWorfjUNUongM88rcNiWnU=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /jwt
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-H+/ySGPuIGrxFWojBBbRjqXExiqNFGH56PstjQPqw+s=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
@@ -86,11 +86,11 @@
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-v/0JOY71NaDqSCOP9tAMLeGn7Iea1oMBu+q/eELSVaA=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /dice
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-WKj1j3RkG5v4Wef9E1QBtbW6eccPuUMCMwt4vepA2OI=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-7tMRzerYbzsrk3XYdMuD1yALtGLEcaBdQALtwi+WBDI=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /dice/
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-WKj1j3RkG5v4Wef9E1QBtbW6eccPuUMCMwt4vepA2OI=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-7tMRzerYbzsrk3XYdMuD1yALtGLEcaBdQALtwi+WBDI=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /dice/index.html
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-WKj1j3RkG5v4Wef9E1QBtbW6eccPuUMCMwt4vepA2OI=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-7tMRzerYbzsrk3XYdMuD1yALtGLEcaBdQALtwi+WBDI=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 

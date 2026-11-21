@@ -187,6 +187,7 @@
         <div id="gameIndicator">READY</div>
         <div id="diceGroup" class="dice-group-wrapper"></div>
         <div id="totalResult" class="platinum-glow-text"></div>
+        <div id="telemetry" style="font-size:0.6rem;color:#8a8c92;letter-spacing:1.5px;margin-top:12px;text-align:center;"></div>
     </div>
     
     <div class="action-area">
@@ -295,7 +296,7 @@
             });
 
             setTimeout(() => {
-                totalResult.innerText = total;
+                totalResult.innerText = total; const __tel = document.getElementById("telemetry"); if (__tel && typeof __formatMultiDice === "function") __tel.innerText = __formatMultiDice(results);
                 
                 let status = "";
                 if (numDice === 3 && results[0] === results[1] && results[1] === results[2]) {
