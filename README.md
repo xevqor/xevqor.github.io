@@ -1,24 +1,14 @@
 <div align="center">
 
-    ╔════════════════════════════════════════════════════════════════╗
-    ║                                                                ║
-    ║   ██╗  ██╗███████╗██╗   ██╗ ██████╗  ██████╗ ██████╗           ║
-    ║   ╚██╗██╔╝██╔════╝██║   ██║██╔═══██╗██╔═══██╗██╔══██╗          ║
-    ║    ╚███╔╝ █████╗  ██║   ██║██║   ██║██║   ██║██████╔╝          ║
-    ║    ██╔██╗ ██╔══╝  ╚██╗ ██╔╝██║▄▄ ██║██║   ██║██╔══██╗          ║
-    ║   ██╔╝ ██╗███████╗ ╚████╔╝ ╚██████╔╝╚██████╔╝██║  ██║          ║
-    ║   ╚═╝  ╚═╝╚══════╝  ╚═══╝   ╚══▀▀═╝  ╚═════╝ ╚═╝  ╚═╝          ║
-    ║                                                                ║
-    ║   ZERO-SERVER CLIENT-SIDE CRYPTOGRAPHY & PRIVACY UTILITY SUITE ║
-    ╚════════════════════════════════════════════════════════════════╝
+<h1>XEVQOR</h1>
 
-**Sovereign, Self-Contained, Deterministic Web Crypto Architecture**  
-*Zero Backend • Zero Telemetry • Zero Cookies • Strict `connect-src 'none'` Isolation*
+**Zero-Server Client-Side Cryptography & Privacy Utility Suite**  
+*Deterministic Web Crypto • Zero Telemetry • Zero Cookies • Strict `connect-src 'none'` Isolation*
 
 [![Mozilla Observatory](https://img.shields.io/badge/Mozilla_Observatory-Grade_A%2B_(115%2F100)-0A0A0A?style=for-the-badge&logo=mozilla&logoColor=E4E4E7)](https://developer.mozilla.org/en-US/observatory/analyze?host=xevqor.my.id)
 [![Security Headers](https://img.shields.io/badge/Security_Headers-Grade_A%2B-0A0A0A?style=for-the-badge&logo=cloudflare&logoColor=E4E4E7)](https://securityheaders.com/?q=https%3A%2F%2Fxevqor.my.id%2F&followRedirects=on)
 [![VirusTotal](https://img.shields.io/badge/VirusTotal-0%2F94_Clean-0A0A0A?style=for-the-badge&logo=virustotal&logoColor=E4E4E7)](https://www.virustotal.com/gui/url/15d26cd0f18520bfc5b8e5c9b03983fc85ee717d83e98aa7c2510f8f5e28adbd)
-[![Network Policy](https://img.shields.io/badge/Network_Sandbox-connect--src_'none'-18181B?style=for-the-badge&logo=shield&logoColor=E4E4E7)](#-01--zero-trust-execution--edge-architecture)
+[![Network Policy](https://img.shields.io/badge/Sandbox-connect--src_'none'-18181B?style=for-the-badge&logo=shield&logoColor=E4E4E7)](#-01--zero-trust-execution--edge-architecture)
 [![Web Crypto](https://img.shields.io/badge/Engine-Native_Web_Crypto_API-18181B?style=for-the-badge&logo=webauthn&logoColor=E4E4E7)](#-02--cryptographic-modules--honest-threat-model-matrix)
 
 <br>
@@ -36,30 +26,26 @@
 
 Every cryptographic operation inside **XEVQOR** executes locally in volatile browser tab RAM using native **`window.crypto.subtle`** and **`window.crypto.getRandomValues`** primitives. Zero external CDNs, analytics beacons, web fonts, or third-party scripts exist anywhere in the codebase.
 
-    ┌────────────────────────────────────────────────────────────────┐
-    │  LAYER 1 // EDGE PERIMETER & TRANSPORT HARDENING               │
-    │  ├── Production (xevqor.my.id)  : Cloudflare Pages + _headers  │
-    │  │   • CSP Level 3 SHA-256 Script Hashes (Zero unsafe-inline)  │
-    │  │   • COOP: same-origin | COEP: require-corp (Process Lock)   │
-    │  │   • HSTS Preload (2-Yr) | X-Frame-Options: DENY | 0 Cookies │
-    │  └── Mirror (xevqor.github.io)  : GitHub Pages Static Mirror   │
-    │      • Byte-identical HTML/JS; enforced via <meta> CSP Policy  │
-    ├────────────────────────────────────────────────────────────────┤
-    │  LAYER 2 // BROWSER SANDBOX & ZERO-PERSISTENCE BOUNDARY        │
-    │  ├── Network Lock  : connect-src 'none' (Blocks all outbound)  │
-    │  ├── User Storage  : 0 Cookies | 0 localStorage | 0 IndexedDB  │
-    │  └── Offline Cache : sw.js caches static App-Shell assets ONLY │
-    │                      (Never caches user secrets or # fragments) │
-    ├────────────────────────────────────────────────────────────────┤
-    │  LAYER 3 // NATIVE WEB CRYPTO CORE (Browser RAM Only)          │
-    │  ├── KDF           : PBKDF2-HMAC-SHA256 (600,000 Iterations)   │
-    │  ├── Entropy       : 128-bit CSPRNG Salt + 96-bit Unique IV    │
-    │  └── AEAD Ciphers  : AES-256-GCM & Chunked STREAM-AEAD (10 MB) │
-    └────────────────────────────────────────────────────────────────┘
+    ┌────────────────────────────────────────────┐
+    │ LAYER 1 // EDGE PERIMETER & HEADERS        │
+    │ • xevqor.my.id : Cloudflare + _headers     │
+    │   CSP SHA-256 Hashes, COOP/COEP, HSTS      │
+    │ • xevqor.github.io : Static Audit Mirror   │
+    ├────────────────────────────────────────────┤
+    │ LAYER 2 // BROWSER SANDBOX & ZERO STORAGE  │
+    │ • Network : connect-src 'none' (Offline)   │
+    │ • Storage : 0 Cookies / Local / IndexedDB  │
+    │ • Cache   : sw.js App-Shell Assets Only    │
+    ├────────────────────────────────────────────┤
+    │ LAYER 3 // NATIVE WEB CRYPTO (RAM ONLY)    │
+    │ • KDF     : PBKDF2-SHA256 (600,000 iter)   │
+    │ • Entropy : 128-bit Salt + 96-bit CSPRNG   │
+    │ • Cipher  : AES-256-GCM & 10MB STREAM-AEAD │
+    └────────────────────────────────────────────┘
 
 ### Hosting Scope & Storage Boundary Matrix
 
-| Security Dimension | `[https://xevqor.my.id/](https://xevqor.my.id/)` (Cloudflare Pages) | `[https://xevqor.github.io/](https://xevqor.github.io/)` (GitHub Pages) |
+| Security Dimension | `https://xevqor.my.id/` (Cloudflare Pages) | `https://xevqor.github.io/` (GitHub Pages) |
 | :--- | :--- | :--- |
 | **Static HTML / JS Payload** | Identical SHA-256 checksums (`SHA256SUMS.txt`) | Identical SHA-256 checksums (`SHA256SUMS.txt`) |
 | **CSP Enforcement Mechanism** | HTTP Response Header (`_headers`) w/ SHA-256 hashes | In-document `<meta http-equiv="Content-Security-Policy">` |
@@ -77,6 +63,7 @@ XEVQOR explicitly documents both **what each engine guarantees cryptographically
 
 | Route | Module | Primitives & Wire Format | Honest Threat-Model & Operational Boundaries |
 | :--- | :--- | :--- | :--- |
+| [`/`](https://xevqor.my.id/) | **Portal Index** | Zero-dependency PWA Launcher & App Shell | Offline-capable module switcher; registers `sw.js` strictly for static UI assets without storing user inputs. |
 | [`/encrypt/`](https://xevqor.my.id/encrypt/) | **Encrypt (`XQR2`)** | `PBKDF2-SHA256` (600k) + **10 MB Chunked STREAM-AEAD** (`AES-256-GCM`) | Authenticates chunk order, EOF, original filename, and exact byte length. Bounded by browser tab RAM; restores files with `xevqor.` prefix. |
 | [`/cipherlink/`](https://xevqor.my.id/cipherlink/) | **Cipherlink** | `deflate-raw` + `AES-256-GCM` inside URL `#` fragment | **Stateless URL-Fragment Cipher:** Payload stays in `#` hash (never sent to servers) and scrubs address bar via `history.replaceState` on decrypt. **Does not delete messages remotely**—copies in chat logs or screenshots persist. |
 | [`/stego/`](https://xevqor.my.id/stego/) | **Stego** | **EOF Container Injection** (`XEVQOR88` magic marker + `AES-256-GCM`) | Appends authenticated ciphertext after carrier file's EOF (not pixel-level LSB steganography). Must be sent as an uncompressed file/document; apps that re-encode images strip the payload. Auto-clears clipboard after 45s. |
@@ -88,24 +75,22 @@ XEVQOR explicitly documents both **what each engine guarantees cryptographically
 | [`/dice/`](https://xevqor.my.id/dice/) | **Dice** | Unbiased CSPRNG (`crypto.getRandomValues` + rejection sampling) | Eliminates modulo bias (`uint32 < 4294967292`) for cryptographic dice rolls and entropy generation. |
 
 <details>
-<summary><b>🔍 Expand Deep-Dive Technical Specifications (Wire Formats & Architecture Cards)</b></summary>
+<summary><b>🔍 Expand Deep-Dive Wire Format Specifications</b></summary>
 
-    ┌────────────────────────────────────────────────────────────────┐
-    │ [01] /encrypt/ — XQR2 STREAM-AEAD BINARY CONTAINER             │
-    │  • Magic Header : "XQR2" + 16B Salt + 12B Base IV + Meta Len   │
-    │  • Chunk Framing: Sequential 10 MB blocks; counter-derived IV  │
-    │  • Finality Flag: Bitmask authenticates EOF to block truncation│
-    ├────────────────────────────────────────────────────────────────┤
-    │ [02] /cipherlink/ — STATELESS URL-FRAGMENT CIPHER              │
-    │  • Transport    : [https://xevqor.my.id/cipherlink/#](https://xevqor.my.id/cipherlink/#)<b64url>    │
-    │  • Zero-Server  : RFC 3986 # fragments are never sent in HTTP  │
-    │  • Memory Hygiene: history.replaceState() wipes # post-decrypt │
-    ├────────────────────────────────────────────────────────────────┤
-    │ [03] /stego/ — XEVQOR88 EOF CONTAINER INJECTION                │
-    │  • Structure    : [Original Carrier Bytes] + [XEVQOR88] + GCM  │
-    │  • Carrier Rule : Preserves visual/binary fidelity 100%, but   │
-    │                   requires raw file transfer (Document mode)   │
-    └────────────────────────────────────────────────────────────────┘
+    ┌────────────────────────────────────────────┐
+    │ [01] /encrypt/ — XQR2 STREAM-AEAD FORMAT   │
+    │ • Header : "XQR2" + 16B Salt + 12B Base IV │
+    │ • Chunks : 10 MB blocks; counter-based IV  │
+    │ • EOF    : Bitmask blocks file truncation  │
+    ├────────────────────────────────────────────┤
+    │ [02] /cipherlink/ — URL-FRAGMENT CIPHER    │
+    │ • Format : /cipherlink/#<deflate+gcm+b64>  │
+    │ • Hygiene: history.replaceState() wipes #  │
+    ├────────────────────────────────────────────┤
+    │ [03] /stego/ — XEVQOR88 EOF CONTAINER      │
+    │ • Layout : [Carrier] + [XEVQOR88] + [GCM]  │
+    │ • Rule   : Send uncompressed as Document   │
+    └────────────────────────────────────────────┘
 
 </details>
 
@@ -133,7 +118,7 @@ Anyone can verify that the local build, Cloudflare Pages production (`xevqor.my.
     # 2. Verify live 3-way hash parity across all 10 routes
     for m in "" keypass/ hash/ jwt/ cipherlink/ nano/ nebula/ encrypt/ stego/ dice/; do
       f="${m}index.html"
-      C=$(curl -sL "[https://xevqor.my.id/$f](https://xevqor.my.id/$f)" | sha256sum | cut -c1-12)
-      G=$(curl -sL "[https://xevqor.github.io/$f](https://xevqor.github.io/$f)" | sha256sum | cut -c1-12)
+      C=$(curl -sL "https://xevqor.my.id/$f" | sha256sum | cut -c1-12)
+      G=$(curl -sL "https://xevqor.github.io/$f" | sha256sum | cut -c1-12)
       [ "$C" = "$G" ] && echo "✅ PARITY OK: $f ($C)" || echo "❌ MISMATCH: $f"
     done
