@@ -193,10 +193,23 @@
         <button class="btn-roll" data-click="rollImpulse()">ROLL SAVAGE RNG</button>
     </div>
 
-    <div class="footer">XEVQOR OBSIDIAN | UNBIASED CSPRNG ENGINE (SMALL 2–6 · BIG 7–12)</div>
+    <div class="footer">XEVQOR OBSIDIAN | UNBIASED CSPRNG ENGINE (CSPRNG 3D DICE · SUM · AVG · SHANNON ENTROPY (BITS))</div>
 </div>
 
 <script>
+
+    window.__xevDiceHist = window.__xevDiceHist || [];
+    function __formatMultiDice(rolls) {
+      const n = rolls.length;
+      const sum = rolls.reduce((a, b) => a + b, 0);
+      const avg = (sum / n).toFixed(2);
+      const entropy = (n * Math.log2(6)).toFixed(2);
+      window.__xevDiceHist.unshift(sum);
+      if (window.__xevDiceHist.length > 5) window.__xevDiceHist.pop();
+      const histStr = window.__xevDiceHist.join(" > ");
+      return "[ " + rolls.join(" · ") + " ]  |  SUM " + sum + "  ·  AVG " + avg + "  ·  " + entropy + " BITS  |  HIST: " + histStr;
+    }
+    
     function updateClock() {
         const now = new Date();
         const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -286,10 +299,10 @@
                 
                 let status = "";
                 if (numDice === 3 && results[0] === results[1] && results[1] === results[2]) {
-                    status = "TRIPLE";
+                    status = '';
                 } else {
                     let threshold = (numDice * 6 + numDice) / 2;
-                    status = (total >= threshold) ? "BIG" : "SMALL";
+                    status = (total >= threshold) ? '' : '';
                 }
                 
                 indicator.innerText = status;
