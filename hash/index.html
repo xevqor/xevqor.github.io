@@ -307,7 +307,7 @@
     <div class="btn-group">
       <button class="action-btn btn-hash" data-click="calculateHash('SHA-256')">SHA-256</button>
       <button class="action-btn btn-hash" data-click="calculateHash('SHA-512')">SHA-512</button>
-      <button class="action-btn btn-hash" data-click="calculateHash('SHA-1')">SHA-1</button>
+      <button class="action-btn btn-hash" data-click="calculateHash('SHA-1')">SHA-1 (LEGACY)</button>
     </div>
 
     <div class="action-row">
@@ -428,6 +428,8 @@
   }
 
 (function(){function run(el,code,ev){if(!code)return;if(code==="location.reload()"){location.reload();return;}if(code==="if(event.target===this)hideModal()"){if(ev.target===el){if(window.hideModal)window.hideModal();}return;}var m=code.match(/^([a-zA-Z0-9_]+)\((.*)\)$/);if(!m)return;if(typeof window[m[1]]!=="function")return;var raw=m[2].trim(),args=[];if(raw.length){var parts=raw.split(",");for(var j=0;j<parts.length;j++){var p=parts[j].trim();if(p==="this")args.push(el);else if(/^'.*'$/.test(p))args.push(p.slice(1,-1));else if(/^-?\d+(\.\d+)?$/.test(p))args.push(Number(p));}}window[m[1]].apply(el,args);}document.addEventListener("click",function(e){var t=e.target.closest("[data-click]");if(t)run(t,t.getAttribute("data-click"),e);});document.addEventListener("change",function(e){var t=e.target.closest("[data-change]");if(t)run(t,t.getAttribute("data-change"),e);});})();
+
+(function(){var ta=document.querySelector("textarea"),fi=document.querySelector("input[type=file]");if(ta</script></script>fi){ta.addEventListener("input",function(){if(fi.value)fi.value="";});}})();
 </script>
 </body>
 </html>

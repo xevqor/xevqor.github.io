@@ -39,8 +39,8 @@
     },
     {
       "name": "Burn Notes",
-      "short_name": "Burn",
-      "description": "Serverless self-destructing encrypted notes",
+      "short_name": "Cipherlink",
+      "description": "Serverless stateless URL-fragment encrypted links",
       "url": "/burn",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
