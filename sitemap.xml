@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
    <url>
-      <loc>https://xevqor.my.id/</loc>
+      <loc>https://xevqor.org/</loc>
       <priority>1.0</priority>
    </url>
    <url>
-      <loc>https://xevqor.my.id/keypass</loc>
+      <loc>https://xevqor.org/keypass</loc>
    </url>
    <url>
-      <loc>https://xevqor.my.id/hash</loc>
+      <loc>https://xevqor.org/hash</loc>
    </url>
    <url>
-      <loc>https://xevqor.my.id/jwt</loc>
+      <loc>https://xevqor.org/jwt</loc>
    </url>
    <url>
-      <loc>https://xevqor.my.id/cipherlink</loc>
+      <loc>https://xevqor.org/cipherlink</loc>
    </url>
    <url>
-      <loc>https://xevqor.my.id/nano</loc>
+      <loc>https://xevqor.org/nano</loc>
    </url>
    <url>
-      <loc>https://xevqor.my.id/nebula</loc>
+      <loc>https://xevqor.org/nebula</loc>
    </url>
    <url>
-      <loc>https://xevqor.my.id/encrypt</loc>
+      <loc>https://xevqor.org/encrypt</loc>
    </url>
    <url>
-      <loc>https://xevqor.my.id/stego</loc>
+      <loc>https://xevqor.org/stego</loc>
    </url>
    <url>
-      <loc>https://xevqor.my.id/dice</loc>
+      <loc>https://xevqor.org/dice</loc>
    </url>
   <url>
-    <loc>https://xevqor.my.id/llms.txt</loc>
+    <loc>https://xevqor.org/llms.txt</loc>
     <priority>0.8</priority>
   </url>
 </urlset>
