@@ -41,7 +41,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 
 ## Cryptographic Primitives & Audit Notes
 
-* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **600,000 iterations**) via `SubtleCrypto.deriveBits`. The case-normalized (`lowercase`) domain-prefixed UTF-8 *Identity Label* (`xevqor.keypass.v2:<label>`) serves as the deterministic salt paired with the *Brain Key* to derive 28-character passwords in memory (Output B is a deterministic remapped variant of Output A), featuring a 45-second clipboard auto-wipe.
+* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **600,000 iterations**) via `SubtleCrypto.deriveBits`. The case-normalized (`lowercase`) domain-prefixed UTF-8 *Identity Label* derives two independent 28-character outputs via separate `PBKDF2-SHA256` calls using domain-separated salts (`xevqor.keypass.v2:<label>` for Slot A's 62-character alphanumeric mapping and `xevqor.keypass.v2:slot-b:<label>` for Slot B's 88-character uniform rejection-sampled alphabet), paired with a live Brain Key entropy indicator and best-effort 45-second clipboard auto-clear.
 * **Authenticated Encryption (`/encrypt`, `/nano`, `/cipherlink`, `/stego`, `/nebula`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 600,000 iterations across all 5 AEAD encryption modules and Keypass). Because `/cipherlink` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while distributed copies remain the sender's responsibility.
 * **Entropy Source (`/dice`):** Uses OS-level CSPRNG (`window.crypto.getRandomValues()`) with unbiased rejection sampling (`uint32 < 4294967292`) rather than `Math.random()`.
 * **Service Worker (`sw.js`):** Same-origin `GET` cache handler (`xevqor-vault-v2-cl`) caches same-origin HTTP 200 GET responses for offline availability (never caching URL # fragments or user secrets).
@@ -52,7 +52,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 
 | Module | Endpoint | Purpose |
 | :--- | :--- | :--- |
-| **KEYPASS** | `/keypass` | Deterministic password generator (`PBKDF2-SHA256`, primary + remapped output). |
+| **KEYPASS** | `/keypass` | Deterministic dual-slot password generator (independent `PBKDF2-SHA256` derivations + entropy meter). |
 | **HASH** | `/hash` | `SHA-256`, `SHA-512`, and `SHA-1 (Legacy Checksum)` file and text digest verifier. |
 | **JWT** | `/jwt` | Offline JSON Web Token decoder and expiry inspector (`unverified signature`). |
 | **CIPHERLINK** | `/cipherlink` | Stateless encrypted links via URL fragment (`#`) with active address-bar scrubbing. |
@@ -130,3 +130,5 @@ Licensed under the **MIT License**.
 * **Perimeter Scans vs. Cryptographic Audit:** External scanners (SecurityHeaders, Mozilla Observatory, SSL Labs, urlscan.io, VirusTotal) verify HTTP response headers, TLS configuration, network isolation (`connect-src 'none'`), and domain reputation. Cryptographic primitives and zero-backend execution are verifiable directly via the open-source code in this repository and `SHA256SUMS.txt`.
 * **Hosting & Edge Headers:** No application backend, database, cookies, or analytics exist in XEVQOR. Static files are served via Cloudflare Pages / GitHub Pages; standard CDN edge headers (`NEL`, `Report-To`) injected by Cloudflare apply strictly to network diagnostics and never carry user inputs or cryptographic material.
 * **Workspace Reset & Clipboard Clearing:** `WIPE SYSTEM` clears active DOM state, inputs, outputs, and URL fragments, paired with best-effort 45-second clipboard auto-clear when clipboard permissions are granted. Physical memory reclamation remains governed by the browser's JavaScript garbage collector.
+* **Inline Style Directive (`style-src 'self' 'unsafe-inline'`):** Executable scripts are pinned via SHA-256 hashes in both HTTP `_headers` and HTML `<meta>` CSP policies, while `style-src` permits dynamic DOM progress indicators and status styling.
+* **Vulnerability Disclosure Policy:** Security researchers can review disclosure guidelines, cryptographic standards alignment (`NIST SP 800-132`, `OWASP ASVS`), and reproducible build verification in [`SECURITY.md`](SECURITY.md).
