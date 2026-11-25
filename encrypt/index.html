@@ -400,23 +400,33 @@
           fillDiv.style.width = pct + "%"; percentDiv.innerText = pct + "%";
         }
       } else {
+        if (file.size < 54) throw "EMPTY OR TRUNCATED ARCHIVE";
         const header = new TextDecoder().decode(await file.slice(0,4).arrayBuffer());
         if (header !== "XQR2") throw "INVALID SIGNATURE";
         salt = new Uint8Array(await file.slice(4,20).arrayBuffer());
-        key = await deriveKey(p, salt);
         offset = 20;
         const metaIv = new Uint8Array(await file.slice(offset, offset+12).arrayBuffer()); offset+=12;
         const lenBuf = await file.slice(offset, offset+4).arrayBuffer();
         const metaLen = new DataView(lenBuf).getUint32(0,true); offset+=4;
+        if (metaLen < 18 || metaLen > 65536 || (offset + metaLen) > file.size) throw "INVALID METADATA BOUNDS";
+        key = await deriveKey(p, salt);
         const metaEnc = await file.slice(offset, offset+metaLen).arrayBuffer(); offset+=metaLen;
         const metaDec = await crypto.subtle.decrypt({ name:"AES-GCM", iv:metaIv, additionalData: metaAad }, key, metaEnc);
-        const metaObj = JSON.parse(new TextDecoder().decode(metaDec)); const metaName = metaObj.name; let totalDecrypted = 0;
-        const original = metaName || file.name.replace(/\.xqr$/,'');
+        const metaObj = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(metaDec));
+        if (!metaObj || typeof metaObj !== "object" || typeof metaObj.name !== "string" || typeof metaObj.size !== "number" || !Number.isSafeInteger(metaObj.size) || metaObj.size < 0) {
+          throw "INVALID METADATA PAYLOAD";
+        }
+        if (metaObj.size > 0 && offset >= file.size) throw "MISSING ENCRYPTED CHUNKS";
+        let totalDecrypted = 0;
+        const rawOriginal = metaObj.name || file.name.replace(/\.xqr$/,'');
+        const original = rawOriginal.replace(/[\x00-\x1f\\/:*?"<>|]+/g, "_").replace(/^\.+/, "") || "decrypted.bin";
         outName = "xevqor." + original;
         writable = await openDiskStream(outName);
         let idx = 0;
         while (offset < file.size) {
           if (myJob !== jobId) { if (writable) await writable.abort(); outputChunks.length = 0; return; }
+          const rem = file.size - offset;
+          if (rem < 28) throw "TRUNCATED CHUNK";
           const iv = new Uint8Array(await file.slice(offset, offset+12).arrayBuffer()); offset+=12;
           let ctSize = Math.min(CHUNK_SIZE+16, file.size-offset);
           const isLast = (offset + ctSize >= file.size);
@@ -427,7 +437,7 @@
           let pct = Math.min(100, Math.floor(offset / file.size * 100));
           fillDiv.style.width = pct + "%"; percentDiv.innerText = pct + "%";
         }
-        if (typeof metaObj.size === 'number' && totalDecrypted !== metaObj.size) throw 'TRUNCATED';
+        if (totalDecrypted !== metaObj.size) throw "TRUNCATED PAYLOAD";
       }
       if (myJob !== jobId) { if (writable) await writable.abort(); outputChunks.length = 0; return; }
       if (writable) {
@@ -441,7 +451,7 @@
       }
       statusDiv.innerText = writable ? "STREAMED TO DISK" : "SUCCESS"; fillDiv.style.background = "linear-gradient(90deg, #e8ebf2, #ffffff)";
     } catch(e) {
-      if (writable) { try { await writable.abort(); } catch(_) {} }
+      outputChunks.length = 0; if (writable) { try { await writable.abort(); } catch(_) {} }
       if (e && e.name === 'AbortError') { statusDiv.innerText = "CANCELLED"; barDiv.style.display = "none"; return; }
       statusDiv.innerText = "DECRYPT FAILED — WRONG KEY OR CORRUPTED FILE"; fillDiv.style.background = "#ff4d4d";
     }

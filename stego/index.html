@@ -381,11 +381,14 @@
                 updateStatus("DECRYPTING...", "#b8c7d9");
                 const buf = await carrier.arrayBuffer();
                 const L = buf.byteLength;
+                if (L < 61) throw new Error("FILE TOO SMALL FOR XEVQOR88 CONTAINER");
 
                 const magic = new TextDecoder().decode(buf.slice(L - 8));
-                if(magic !== SIG) throw new Error("INVALID XEVQOR SIGNATURE");
+                if (magic !== SIG) throw new Error("INVALID XEVQOR88 SIGNATURE");
 
-                const encLen = new Uint32Array(buf.slice(L - 12, L - 8))[0];
+                const encLen = new DataView(buf, L - 12, 4).getUint32(0, true);
+                if (encLen < 21 || encLen > (L - 40)) throw new Error("INVALID CONTAINER BOUNDS");
+
                 const encStart = L - 12 - encLen;
                 const ivStart = encStart - 12;
                 const saltStart = ivStart - 16;
@@ -396,23 +399,31 @@
 
                 const key = await deriveKey(pass, salt);
                 const decrypted = await crypto.subtle.decrypt({name: "AES-GCM", iv}, key, data);
+                if (decrypted.byteLength < 6) throw new Error("TRUNCATED PAYLOAD");
 
-                const mLen = new Uint32Array(decrypted.slice(0, 4))[0];
-                const meta = JSON.parse(new TextDecoder().decode(decrypted.slice(4, 4 + mLen)));
+                const mLen = new DataView(decrypted, 0, 4).getUint32(0, true);
+                if (mLen < 2 || mLen > 65536 || (4 + mLen) > decrypted.byteLength) throw new Error("INVALID METADATA BOUNDS");
+
+                const meta = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(decrypted.slice(4, 4 + mLen)));
+                if (!meta || typeof meta !== "object" || (meta.type !== "text" && meta.type !== "file")) {
+                    throw new Error("INVALID METADATA STRUCTURE");
+                }
                 const secretData = decrypted.slice(4 + mLen);
 
-                if(meta.type === 'text') {
+                if (meta.type === 'text') {
                     document.getElementById('payloadArea').classList.remove('hidden');
                     document.getElementById('payloadType').value = 'text';
                     updateUI();
-                    document.getElementById('payloadText').value = new TextDecoder().decode(secretData);
+                    document.getElementById('payloadText').value = new TextDecoder("utf-8", { fatal: true }).decode(secretData);
                     document.getElementById('copyBtn').classList.remove('hidden');
                     updateStatus("MESSAGE REVEALED", "#6bcf9f");
                 } else {
-                    const blob = new Blob([secretData], {type: meta.mime});
+                    if (typeof meta.name !== "string" || !meta.name.length) throw new Error("MISSING FILENAME");
+                    const safeName = meta.name.replace(/[\x00-\x1f\\/:*?"<>|]+/g, "_").replace(/^\.+/, "") || "payload.bin";
+                    const blob = new Blob([secretData], {type: typeof meta.mime === "string" ? meta.mime : "application/octet-stream"});
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(blob);
-                    a.download = "EXTRACTED_" + meta.name;
+                    a.download = "EXTRACTED_" + safeName;
                     a.click();
                     updateStatus("FILE EXTRACTED", "#6bcf9f");
                 }
