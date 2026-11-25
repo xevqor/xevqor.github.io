@@ -9,8 +9,8 @@
   <meta name="referrer" content="no-referrer" />
 
   <title>XEVQOR — Architecting Future Digital Systems</title>
-  <meta name="description" content="XEVQOR — Architecting Future Digital Systems. A 100% Client-Side, Zero-Server open-source client-side cryptography and privacy suite auditable at https://xevqor.github.io, featuring deterministic password generation (Keypass), SHA-256/512 file hashing (Hash), local JWT inspection (JWT), stateless client-side URL-fragment dead-drops (Cipherlink), compressed AES-256 text encryption (Nano), zero-width Unicode text encoding (Nebula), chunked .xqr file encryption (Encrypt), authenticated EOF binary container append (Stego), and unbiased 3D dice CSPRNG (Dice)." />
-  <meta name="keywords" content="XEVQOR, zero server, client side, open source cryptography, client-side cryptography, privacy tools, deterministic password generator, keypass, sha256 hash, jwt inspector, serverless cipherlink dead-drops, aes-256-gcm, nano compress, zero-width steganography, nebula, chunked file encryption, binary steganography, cryptographic rng, xevqor.github.io" />
+  <meta name="description" content="XEVQOR — Architecting Future Digital Systems. A 100% Client-Side, Zero-Server open-source client-side cryptography and privacy suite auditable at https://xevqor.github.io, featuring deterministic password generation (Keypass), SHA-256/512 file hashing (Hash), local JWT inspection (JWT), stateless client-side URL-fragment dead-drops (Cipherlink), ephemeral RAM-only volatile scratchpad (Nano), zero-width Unicode text encoding (Nebula), chunked .xqr file encryption (Encrypt), lossless PNG LSB steganography with automatic EXIF stripping (Stego), and unbiased 3D dice CSPRNG (Dice)." />
+  <meta name="keywords" content="XEVQOR, zero server, client side, open source cryptography, client-side cryptography, privacy tools, deterministic password generator, keypass, sha256 hash, jwt inspector, serverless cipherlink dead-drops, aes-256-gcm, ephemeral ram scratchpad, nano, zero-width steganography, nebula, chunked file encryption, png lsb steganography, cryptographic rng, xevqor.github.io" />
   <meta name="author" content="XEVQOR" />
   <link rel="canonical" href="https://xevqor.org" />
 
@@ -48,10 +48,10 @@
       "Hash (/hash): Client-side cryptographic file and text integrity checksum generator supporting SHA-256, SHA-512, and SHA-1.",
       "JWT (/jwt): Local Base64Url JSON Web Token decoder and real-time expiration (exp) claim inspector.",
       "Cipherlink (/cipherlink/): Stateless client-side encrypted URL fragment (#) notes using deflate-raw compression, AES-256-GCM encryption, and active browser address-bar scrubbing.",
-      "Nano (/nano): Platinum Squeeze text compressor (deflate-raw) and AES-256-GCM Base64 cipher utility.",
+      "Nano (/nano): Ephemeral volatile scratchpad held strictly in RAM with instant zero-trace wipe.",
       "Nebula (/nebula): Zero-width Unicode text encoder embedding AES-256-GCM encrypted messages into invisible characters (U+200B and U+200C).",
       "Encrypt (/encrypt): Chunked 10MB stream AES-256-GCM large file encryption vault outputting binary .xqr archives.",
-      "Stego (/stego): Authenticated binary container tool appending AES-256-GCM encrypted text or files to the EOF of cover files.",
+      "Stego (/stego): Lossless PNG LSB (Least Significant Bit) steganography with automatic EXIF metadata stripping.",
       "Dice (/dice): OS-level CSPRNG (window.crypto.getRandomValues) 3D cryptographic dice generator with Big, Small, and Triple evaluation."
     ],
     "offers": {
@@ -689,10 +689,10 @@
         <li><strong>Hash (/hash):</strong> Client-side cryptographic file and text integrity checksum calculator supporting SHA-256, SHA-512, and SHA-1 algorithms directly in browser memory.</li>
         <li><strong>JWT (/jwt):</strong> Offline Base64Url JSON Web Token header and payload decoder with real-time expiration (exp) timestamp verification.</li>
         <li><strong>Cipherlink (/cipherlink/):</strong> Stateless client-side encrypted notes combining deflate-raw compression and authenticated AES-256-GCM encryption stored inside local URL hash fragments (#) with active address-bar scrubbing upon decryption.</li>
-        <li><strong>Nano (/nano):</strong> Platinum Squeeze deflate-raw text compressor paired with authenticated AES-256-GCM Base64 encryption for compact secure message transmission.</li>
+        <li><strong>Nano (/nano):</strong> Ephemeral volatile scratchpad held strictly in RAM with instant zero-trace wipe, leaving zero disk or storage residue.</li>
         <li><strong>Nebula (/nebula):</strong> Zero-width Unicode text steganography engine concealing AES-256-GCM encrypted payloads inside invisible Unicode characters (U+200B and U+200C) embedded within ordinary cover text.</li>
         <li><strong>Encrypt (/encrypt):</strong> Chunked 10MB streaming AES-256-GCM file encryption vault designed for large files, generating portable binary .xqr encrypted archives locally.</li>
-        <li><strong>Stego (/stego):</strong> Authenticated binary container tool appending AES-256-GCM encrypted messages or files after the EOF of cover files without altering host playback or viewing.</li>
+        <li><strong>Stego (/stego):</strong> Lossless PNG LSB (Least Significant Bit) steganography with automatic EXIF metadata stripping for covert image payloads.</li>
         <li><strong>Dice (/dice):</strong> OS-level Cryptographically Secure Pseudo-Random Number Generator (window.crypto.getRandomValues) 3D dice simulator for Big, Small, and Triple outcomes.</li>
       </ul>
     </section>
