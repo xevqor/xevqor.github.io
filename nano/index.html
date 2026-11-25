@@ -222,12 +222,9 @@
         return new Uint8Array(await new Response(stream).arrayBuffer());
     }
 
-    const MAX_DECOMPRESSED_BYTES = 5 * 1024 * 1024;
     async function decompress(bytes) {
-        const r = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw')).getReader(), chunks = []; let total = 0;
-        while (true) { const { value, done } = await r.read(); if (done) break; total += value.byteLength; if (total > MAX_DECOMPRESSED_BYTES) { await r.cancel(); throw new Error("DECOMPRESSED PAYLOAD EXCEEDS 5 MB LIMIT"); } chunks.push(value); }
-        const m = new Uint8Array(total); let pos = 0; for (const c of chunks) { m.set(c, pos); pos += c.byteLength; }
-        return new TextDecoder("utf-8", { fatal: true }).decode(m);
+        const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+        return await new Response(stream).text();
     }
 
     async function deriveKey(p,salt){const enc=new TextEncoder();const km=await crypto.subtle.importKey("raw",enc.encode(p),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:600000,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);}

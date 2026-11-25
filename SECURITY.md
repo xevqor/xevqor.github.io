@@ -20,9 +20,3 @@ sha256sum -c SHA256SUMS.txt
 
 ## Reporting a Vulnerability
 Open a private security advisory at `https://github.com/xevqor/xevqor.github.io/security/advisories/new` or a public issue at `https://github.com/xevqor/xevqor.github.io/issues` with affected route, browser/OS version, and reproduction steps.
-
-## Resource & Parser Safety Bounds
-- **Stego (`/stego/`):** Enforces a 100 MB per-file (150 MB combined) pre-allocation check before reading `arrayBuffer()`, paired with `URL.revokeObjectURL()` cleanup and best-effort clipboard sanitization on `WIPE SYSTEM`.
-- **Hash (`/hash/`) & Encrypt (`/encrypt/`):** Enforces a 250 MB pre-allocation RAM guard for in-memory hashing and mobile Blob fallback (desktop browsers with File System Access API stream chunks directly to disk).
-- **Cipherlink (`/cipherlink/`) & Nano (`/nano/`):** Caps `deflate-raw` decompression streams at 5 MB to prevent decompression-bomb memory exhaustion.
-- **Nebula (`/nebula/`):** Wraps zero-width bitstreams in explicit `NBL2` frame delimiters (`U+200D`/`U+FEFF`), version byte, and 32-bit payload length header, validating 8-bit alignment before AES-GCM decryption.
