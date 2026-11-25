@@ -59,13 +59,13 @@
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-QcCtBws6diGzWAO1CPjZt31YYF2PwRZ7EuAhs+4G1PU=' 'sha256-7M3UtXi5/I/SwvjnolYFCaAfRZarO39CNvk9PeEQ0JI='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /nebula
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-KNS7S8L/dUcsk6+oBqvRow3fAt2szBXYZnmsU02hMTk='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-7YoKqlY61ytgQT+PeGT7XQoYzWZ/miy5m0NrhanZnnI='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /nebula/
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-KNS7S8L/dUcsk6+oBqvRow3fAt2szBXYZnmsU02hMTk='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-7YoKqlY61ytgQT+PeGT7XQoYzWZ/miy5m0NrhanZnnI='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /nebula/index.html
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-KNS7S8L/dUcsk6+oBqvRow3fAt2szBXYZnmsU02hMTk='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-7YoKqlY61ytgQT+PeGT7XQoYzWZ/miy5m0NrhanZnnI='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /encrypt
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-jQVO46mzO7k8g8hrUphyIzCCkoSbce6IvNXAxplpl84='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
