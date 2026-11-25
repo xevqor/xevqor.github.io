@@ -69,9 +69,9 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 1. **Audit Zero Network Traffic & CSP:** Open DevTools (`F12` -> **Network**) while operating any utility—including the **Support Xevqor** QR modal—to verify zero outbound requests and `connect-src 'none'`.
 2. **Verify Production-to-Mirror Parity:**
 
-       curl -sL https://xevqor.org | sha256sum
-       curl -sL https://xevqor.github.io | sha256sum
-       sha256sum -c SHA256SUMS.txt
+       curl -fsSL -A "Mozilla/5.0" https://xevqor.org | sha256sum
+       curl -fsSL -A "Mozilla/5.0" https://xevqor.github.io | sha256sum
+       sha256sum -c SHA256SUMS.txt  # run inside cloned repo (22 files incl. edge-only _headers)
 
 3. **Test Air-Gapped Offline Execution:** Load `https://xevqor.org` once, enable **Airplane Mode**, and run any of the 9 tools via Service Worker cache.
 4. **Clone & Self-Host:** `git clone https://github.com/xevqor/xevqor.github.io.git && cd xevqor.github.io` and serve via any static HTTP server (`python3 -m http.server`).
@@ -100,12 +100,13 @@ To maintain strict cryptographic transparency, **XEVQOR** explicitly defines wha
 - **Cloudflare Edge (`https://xevqor.org/`) vs. GitHub Mirror (`https://xevqor.github.io/`):** Both serve bit-identical static files (`SHA256SUMS.txt`). Production enforces strict HTTP response headers via `_headers` (**CSP Level 3 SHA-256 script hashes**, `COOP: same-origin`, `COEP: require-corp`, `HSTS Preload`, `X-Frame-Options: DENY`), whereas GitHub Pages enforces sandbox isolation via the in-document `<meta>` Content-Security-Policy (`connect-src 'none'`).
 - **Zero User-Data Persistence:** No passphrases, files, or messages are ever transmitted to a server or written to cookies, `localStorage`, or `IndexedDB`. The Service Worker (`sw.js`) caches same-origin HTTP 200 GET responses for offline availability and never caches user inputs or URL `#` fragments.
 - **Passphrase Responsibility:** Encrypted modules use **PBKDF2-SHA256 (600,000 iterations)** + **AES-256-GCM**. While 600k iterations resist casual brute force, weak or dictionary passwords remain vulnerable to offline GPU cracking if ciphertext is captured.
+- **Client Environment & Extension Boundary:** Client-side execution in tab RAM assumes an uncompromised operating system and browser profile; malicious browser extensions, compromised OS kernels, or keyloggers on the user's device remain outside the browser sandbox's control.
 
 ### Per-Module Cryptographic Boundaries
 
 | Route | Module | Honest Technical Definition & Operational Boundary |
 | :--- | :--- | :--- |
-| `/encrypt/` | **Encrypt (`XQR2`)** | Splits files into **10 MB chunks** using **Chunked AES-256-GCM (`AES-256-GCM`)**, authenticating chunk order, EOF, original filename, and exact size. Bounded by browser tab RAM; decrypted files download with `xevqor.` prefix. |
+| `/encrypt/` | **Encrypt (`XQR2`)** | Splits files into **10 MB chunks** using **Chunked AES-256-GCM**, authenticating chunk order, EOF, original filename, and exact size. Bounded by browser tab RAM; decrypted files download with `xevqor.` prefix. |
 | `/cipherlink/` | **Cipherlink** | **Stateless URL-Fragment Cipher (`deflate-raw` + `AES-256-GCM`).** Payload stays in the URL `#` fragment (never sent to servers), trims passphrase whitespace (`.trim()`), and scrubs the address bar via `history.replaceState` upon decryption. **Does not delete messages remotely**—copies in chat logs, clipboards, or screenshots persist. |
 | `/stego/` | **Stego** | **EOF Container Injection (`XEVQOR88` + `AES-256-GCM`).** Appends authenticated ciphertext after the carrier file's EOF marker (not pixel-level LSB steganography; does not strip EXIF metadata). Must be sent as an uncompressed file/document; apps that re-encode images strip the payload. Best-effort clipboard auto-clear after 45s (when browser clipboard read/write permission is granted). |
 | `/nebula/` | **Nebula** | **Zero-Width Unicode Carrier (`U+200B` / `U+200C`).** Embeds 8 invisible characters per byte (352-character fixed overhead for salt + IV + GCM tag; total 8 × (plaintext bytes + 44)) at cover text midpoint. Fails if transmitted through channels that sanitize or normalize invisible Unicode. |
@@ -117,6 +118,15 @@ To maintain strict cryptographic transparency, **XEVQOR** explicitly defines wha
 
 ---
 
+## Scope of External Scans & Memory Model
+* **Perimeter Scans vs. Cryptographic Audit:** External scanners (SecurityHeaders, Mozilla Observatory, SSL Labs, urlscan.io, VirusTotal) verify HTTP response headers, TLS configuration, network isolation (`connect-src 'none'`), and domain reputation. Cryptographic primitives and zero-backend execution are verifiable directly via the open-source code in this repository and `SHA256SUMS.txt`.
+* **Hosting & Edge Headers:** Zero application backend, database, or tracking cookies (passive edge-level CDN telemetry has zero access to client-side Web Crypto memory, passphrases, or URL `#` fragments). Static files are served via Cloudflare Pages / GitHub Pages; standard CDN edge headers (`NEL`, `Report-To`) injected by Cloudflare apply strictly to network diagnostics and never carry user inputs or cryptographic material.
+* **Workspace Reset & Clipboard Clearing:** `WIPE SYSTEM` clears active DOM state, inputs, outputs, and URL fragments, paired with best-effort 45-second clipboard auto-clear when clipboard permissions are granted. Physical memory reclamation remains governed by the browser's JavaScript garbage collector.
+* **Inline Style Directive (`style-src 'self' 'unsafe-inline'`):** Executable scripts are pinned via SHA-256 hashes in both HTTP `_headers` and HTML `<meta>` CSP policies, while `style-src` permits dynamic DOM progress indicators and status styling.
+* **Vulnerability Disclosure Policy:** Security researchers can review disclosure guidelines, cryptographic standards alignment (`NIST SP 800-132`, `OWASP ASVS`), and reproducible build verification in [`SECURITY.md`](SECURITY.md).
+
+---
+
 ## License
 
 Licensed under the **MIT License**.
@@ -125,10 +135,3 @@ Licensed under the **MIT License**.
   <br>
   <i>Engineered with precision. 100% Client-Side & Zero-Server by design.</i>
 </div>
-
-## Scope of External Scans & Memory Model
-* **Perimeter Scans vs. Cryptographic Audit:** External scanners (SecurityHeaders, Mozilla Observatory, SSL Labs, urlscan.io, VirusTotal) verify HTTP response headers, TLS configuration, network isolation (`connect-src 'none'`), and domain reputation. Cryptographic primitives and zero-backend execution are verifiable directly via the open-source code in this repository and `SHA256SUMS.txt`.
-* **Hosting & Edge Headers:** zero application backend, database, or tracking cookies (passive edge-level CDN telemetry has zero access to client-side Web Crypto memory, passphrases, or URL `#` fragments). Static files are served via Cloudflare Pages / GitHub Pages; standard CDN edge headers (`NEL`, `Report-To`) injected by Cloudflare apply strictly to network diagnostics and never carry user inputs or cryptographic material.
-* **Workspace Reset & Clipboard Clearing:** `WIPE SYSTEM` clears active DOM state, inputs, outputs, and URL fragments, paired with best-effort 45-second clipboard auto-clear when clipboard permissions are granted. Physical memory reclamation remains governed by the browser's JavaScript garbage collector.
-* **Inline Style Directive (`style-src 'self' 'unsafe-inline'`):** Executable scripts are pinned via SHA-256 hashes in both HTTP `_headers` and HTML `<meta>` CSP policies, while `style-src` permits dynamic DOM progress indicators and status styling.
-* **Vulnerability Disclosure Policy:** Security researchers can review disclosure guidelines, cryptographic standards alignment (`NIST SP 800-132`, `OWASP ASVS`), and reproducible build verification in [`SECURITY.md`](SECURITY.md).
