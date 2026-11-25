@@ -120,7 +120,7 @@
         <div class="dual-results">
             <div class="res-card">
                 <div class="res-content">
-                    <span class="res-label">A: Alpha Only (28 Chars)</span>
+                    <span class="res-label">A: Base64URL Unbiased (28 Chars)</span>
                     <div id="outA" class="res-out">LOCKED</div>
                 </div>
                 <button class="mini-copy" data-click="copy('outA', this)">COPY</button>
@@ -195,9 +195,9 @@
             
             // Base string sekarang di-cut jadi 28 karakter sesuai standar optimal
             let raw = btoa(String.fromCharCode(...new Uint8Array(bits)))
-                       .replace(/\+/g, "X")
-                       .replace(/\//g, "Z")
-                       .replace(/=/g, "Y")
+                       .replace(/\+/g, "-")
+                       .replace(/\//g, "_")
+                       .replace(/=+$/g, "")
                        .substring(0, 28);
 
             document.getElementById('outA').innerText = raw;
@@ -253,7 +253,7 @@
   var h=document.querySelector("header,.header,.subtitle,p");
   if(h&&!document.getElementById("xqr-note")){
     var d=document.createElement("div");d.id="xqr-note";d.style.cssText="font-size:11px;opacity:.72;margin-top:8px;line-height:1.45;letter-spacing:.3px;";
-    d.textContent="Independent PBKDF2-SHA256 (600,000 iterations) derivations for Slot A (62-char alphanumeric map) and Slot B (88-char mixed symbols) using domain-separated salts. Security relies on Brain Key entropy (80+ bits recommended). Best-effort 45s clipboard auto-clear.";
+    d.textContent="Independent PBKDF2-SHA256 (600,000 iterations) derivations for Slot A (64-char bijective Base64URL map) and Slot B (88-char mixed symbols) using domain-separated salts. Security relies on Brain Key entropy (80+ bits recommended). Best-effort 45s clipboard auto-clear.";
     h.insertAdjacentElement("afterend",d);
   }
 })();

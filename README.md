@@ -8,7 +8,7 @@
 [![Architecture](https://img.shields.io/badge/Architecture-Zero--Knowledge-0a0a0a?style=flat-square&labelColor=000000)]()
 [![Execution](https://img.shields.io/badge/Execution-100%25_Client--Side-141414?style=flat-square&labelColor=000000)]()
 [![Cryptography](https://img.shields.io/badge/Crypto-Web_Crypto_API-1a1a1a?style=flat-square&labelColor=000000)]()
-[![Telemetry](https://img.shields.io/badge/Telemetry-Zero_Tracking-222222?style=flat-square&labelColor=000000)]()
+[![Telemetry](https://img.shields.io/badge/In--App_Analytics-None-222222?style=flat-square&labelColor=000000)]()
 [![Offline](https://img.shields.io/badge/Runtime-Offline_Capable-2b2b2b?style=flat-square&labelColor=000000)]()
 
 </div>
@@ -41,7 +41,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 
 ## Cryptographic Primitives & Audit Notes
 
-* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **600,000 iterations**) via `SubtleCrypto.deriveBits`. The case-normalized (`lowercase`) domain-prefixed UTF-8 *Identity Label* derives two independent 28-character outputs via separate `PBKDF2-SHA256` calls using domain-separated salts (`xevqor.keypass.v2:<label>` for Slot A's 62-character alphanumeric mapping and `xevqor.keypass.v2:slot-b:<label>` for Slot B's 88-character uniform rejection-sampled alphabet), paired with a live Brain Key entropy indicator and best-effort 45-second clipboard auto-clear.
+* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **600,000 iterations**) via `SubtleCrypto.deriveBits`. The case-normalized (`lowercase`) domain-prefixed UTF-8 *Identity Label* derives two independent 28-character outputs via separate `PBKDF2-SHA256` calls using domain-separated salts (`xevqor.keypass.v2:<label>` for Slot A's 64-character bijective Base64URL mapping and `xevqor.keypass.v2:slot-b:<label>` for Slot B's 88-character uniform rejection-sampled alphabet), paired with a live Brain Key entropy indicator and best-effort 45-second clipboard auto-clear.
 * **Authenticated Encryption (`/encrypt`, `/nano`, `/cipherlink`, `/stego`, `/nebula`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 600,000 iterations across all 5 AEAD encryption modules and Keypass). Because `/cipherlink` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while distributed copies remain the sender's responsibility.
 * **Entropy Source (`/dice`):** Uses OS-level CSPRNG (`window.crypto.getRandomValues()`) with unbiased rejection sampling (`uint32 < 4294967292`) rather than `Math.random()`.
 * **Service Worker (`sw.js`):** Same-origin `GET` cache handler (`xevqor-vault-v2-cl`) caches same-origin HTTP 200 GET responses for offline availability (never caching URL # fragments or user secrets).
@@ -53,7 +53,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 | Module | Endpoint | Purpose |
 | :--- | :--- | :--- |
 | **KEYPASS** | `/keypass` | Deterministic dual-slot password generator (independent `PBKDF2-SHA256` derivations + entropy meter). |
-| **HASH** | `/hash` | `SHA-256`, `SHA-512`, and `SHA-1 (Legacy Checksum)` file and text digest verifier. |
+| **HASH** | `/hash` | `SHA-256`, `SHA-384`, `SHA-512`, and `SHA-1 (Legacy Checksum)` file and text digest verifier (250 MB pre-allocation limit). |
 | **JWT** | `/jwt` | Offline JSON Web Token decoder and expiry inspector (`unverified signature`). |
 | **CIPHERLINK** | `/cipherlink` | Stateless encrypted links via URL fragment (`#`) with active address-bar scrubbing. |
 | **NANO** | `/nano` | `deflate-raw` compressor and `AES-256-GCM` text cipher. |
@@ -105,13 +105,13 @@ To maintain strict cryptographic transparency, **XEVQOR** explicitly defines wha
 
 | Route | Module | Honest Technical Definition & Operational Boundary |
 | :--- | :--- | :--- |
-| `/encrypt/` | **Encrypt (`XQR2`)** | Splits files into **10 MB chunks** using **Chunked AES-256-GCM (`AES-256-GCM`)**, authenticating chunk order, EOF, original filename, and exact size. Bounded by browser tab RAM; decrypted files download with `xevqor.` prefix. |
+| `/encrypt/` | **Encrypt (`XQR2`)** | Splits files into **10 MB chunks** using **Chunked AES-256-GCM (`AES-256-GCM`)**, authenticating chunk order, EOF, original filename, and exact size. Streams directly to disk via File System Access API or falls back to tab RAM Blob (capped at 250 MB); decrypted files download with `xevqor.` prefix. |
 | `/cipherlink/` | **Cipherlink** | **Stateless URL-Fragment Cipher (`deflate-raw` + `AES-256-GCM`).** Payload stays in the URL `#` fragment (never sent to servers), trims passphrase whitespace (`.trim()`), and scrubs the address bar via `history.replaceState` upon decryption. **Does not delete messages remotely**—copies in chat logs, clipboards, or screenshots persist. |
 | `/stego/` | **Stego** | **EOF Container Injection (`XEVQOR88` + `AES-256-GCM`).** Appends authenticated ciphertext after the carrier file's EOF marker (not pixel-level LSB steganography; does not strip EXIF metadata). Must be sent as an uncompressed file/document; apps that re-encode images strip the payload. Best-effort clipboard auto-clear after 45s (when browser clipboard read/write permission is granted). |
-| `/nebula/` | **Nebula** | **Zero-Width Unicode Carrier (`U+200B` / `U+200C`).** Embeds 8 invisible characters per byte (352-character fixed overhead for salt + IV + GCM tag; total 8 × (plaintext bytes + 44)) at cover text midpoint. Fails if transmitted through channels that sanitize or normalize invisible Unicode. |
+| `/nebula/` | **Nebula** | **Framed Zero-Width Unicode Carrier (`NBL2`, `U+200B` / `U+200C` with `U+200D` / `U+FEFF` frame delimiters & 32-bit length header).** Embeds 8 invisible characters per byte (+430 fixed frame/AEAD overhead) at cover text midpoint. Statistically detectable under Unicode/forensic inspection and stripped by channels that normalize invisible Unicode. |
 | `/nano/` | **Nano** | Compresses plaintext via `deflate-raw`, encrypts with `AES-256-GCM`, and encodes as compact Base64. |
 | `/keypass/` | **Keypass** | Deterministic `PBKDF2-SHA256` (600,000 iterations). Service labels are case-normalized (`lowercase`); **Output A** and **Output B** are independently derived via separate PBKDF2 calls using domain-separated salts (`xevqor.keypass.v2:<label>` and `xevqor.keypass.v2:slot-b:<label>`). Output strength depends on Brain Key entropy. Best-effort clipboard auto-clear after 45s (when browser clipboard read/write permission is granted). |
-| `/hash/` | **Hash** | Local `crypto.subtle.digest` calculator for **SHA-256**, **SHA-512**, and **SHA-1 (Legacy Non-Security Checksum)**. |
+| `/hash/` | **Hash** | Local `crypto.subtle.digest` calculator for **SHA-256**, **SHA-384**, **SHA-512**, and **SHA-1 (Legacy Non-Security Checksum)** with a 250 MB pre-allocation guard. |
 | `/jwt/` | **JWT** | Local Base64URL header/payload decoder (`UNVERIFIED SIGNATURE` — does not perform cryptographic signature verification). |
 | `/dice/` | **Dice** | Unbiased CSPRNG (`crypto.getRandomValues` with rejection sampling `uint32 < 4294967292`). |
 
@@ -119,7 +119,7 @@ To maintain strict cryptographic transparency, **XEVQOR** explicitly defines wha
 
 ## License
 
-Licensed under the **MIT License**.
+Licensed under the [**MIT License**](LICENSE).
 
 <div align="center">
   <br>

@@ -263,9 +263,12 @@
     return new Uint8Array(await new Response(stream).arrayBuffer());
   }
 
+  const MAX_DECOMPRESSED_BYTES = 5 * 1024 * 1024;
   async function decompressData(uint8Array) {
-    const stream = new Blob([uint8Array]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
-    return await new Response(stream).text();
+    const r = new Blob([uint8Array]).stream().pipeThrough(new DecompressionStream('deflate-raw')).getReader(), chunks = []; let total = 0;
+    while (true) { const { value, done } = await r.read(); if (done) break; total += value.byteLength; if (total > MAX_DECOMPRESSED_BYTES) { await r.cancel(); throw new Error("DECOMPRESSED PAYLOAD EXCEEDS 5 MB LIMIT"); } chunks.push(value); }
+    const m = new Uint8Array(total); let pos = 0; for (const c of chunks) { m.set(c, pos); pos += c.byteLength; }
+    return new TextDecoder("utf-8", { fatal: true }).decode(m);
   }
 
   // ========== CRYPTO ENGINE (16B SALT + 600K PBKDF2) ==========
