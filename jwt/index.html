@@ -141,7 +141,7 @@
     pre::-webkit-scrollbar { width: 4px; }
     pre::-webkit-scrollbar-thumb { background: var(--silver); border-radius: 10px; }
   </style>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-H+/ySGPuIGrxFWojBBbRjqXExiqNFGH56PstjQPqw+s='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-I+OS9715JSyPCVBh6mcya0msja+hhCb/ecgMuf/lzQ4='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';" />
   <meta name="referrer" content="no-referrer" />
 </head>
 <body>
@@ -245,7 +245,7 @@
       payloadOut.innerText = JSON.stringify(payloadJson, null, 2);
 
       // Cek Expiry (exp claim)
-      if (payloadJson.exp) {
+      if (typeof payloadJson.exp === 'number') {
         const expDate = new Date(payloadJson.exp * 1000);
         const now = new Date();
         

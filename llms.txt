@@ -15,7 +15,7 @@
 - [Encrypt](https://xevqor.org/encrypt/): Chunked 10MB AES-256-GCM file encryption and decryption with randomized output filenames (`xevqorvaultXXXXXX.xqr`). Streams directly to disk via File System Access API (`showSaveFilePicker`) on supported desktop browsers, falling back to browser RAM `Blob` on mobile browsers.
 - [Cipherlink](https://xevqor.org/cipherlink/): Serverless encrypted dead-drop links storing `deflate-raw` compressed `AES-256-GCM` ciphertext exclusively in the URL `#fragment` (never sent to HTTP servers) with active address-bar scrubbing and best-effort 45-second clipboard auto-clear.
 - [Stego](https://xevqor.org/stego/): Authenticated EOF container injection (`XEVQOR88` + `AES-256-GCM`) appending encrypted payloads after the carrier file's EOF marker (not pixel-level LSB steganography; does not strip EXIF metadata; requires uncompressed file transmission).
-- [Nebula](https://xevqor.org/nebula/): Zero-width Unicode steganography encoding `AES-256-GCM` ciphertext into invisible characters (`U+200B` and `U+200C`).
+- [Nebula](https://xevqor.org/nebula/): Zero-width Unicode text carrier encoding `AES-256-GCM` ciphertext into invisible characters (`U+200B` and `U+200C`).
 - [Hash](https://xevqor.org/hash/): Local file and text cryptographic digest calculator (SHA-256, SHA-384, SHA-512) using Web Crypto API.
 - [JWT Inspector](https://xevqor.org/jwt/): Offline JSON Web Token header/payload decoder and expiration (`exp`) claim inspector (explicitly notes unverified signature status).
 - [Nano](https://xevqor.org/nano/): Client-side text compressor and cipher combining `deflate-raw` compression, `AES-256-GCM` encryption, and compact Base64 encoding.

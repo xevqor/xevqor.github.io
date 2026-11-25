@@ -2,7 +2,7 @@
 
 # X E V Q O R
 
-**Architecting Future Digital Systems**  
+**Trust-No-One Client-Side Cryptography**  
 *Client-Side Cryptographic Suite. Zero-Server Client-Side Architecture.*
 
 [![Architecture](https://img.shields.io/badge/Architecture-Zero--Knowledge-0a0a0a?style=flat-square&labelColor=000000)]()
@@ -41,7 +41,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 
 ## Cryptographic Primitives & Audit Notes
 
-* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **600,000 iterations**) via `SubtleCrypto.deriveBits`. The case-normalized (`lowercase`) domain-prefixed UTF-8 *Identity Label* derives two independent 28-character outputs via separate `PBKDF2-SHA256` calls using domain-separated salts (`xevqor.keypass.v2:<label>` for Slot A's 62-character alphanumeric mapping and `xevqor.keypass.v2:slot-b:<label>` for Slot B's 88-character uniform rejection-sampled alphabet), paired with a live Brain Key entropy indicator and best-effort 45-second clipboard auto-clear.
+* **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **600,000 iterations**) via `SubtleCrypto.deriveBits`. The case-normalized (`lowercase`) domain-prefixed UTF-8 *Identity Label* derives two independent 28-character outputs via separate `PBKDF2-SHA256` calls using domain-separated salts (`xevqor.keypass.v2:<label>` for Slot A's Base64-derived 62-character alphanumeric mapping (`+`, `/`, `=` replaced with `X`, `Z`, `Y`) and `xevqor.keypass.v2:slot-b:<label>` for Slot B's 88-character uniform rejection-sampled alphabet), paired with a live Brain Key entropy indicator and best-effort 45-second clipboard auto-clear.
 * **Authenticated Encryption (`/encrypt`, `/nano`, `/cipherlink`, `/stego`, `/nebula`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 600,000 iterations across all 5 AEAD encryption modules and Keypass). Because `/cipherlink` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while distributed copies remain the sender's responsibility.
 * **Entropy Source (`/dice`):** Uses OS-level CSPRNG (`window.crypto.getRandomValues()`) with unbiased rejection sampling (`uint32 < 4294967292`) rather than `Math.random()`.
 * **Service Worker (`sw.js`):** Same-origin `GET` cache handler (`xevqor-vault-v2-cl`) caches same-origin HTTP 200 GET responses for offline availability (never caching URL # fragments or user secrets).
@@ -135,5 +135,5 @@ Licensed under the **MIT License**.
 
 <div align="center">
   <br>
-  <i>Engineered with precision. 100% Client-Side & Zero-Server by design.</i>
+  <i>Open-source Web Crypto utilities executed locally in browser memory. Auditable source and SHA-256 manifests.</i>
 </div>

@@ -151,7 +151,7 @@
             textarea { font-size: 0.75rem; }
         }
     </style>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-KNS7S8L/dUcsk6+oBqvRow3fAt2szBXYZnmsU02hMTk='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-f0Jc5VDuH4YUKPhCGbMZ4llOwO82Nk262QF+ymTZlVY='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';" />
   <meta name="referrer" content="no-referrer" />
 </head>
 <body>
@@ -247,7 +247,7 @@
                 for(let i=0; i<combined.length; i++) binStr += combined[i].toString(2).padStart(8, '0');
                 const hid = binStr.split('').map(b => Z[b]).join('');
 
-                const chars = Array.from(pub), mid = Math.floor(chars.length / 2);
+                const cleanPub = pub.replace(/[\u200B-\u200D\uFEFF]/g, ''), chars = Array.from(cleanPub), mid = Math.floor(chars.length / 2);
                 out.value = chars.slice(0, mid).join('') + hid + chars.slice(mid).join('');
                 updateStatus("MISSION ACCOMPLISHED", "#6bcf9f");
 
