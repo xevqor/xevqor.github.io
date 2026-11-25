@@ -86,7 +86,7 @@ Live production (`https://xevqor.org/`) verified across independent public secur
 | :--- | :--- | :--- |
 | **Mozilla HTTP Observatory** | **Grade A+ (`135/100` — `12/12` Tests Passed)**, SHA-256 CSP, 0 Cookies | [View Live Report](https://developer.mozilla.org/en-US/observatory/analyze?host=xevqor.org) |
 | **Security Headers (Snyk)** | **Grade A+** — All 6 HTTP security headers active, 0 warnings | [View Live Report](https://securityheaders.com/?q=https%3A%2F%2Fxevqor.org%2F&followRedirects=on) |
-| **urlscan.io (Public Sandbox)** | **1 Domain (`xevqor.org`), 2 Requests, 0 Cookies, 100% HTTPS** | [View Domain Scans](https://urlscan.io/search/#domain%3Axevqor.org) |
+| **urlscan.io (Public Sandbox)** | **1 Domain (`xevqor.org`), 2 Requests, 0 Cookies, 100% HTTPS** | [View Live Report](https://urlscan.io/result/01a211a2-3ec2-7023-9ccc-b3d85a2c6007/) |
 | **VirusTotal Threat Intel** | **0 Malicious Flags** across global security vendors | [View Live Report](https://www.virustotal.com/gui/url/15d26cd0f18520bfc5b8e5c9b03983fc85ee717d83e98aa7c2510f8f5e28adbd) |
 | **Qualys SSL Labs** | Cloudflare Edge TLS 1.3 & 2-Year HSTS Preload | [View Live Report](https://www.ssllabs.com/ssltest/analyze.html?d=xevqor.org) |
 
