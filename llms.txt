@@ -1,25 +1,25 @@
 # XEVQOR
 
-> Zero-dependency, offline-first client-side cryptography and privacy utility suite. 100% browser-executed via Web Crypto API with zero cookies, zero localStorage, zero analytics, and strict `connect-src 'none'` network isolation.
+> Zero-dependency, offline-first client-side cryptography and privacy utility suite. Executed locally in the browser via Web Crypto API with no application backend, zero cookies, zero localStorage, zero analytics, and strict `connect-src 'none'` network isolation.
 
 ## Core Architecture & Security Posture
 - **Domain**: https://xevqor.org/
 - **Open-Source Mirror**: https://github.com/xevqor/xevqor.github.io
-- **Cryptographic Primitives**: PBKDF2-SHA256 (600,000 iterations), AES-256-GCM (Chunked with anti-truncation per-chunk AAD), 96-bit random IV, 128-bit salt, CSPRNG (`crypto.getRandomValues` with modulo-bias rejection sampling).
-- **HTTP Security Score**: 135/100 (Grade A+) on Mozilla HTTP Observatory; strict SHA-256 inline script CSP, HSTS preload, COOP/COEP/CORP isolation.
-- **Offline PWA**: Service Worker (`sw.js`) caches static assets locally; zero user inputs or keys ever touch disk or network.
+- **Cryptographic Primitives**: PBKDF2-SHA256 (600,000 iterations with domain-separated salts), AES-256-GCM (Chunked with anti-truncation per-chunk AAD), 96-bit random IV, 128-bit salt, CSPRNG (`crypto.getRandomValues` with modulo-bias rejection sampling).
+- **HTTP Security Posture**: Grade A+ on Mozilla HTTP Observatory and SecurityHeaders; strict SHA-256 inline script CSP, `connect-src 'none'`, HSTS preload, COOP/COEP/CORP isolation. Static files are served via Cloudflare Pages / GitHub Pages (standard CDN edge headers such as `NEL`/`Report-To` apply only to network diagnostics and never carry user inputs or cryptographic material).
+- **Offline PWA & Workspace Reset**: Service Worker (`sw.js`) caches static assets locally. `WIPE SYSTEM` resets active DOM state and triggers best-effort 45-second clipboard auto-clear when clipboard permissions are granted (physical RAM reclamation remains governed by the browser JavaScript garbage collector).
 
 ## Tools & Modules
 - [XEVQOR Suite Index](https://xevqor.org/): Main portal launching all 9 client-side privacy and cryptographic utilities.
-- [Keypass](https://xevqor.org/keypass/): High-entropy CSPRNG password and passphrase generator with rejection sampling.
-- [Encrypt](https://xevqor.org/encrypt/): Streaming Chunked AES-256-GCM file encryption and decryption with randomized output filenames (`xevqorvaultXXXXXX.xqr`) to prevent metadata leakage.
-- [Cipherlink](https://xevqor.org/cipherlink/): Serverless encrypted dead-drop links storing ciphertext exclusively in the URL `#fragment` (never sent to HTTP servers) with 45-second auto-wipe clipboard protection.
-- [Stego](https://xevqor.org/stego/): Lossless PNG LSB (Least Significant Bit) steganography hiding AES-256-GCM encrypted payloads inside images while stripping EXIF metadata.
-- [Nebula](https://xevqor.org/nebula/): Zero-width Unicode steganography encoding AES-256-GCM ciphertext into invisible characters (`8 chars/byte + 352 fixed overhead`).
-- [Hash](https://xevqor.org/hash/): Local file and text cryptographic digest calculator (SHA-256, SHA-384, SHA-512) with constant-time comparison.
-- [JWT Inspector](https://xevqor.org/jwt/): Offline JSON Web Token header/payload decoder and HMAC/RSA/ECDSA signature verifier.
-- [Nano](https://xevqor.org/nano/): Ephemeral volatile scratchpad held strictly in RAM with instant zero-trace wipe.
-- [Dice](https://xevqor.org/dice/): Unbiased CSPRNG 3D multi-dice entropy generator displaying faces, sum, mean, Shannon entropy bits, and session history.
+- [Keypass](https://xevqor.org/keypass/): Deterministic dual 28-character password generator derived from Brain Key and Identity Label using separate PBKDF2-SHA256 (600,000 iterations) calls with domain-separated salts (`xevqor.keypass.v2:<label>` and `xevqor.keypass.v2:slot-b:<label>`). Output strength depends on Brain Key entropy.
+- [Encrypt](https://xevqor.org/encrypt/): Chunked 10MB AES-256-GCM file encryption and decryption with randomized output filenames (`xevqorvaultXXXXXX.xqr`). Streams directly to disk via File System Access API (`showSaveFilePicker`) on supported desktop browsers, falling back to browser RAM `Blob` on mobile browsers.
+- [Cipherlink](https://xevqor.org/cipherlink/): Serverless encrypted dead-drop links storing `deflate-raw` compressed `AES-256-GCM` ciphertext exclusively in the URL `#fragment` (never sent to HTTP servers) with active address-bar scrubbing and best-effort 45-second clipboard auto-clear.
+- [Stego](https://xevqor.org/stego/): Authenticated EOF container injection (`XEVQOR88` + `AES-256-GCM`) appending encrypted payloads after the carrier file's EOF marker (not pixel-level LSB steganography; does not strip EXIF metadata; requires uncompressed file transmission).
+- [Nebula](https://xevqor.org/nebula/): Zero-width Unicode steganography encoding `AES-256-GCM` ciphertext into invisible characters (`U+200B` and `U+200C`).
+- [Hash](https://xevqor.org/hash/): Local file and text cryptographic digest calculator (SHA-256, SHA-384, SHA-512) using Web Crypto API.
+- [JWT Inspector](https://xevqor.org/jwt/): Offline JSON Web Token header/payload decoder and expiration (`exp`) claim inspector (explicitly notes unverified signature status).
+- [Nano](https://xevqor.org/nano/): Client-side text compressor and cipher combining `deflate-raw` compression, `AES-256-GCM` encryption, and compact Base64 encoding.
+- [Dice](https://xevqor.org/dice/): Unbiased CSPRNG (`crypto.getRandomValues` with rejection sampling) 3D multi-dice entropy generator displaying faces, sum, mean, Shannon entropy bits, and session history.
 
 ## Verification & Reproducibility
 - [SHA256SUMS.txt](https://raw.githubusercontent.com/xevqor/xevqor.github.io/main/SHA256SUMS.txt): Bit-for-bit SHA-256 manifest verifying parity between production (`xevqor.org`) and GitHub Pages (`xevqor.github.io`).

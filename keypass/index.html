@@ -202,14 +202,17 @@
 
             document.getElementById('outA').innerText = raw;
 
-            const symbols = "!@#$%^&*()_+-=[]{}|;:,.<>?";
-            let mixed = raw.split('');
-            for(let i = 0; i < mixed.length; i++) {
-                if ((i + raw.charCodeAt(i)) % 4 === 0) {
-                    mixed[i] = symbols[i % symbols.length];
+            const saltB = encoder.encode("xevqor.keypass.v2:slot-b:" + l1);
+            const bitsB = await crypto.subtle.deriveBits({name: "PBKDF2", salt: saltB, iterations: 600000, hash: "SHA-256"}, bKey, 1024);
+            const alphabetB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+            const bytesB = new Uint8Array(bitsB);
+            let outB = "";
+            for (let i = 0; i < bytesB.length && outB.length < 28; i++) {
+                if (bytesB[i] < 176) {
+                    outB += alphabetB[bytesB[i] % 88];
                 }
             }
-            document.getElementById('outB').innerText = mixed.join('');
+            document.getElementById('outB').innerText = outB;
 
             updateStatus("DUAL KEY REVEALED", "#6bcf9f");
         } catch (e) { updateStatus("FATAL ERROR", "#ff6b6b"); }

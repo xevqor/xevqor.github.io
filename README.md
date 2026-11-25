@@ -86,7 +86,7 @@ Live production (`https://xevqor.org/`) verified across independent public secur
 | :--- | :--- | :--- |
 | **Mozilla HTTP Observatory** | **Grade A+ (`135/100` — `12/12` Tests Passed)**, SHA-256 CSP, 0 Cookies | [View Live Report](https://developer.mozilla.org/en-US/observatory/analyze?host=xevqor.org) |
 | **Security Headers (Snyk)** | **Grade A+** — All 6 HTTP security headers active, 0 warnings | [View Live Report](https://securityheaders.com/?q=https%3A%2F%2Fxevqor.org%2F&followRedirects=on) |
-| **urlscan.io (Public Sandbox)** | **1 Domain (`xevqor.org`), 2 Requests, 0 Cookies, 100% HTTPS** | [View Live Report](https://urlscan.io/result/01a1faa4-4259-760c-ac4d-81cb7561f052/) |
+| **urlscan.io (Public Sandbox)** | **1 Domain (`xevqor.org`), 2 Requests, 0 Cookies, 100% HTTPS** | [View Domain Scans](https://urlscan.io/search/#domain%3Axevqor.org) |
 | **VirusTotal Threat Intel** | **0 Malicious Flags** across global security vendors | [View Live Report](https://www.virustotal.com/gui/url/15d26cd0f18520bfc5b8e5c9b03983fc85ee717d83e98aa7c2510f8f5e28adbd) |
 | **Qualys SSL Labs** | Cloudflare Edge TLS 1.3 & 2-Year HSTS Preload | [View Live Report](https://www.ssllabs.com/ssltest/analyze.html?d=xevqor.org) |
 
@@ -107,10 +107,10 @@ To maintain strict cryptographic transparency, **XEVQOR** explicitly defines wha
 | :--- | :--- | :--- |
 | `/encrypt/` | **Encrypt (`XQR2`)** | Splits files into **10 MB chunks** using **Chunked AES-256-GCM (`AES-256-GCM`)**, authenticating chunk order, EOF, original filename, and exact size. Bounded by browser tab RAM; decrypted files download with `xevqor.` prefix. |
 | `/cipherlink/` | **Cipherlink** | **Stateless URL-Fragment Cipher (`deflate-raw` + `AES-256-GCM`).** Payload stays in the URL `#` fragment (never sent to servers), trims passphrase whitespace (`.trim()`), and scrubs the address bar via `history.replaceState` upon decryption. **Does not delete messages remotely**—copies in chat logs, clipboards, or screenshots persist. |
-| `/stego/` | **Stego** | **EOF Container Injection (`XEVQOR88` + `AES-256-GCM`).** Appends authenticated ciphertext after the carrier file's EOF marker (not pixel-level LSB steganography). Must be sent as an uncompressed file/document; apps that re-encode images strip the payload. Auto-clears clipboard after 45s (when browser clipboard read/write permission is granted). |
+| `/stego/` | **Stego** | **EOF Container Injection (`XEVQOR88` + `AES-256-GCM`).** Appends authenticated ciphertext after the carrier file's EOF marker (not pixel-level LSB steganography; does not strip EXIF metadata). Must be sent as an uncompressed file/document; apps that re-encode images strip the payload. Best-effort clipboard auto-clear after 45s (when browser clipboard read/write permission is granted). |
 | `/nebula/` | **Nebula** | **Zero-Width Unicode Carrier (`U+200B` / `U+200C`).** Embeds 8 invisible characters per byte (352-character fixed overhead for salt + IV + GCM tag; total 8 × (plaintext bytes + 44)) at cover text midpoint. Fails if transmitted through channels that sanitize or normalize invisible Unicode. |
 | `/nano/` | **Nano** | Compresses plaintext via `deflate-raw`, encrypts with `AES-256-GCM`, and encodes as compact Base64. |
-| `/keypass/` | **Keypass** | Deterministic `PBKDF2-SHA256` (600,000 iterations). Service labels are case-normalized (`lowercase`); **Output B** is a deterministic character-remapped variant of Output A (same primary entropy). Auto-clears clipboard after 45s (when browser clipboard read/write permission is granted). |
+| `/keypass/` | **Keypass** | Deterministic `PBKDF2-SHA256` (600,000 iterations). Service labels are case-normalized (`lowercase`); **Output A** and **Output B** are independently derived via separate PBKDF2 calls using domain-separated salts (`xevqor.keypass.v2:<label>` and `xevqor.keypass.v2:slot-b:<label>`). Output strength depends on Brain Key entropy. Best-effort clipboard auto-clear after 45s (when browser clipboard read/write permission is granted). |
 | `/hash/` | **Hash** | Local `crypto.subtle.digest` calculator for **SHA-256**, **SHA-512**, and **SHA-1 (Legacy Non-Security Checksum)**. |
 | `/jwt/` | **JWT** | Local Base64URL header/payload decoder (`UNVERIFIED SIGNATURE` — does not perform cryptographic signature verification). |
 | `/dice/` | **Dice** | Unbiased CSPRNG (`crypto.getRandomValues` with rejection sampling `uint32 < 4294967292`). |
@@ -125,3 +125,8 @@ Licensed under the **MIT License**.
   <br>
   <i>Engineered with precision. 100% Client-Side & Zero-Server by design.</i>
 </div>
+
+## Scope of External Scans & Memory Model
+* **Perimeter Scans vs. Cryptographic Audit:** External scanners (SecurityHeaders, Mozilla Observatory, SSL Labs, urlscan.io, VirusTotal) verify HTTP response headers, TLS configuration, network isolation (`connect-src 'none'`), and domain reputation. Cryptographic primitives and zero-backend execution are verifiable directly via the open-source code in this repository and `SHA256SUMS.txt`.
+* **Hosting & Edge Headers:** No application backend, database, cookies, or analytics exist in XEVQOR. Static files are served via Cloudflare Pages / GitHub Pages; standard CDN edge headers (`NEL`, `Report-To`) injected by Cloudflare apply strictly to network diagnostics and never carry user inputs or cryptographic material.
+* **Workspace Reset & Clipboard Clearing:** `WIPE SYSTEM` clears active DOM state, inputs, outputs, and URL fragments, paired with best-effort 45-second clipboard auto-clear when clipboard permissions are granted. Physical memory reclamation remains governed by the browser's JavaScript garbage collector.
