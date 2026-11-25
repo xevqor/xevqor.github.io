@@ -32,7 +32,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 > *"What you do here, stays here."*
 
 * **100% Client-Side Execution:** Key derivation, encryption, hashing, token inspection, compression, and binary/Unicode payload encoding run locally in browser memory via the native **W3C Web Crypto API (`window.crypto.subtle`)**.
-* **Zero Third-Party Requests:** No analytics, no cookies, no external font CDNs, and no third-party QR APIs. Typography uses local system font stacks, and donation QR codes render locally via an embedded **Reed-Solomon SVG generator (`OfflineQR`)**.
+* **Zero Application-Level Trackers:** No embedded analytics, cookies, external font CDNs, or third-party QR APIs in source code (any Cloudflare edge RUM beacon injected on `xevqor.org` is blocked from executing by strict `script-src` SHA-256 CSP). Typography uses local system font stacks, and donation QR codes render locally via an embedded **Reed-Solomon SVG generator (`OfflineQR`)**.
 * **Browser-Enforced CSP Lockdown:** Enforces `Content-Security-Policy` (`connect-src 'none'`, `form-action 'none'`, `object-src 'none'`) and `referrer="no-referrer"`, blocking outbound network calls at the browser engine level after initial load.
 * **Zero Data Persistence:** No backend servers, no databases, and no `localStorage` credential retention. Inputs and keys stay strictly in volatile browser tab RAM.
 * **Offline Capable (PWA):** Backed by a same-origin Service Worker (`sw.js`) caching static app-shell assets for air-gapped operation without caching user secrets or URL `#` fragments.
@@ -67,11 +67,13 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 ## How to Verify & Self-Host
 
 1. **Audit Zero Network Traffic & CSP:** Open DevTools (`F12` -> **Network**) while operating any utility—including the **Support Xevqor** QR modal—to verify zero outbound requests and `connect-src 'none'`.
-2. **Verify Production-to-Mirror Parity:**
+2. **Verify Origin-to-Mirror Parity:**
 
-       curl -fsSL -A "Mozilla/5.0" https://xevqor.org | sha256sum
+       curl -fsSL -A "Mozilla/5.0" https://xevqormyid.pages.dev | sha256sum
        curl -fsSL -A "Mozilla/5.0" https://xevqor.github.io | sha256sum
        sha256sum -c SHA256SUMS.txt  # run inside cloned repo (22 files incl. edge-only _headers)
+
+   *(Note: On `https://xevqor.org`, Cloudflare's custom-domain proxy appends its `beacon.min.js` analytics tag before `</body>` on `.html` responses—blocked at runtime by CSP—while all non-HTML assets and raw origin mirrors match `SHA256SUMS.txt` byte-for-byte.)*
 
 3. **Test Air-Gapped Offline Execution:** Load `https://xevqor.org` once, enable **Airplane Mode**, and run any of the 9 tools via Service Worker cache.
 4. **Clone & Self-Host:** `git clone https://github.com/xevqor/xevqor.github.io.git && cd xevqor.github.io` and serve via any static HTTP server (`python3 -m http.server`).
@@ -120,7 +122,7 @@ To maintain strict cryptographic transparency, **XEVQOR** explicitly defines wha
 
 ## Scope of External Scans & Memory Model
 * **Perimeter Scans vs. Cryptographic Audit:** External scanners (SecurityHeaders, Mozilla Observatory, SSL Labs, urlscan.io, VirusTotal) verify HTTP response headers, TLS configuration, network isolation (`connect-src 'none'`), and domain reputation. Cryptographic primitives and zero-backend execution are verifiable directly via the open-source code in this repository and `SHA256SUMS.txt`.
-* **Hosting & Edge Headers:** Zero application backend, database, or tracking cookies (passive edge-level CDN telemetry has zero access to client-side Web Crypto memory, passphrases, or URL `#` fragments). Static files are served via Cloudflare Pages / GitHub Pages; standard CDN edge headers (`NEL`, `Report-To`) injected by Cloudflare apply strictly to network diagnostics and never carry user inputs or cryptographic material.
+* **Hosting, Edge Headers & CDN Beacon:** Zero application backend, database, or tracking cookies. Static files are served via Cloudflare Pages / GitHub Pages; standard CDN edge headers (`NEL`, `Report-To`) apply strictly to network diagnostics, and Cloudflare's optional Web Analytics tag (`static.cloudflareinsights.com/beacon.min.js`) appended to `xevqor.org` HTML responses is blocked from executing by the `script-src` SHA-256 CSP policy—having zero access to client-side Web Crypto memory, passphrases, or URL `#` fragments.
 * **Workspace Reset & Clipboard Clearing:** `WIPE SYSTEM` clears active DOM state, inputs, outputs, and URL fragments, paired with best-effort 45-second clipboard auto-clear when clipboard permissions are granted. Physical memory reclamation remains governed by the browser's JavaScript garbage collector.
 * **Inline Style Directive (`style-src 'self' 'unsafe-inline'`):** Executable scripts are pinned via SHA-256 hashes in both HTTP `_headers` and HTML `<meta>` CSP policies, while `style-src` permits dynamic DOM progress indicators and status styling.
 * **Vulnerability Disclosure Policy:** Security researchers can review disclosure guidelines, cryptographic standards alignment (`NIST SP 800-132`, `OWASP ASVS`), and reproducible build verification in [`SECURITY.md`](SECURITY.md).
