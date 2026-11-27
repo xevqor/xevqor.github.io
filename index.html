@@ -9,8 +9,8 @@
   <meta name="referrer" content="no-referrer" />
 
   <title>XEVQOR — Trust-No-One Client-Side Cryptography</title>
-  <meta name="description" content="XEVQOR — Trust-No-One Client-Side Cryptography. A client-side, zero-application-backend open-source cryptography and privacy suite auditable at https://xevqor.github.io, featuring domain-separated PBKDF2 password generation (Keypass), SHA-256/512 file hashing (Hash), local JWT inspection (JWT), stateless URL-fragment dead-drops (Cipherlink), deflate-raw AES-256-GCM text cipher (Nano), zero-width Unicode encoding (Nebula), chunked .xqr file encryption (Encrypt), XEVQOR88 EOF container injection (Stego), and unbiased 3D dice CSPRNG (Dice)." />
-  <meta name="keywords" content="XEVQOR, zero application backend, client side, open source cryptography, client-side cryptography, privacy tools, deterministic password generator, keypass, sha256 hash, jwt inspector, serverless cipherlink dead-drops, aes-256-gcm, deflate-raw cipher, nano, zero-width steganography, nebula, chunked file encryption, eof container injection, stego, cryptographic rng, xevqor.github.io" />
+  <meta name="description" content="XEVQOR — Trust-No-One Client-Side Cryptography. A client-side, zero-application-backend open-source cryptography and privacy suite auditable at https://xevqor.github.io, featuring domain-separated PBKDF2 password generation (Keypass), SHA-256/512 file hashing (Hash), local JWT inspection (JWT), stateless URL-fragment dead-drops (Cipherlink), deflate-raw AES-256-GCM text cipher (Nano), zero-width Unicode encoding (Nebula), chunked .xqr file encryption (Encrypt), XEVQOR88 EOF container injection (Stego), unbiased 3D dice CSPRNG (Dice), and offline ISO/IEC 18004 QR Code generation (QR)." />
+  <meta name="keywords" content="XEVQOR, zero application backend, client side, open source cryptography, client-side cryptography, privacy tools, deterministic password generator, keypass, sha256 hash, jwt inspector, serverless cipherlink dead-drops, aes-256-gcm, deflate-raw cipher, nano, zero-width steganography, nebula, chunked file encryption, eof container injection, stego, cryptographic rng, offline qr generator, reed-solomon, xevqor.github.io" />
   <meta name="author" content="XEVQOR" />
   <link rel="canonical" href="https://xevqor.org" />
 
@@ -52,7 +52,8 @@
       "Nebula (/nebula): Zero-width Unicode text encoder embedding AES-256-GCM encrypted messages into invisible characters (U+200B and U+200C).",
       "Encrypt (/encrypt): Chunked 10MB AES-256-GCM file encryption vault outputting binary .xqr archives via File System Access API disk streaming or browser Blob fallback.",
       "Stego (/stego): Authenticated EOF container injection (XEVQOR88 + AES-256-GCM) appending encrypted payloads after carrier file EOF markers.",
-      "Dice (/dice): OS-level CSPRNG (window.crypto.getRandomValues) with rejection sampling 3D cryptographic dice generator with Big, Small, and Triple evaluation."
+      "Dice (/dice): OS-level CSPRNG (window.crypto.getRandomValues) with rejection sampling 3D cryptographic dice generator with Big, Small, and Triple evaluation.",
+      "QR (/qr): Offline-first ISO/IEC 18004 QR Code generator with GF(256) Reed-Solomon error correction, customizable center logo overlay, and PNG/SVG export."
     ],
     "offers": {
       "@type": "Offer",
@@ -664,6 +665,7 @@
       <a href="/encrypt" class="tool-btn">/ENCRYPT</a>
       <a href="/stego" class="tool-btn">/STEGO</a>
       <a href="/dice" class="tool-btn">/DICE</a>
+      <a href="/qr" class="tool-btn">/QR</a>
     </nav>
 
     <div class="donate-section">
@@ -694,6 +696,7 @@
         <li><strong>Encrypt (/encrypt):</strong> Chunked 10MB AES-256-GCM file encryption vault generating portable binary .xqr archives via File System Access API disk streaming on supported desktop browsers or tab RAM Blob fallback on mobile.</li>
         <li><strong>Stego (/stego):</strong> Authenticated EOF container injection (XEVQOR88 + AES-256-GCM) appending encrypted payloads after carrier file EOF markers for uncompressed file transmission.</li>
         <li><strong>Dice (/dice):</strong> OS-level Cryptographically Secure Pseudo-Random Number Generator (window.crypto.getRandomValues) with rejection sampling 3D dice simulator for Big, Small, and Triple outcomes.</li>
+        <li><strong>QR (/qr):</strong> Offline-first ISO/IEC 18004 QR Code generator with GF(256) Reed-Solomon error correction (L/M/Q/H), customizable center logo overlay with SVG clip-path, real-time scannability audit, and PNG/SVG export.</li>
       </ul>
     </section>
   </main>

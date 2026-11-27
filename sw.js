@@ -1,4 +1,4 @@
-const CACHE_NAME = 'xevqor-vault-v2-cl';
+const CACHE_NAME = 'xevqor-vault-v3-qr';
 
 const CORE_ASSETS = [
   '/',
@@ -15,10 +15,11 @@ const CORE_ASSETS = [
   '/nebula',
   '/encrypt',
   '/stego',
-  '/dice'
+  '/dice',
+  '/qr'
 ];
 
-// Install: Simpan seluruh cangkang PWA & 9 modul ke cache lokal
+// Install: Simpan seluruh cangkang PWA & 10 modul ke cache lokal
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>

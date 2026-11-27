@@ -31,6 +31,9 @@
    <url>
       <loc>https://xevqor.org/dice</loc>
    </url>
+   <url>
+      <loc>https://xevqor.org/qr</loc>
+   </url>
   <url>
     <loc>https://xevqor.org/llms.txt</loc>
     <priority>0.8</priority>

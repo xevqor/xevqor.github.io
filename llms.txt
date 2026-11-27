@@ -10,7 +10,7 @@
 - **Offline PWA & Workspace Reset**: Service Worker (`sw.js`) caches static assets locally. `WIPE SYSTEM` resets active DOM state and triggers best-effort 45-second clipboard auto-clear when clipboard permissions are granted (physical RAM reclamation remains governed by the browser JavaScript garbage collector).
 
 ## Tools & Modules
-- [XEVQOR Suite Index](https://xevqor.org/): Main portal launching all 9 client-side privacy and cryptographic utilities.
+- [XEVQOR Suite Index](https://xevqor.org/): Main portal launching all 10 client-side privacy and cryptographic utilities.
 - [Keypass](https://xevqor.org/keypass/): Deterministic dual 28-character password generator derived from Brain Key and Identity Label using separate PBKDF2-SHA256 (600,000 iterations) calls with domain-separated salts (`xevqor.keypass.v2:<label>` and `xevqor.keypass.v2:slot-b:<label>`). Output strength depends on Brain Key entropy.
 - [Encrypt](https://xevqor.org/encrypt/): Chunked 10MB AES-256-GCM file encryption and decryption with randomized output filenames (`xevqorvaultXXXXXX.xqr`). Streams directly to disk via File System Access API (`showSaveFilePicker`) on supported desktop browsers, falling back to browser RAM `Blob` on mobile browsers.
 - [Cipherlink](https://xevqor.org/cipherlink/): Serverless encrypted dead-drop links storing `deflate-raw` compressed `AES-256-GCM` ciphertext exclusively in the URL `#fragment` (never sent to HTTP servers) with active address-bar scrubbing and best-effort 45-second clipboard auto-clear.
@@ -20,6 +20,7 @@
 - [JWT Inspector](https://xevqor.org/jwt/): Offline JSON Web Token header/payload decoder and expiration (`exp`) claim inspector (explicitly notes unverified signature status).
 - [Nano](https://xevqor.org/nano/): Client-side text compressor and cipher combining `deflate-raw` compression, `AES-256-GCM` encryption, and compact Base64 encoding.
 - [Dice](https://xevqor.org/dice/): Unbiased CSPRNG (`crypto.getRandomValues` with rejection sampling) 3D multi-dice entropy generator displaying faces, sum, mean, Shannon entropy bits, and session history.
+- [QR](https://xevqor.org/qr/): Offline-first ISO/IEC 18004 QR Code generator with GF(256) Reed-Solomon error correction (L/M/Q/H), center logo overlay with SVG clip-path, real-time scannability audit, and PNG/SVG export.
 
 ## Verification & Reproducibility
 - [SHA256SUMS.txt](https://raw.githubusercontent.com/xevqor/xevqor.github.io/main/SHA256SUMS.txt): Bit-for-bit SHA-256 manifest verifying parity between production (`xevqor.org`) and GitHub Pages (`xevqor.github.io`).

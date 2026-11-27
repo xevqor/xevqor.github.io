@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>XEVQOR // QR — Trust-No-One Client-Side QR Generator</title>
+  <meta name="description" content="Zero-backend, offline-capable client-side ISO/IEC 18004 QR Code generator with Reed-Solomon error correction and center logo overlay." />
+  <meta name="referrer" content="no-referrer" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self'; connect-src 'none'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none';" />
+
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+
+  <style>
+    /* ==========================================================================
+       XEVQOR // QR — DESIGN TOKENS (OFFLINE SYSTEM FONTS)
+       ========================================================================== */
+    :root {
+      --bg-deep: #000000;
+      --bg-card: #050505;
+      --bg-card-elevated: #0a0a0c;
+      --bg-input: #000000;
+      --border-crisp: #1a1a1c;
+      --border-hover: #333333;
+      --accent-platinum: #e8ebf2;
+      --accent-silver: #a8adb8;
+      --accent-glow: rgba(220, 225, 240, 0.15);
+      --text-primary: #f5f5f7;
+      --text-secondary: #8a8c92;
+      --text-muted: #555555;
+      --status-ok: #4dff88;
+      --status-ok-bg: rgba(77, 255, 136, 0.1);
+      --status-ok-border: rgba(77, 255, 136, 0.3);
+      --status-warn: #f59e0b;
+      --status-warn-bg: rgba(245, 158, 11, 0.1);
+      --status-warn-border: rgba(245, 158, 11, 0.3);
+
+      /* SYSTEM FONTS ONLY - ZERO NETWORK REQUESTS */
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-serif: "Didot", "Bodoni MT", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      min-height: 100%;
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Ambient glow */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 20%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100vw; height: 60vh;
+      background: radial-gradient(ellipse at center, rgba(220, 225, 240, 0.03) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Top Header Bar */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.2rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #000;
+      border: 1px solid #222;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 15px rgba(220, 225, 240, 0.1);
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      background: linear-gradient(180deg, #ffffff 0%, #a8adb8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 0.65rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .topbar-right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .back-link {
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid #222;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+    }
+
+    .back-link:hover {
+      border-color: var(--accent-platinum);
+      color: var(--accent-platinum);
+    }
+
+    .security-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-hover);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--accent-platinum);
+      text-transform: uppercase;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--status-ok);
+      box-shadow: 0 0 8px var(--status-ok);
+    }
+
+    /* Main Workspace Grid */
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (min-width: 960px) {
+      .workspace {
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Elevated Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid #111;
+    }
+
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--accent-platinum);
+      text-transform: uppercase;
+    }
+
+    .card-meta {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Form Controls */
+    label.field-label {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    textarea.payload-input {
+      width: 100%;
+      min-height: 100px;
+      resize: vertical;
+      background: var(--bg-input);
+      border: 1px solid #222;
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    textarea.payload-input:focus {
+      outline: none;
+      border-color: var(--accent-platinum);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    textarea.payload-input::placeholder {
+      color: #333;
+    }
+
+    .quick-pills {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
+    }
+
+    .pill-btn {
+      min-height: 32px;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid #333;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pill-btn:hover {
+      border-color: var(--accent-platinum);
+      color: var(--accent-platinum);
+    }
+
+    /* Segmented Button Groups */
+    .seg-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+
+    .seg-group.four-col {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .seg-btn {
+      min-height: 40px;
+      padding: 0.5rem;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: 1px solid #222;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .seg-btn:hover {
+      border-color: #444;
+      color: var(--text-primary);
+    }
+
+    .seg-btn.active {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--accent-platinum);
+      color: var(--accent-platinum);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    /* Sub-panels & Grids */
+    .control-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 600px) {
+      .control-grid.two-col {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* File Upload Box */
+    .upload-zone {
+      margin-top: 0.8rem;
+      padding: 0.8rem 1rem;
+      border-radius: var(--radius-md);
+      background: #000;
+      border: 1px dashed #333;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+    }
+
+    .upload-zone.hidden { display: none; }
+
+    .upload-info {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .btn-secondary {
+      min-height: 36px;
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: 1px solid #333;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent-platinum);
+      color: var(--accent-platinum);
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* Range Slider */
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .slider-val {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent-platinum);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 999px;
+      background: #222;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent-platinum);
+      border: 2px solid #000;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent-platinum);
+      border: 2px solid #000;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+    }
+
+    /* Toggle Switch Rows */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-sm);
+      background: #000;
+      border: 1px solid #222;
+      min-height: 48px;
+    }
+
+    .toggle-text {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .toggle-sub {
+      display: block;
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      font-weight: 300;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider-track {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      background-color: #222;
+      border-radius: 999px;
+      transition: 0.3s;
+    }
+
+    .slider-track::before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #555;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .switch input:checked + .slider-track { background-color: var(--accent-platinum); }
+    .switch input:checked + .slider-track::before {
+      transform: translateX(18px);
+      background-color: #000;
+    }
+
+    /* Color Pickers */
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.5rem 0.8rem;
+      border-radius: var(--radius-sm);
+      background: #000;
+      border: 1px solid #222;
+      min-height: 44px;
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 28px;
+      height: 28px;
+      border: 1px solid #333;
+      border-radius: 6px;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
+    input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+
+    .color-hex {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      text-transform: uppercase;
+    }
+
+    /* Right Sticky Preview Column */
+    @media (min-width: 960px) {
+      .preview-sticky {
+        position: sticky;
+        top: 2rem;
+      }
+    }
+
+    .canvas-stage {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      max-width: 380px;
+      margin: 0 auto 1.5rem;
+      border-radius: var(--radius-md);
+      background: #000;
+      border: 1px solid #111;
+      padding: 1rem;
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 2px 15px rgba(0, 0, 0, 0.9);
+    }
+
+    canvas#qrCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Audit Box */
+    .audit-box {
+      border-radius: var(--radius-md);
+      background: #000;
+      border: 1px solid #1a1a1c;
+      padding: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .audit-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .audit-heading {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      background: var(--status-ok-bg);
+      border: 1px solid var(--status-ok-border);
+      color: var(--status-ok);
+    }
+
+    .status-badge.warn {
+      background: var(--status-warn-bg);
+      border-color: var(--status-warn-border);
+      color: var(--status-warn);
+    }
+
+    .audit-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .metric-cell {
+      padding: 0.6rem;
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      border: 1px solid #1a1a1c;
+      text-align: center;
+    }
+
+    .metric-label {
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.2rem;
+    }
+
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-platinum);
+    }
+
+    .audit-note {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      font-weight: 300;
+    }
+
+    /* Export Buttons */
+    .export-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    .export-btn {
+      min-height: 44px;
+      padding: 0.6rem;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .export-btn.primary {
+      background: transparent;
+      border: 1px solid var(--accent-platinum);
+      color: var(--accent-platinum);
+    }
+
+    .export-btn.primary:hover {
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 20px var(--accent-glow);
+      color: #fff;
+    }
+
+    .export-btn.secondary {
+      background: #000;
+      border: 1px solid #222;
+      color: var(--text-secondary);
+    }
+
+    .export-btn.secondary:hover {
+      border-color: #444;
+      color: #fff;
+    }
+
+    .export-btn.full-span {
+      grid-column: 1 / -1;
+    }
+
+    /* Toast */
+    .toast-bar {
+      margin-top: 0.8rem;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--accent-platinum);
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      color: var(--accent-platinum);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast-bar.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .footer-note {
+      margin-top: 2rem;
+      text-align: center;
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      color: #444;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .mt-sm { margin-top: 0.8rem; }
+    .mt-md { margin-top: 1.2rem; }
+    .mb-0 { margin-bottom: 0; }
+    .w-full { width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Top Header -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <!-- XEVQOR Metallic 'X' Emblem (Platinum) -->
+          <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="xevqorGradA" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="45%" stop-color="#c4c9d4" />
+                <stop offset="100%" stop-color="#6a6e7c" />
+              </linearGradient>
+              <linearGradient id="xevqorGradB" x1="56" y1="8" x2="8" y2="56" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#e8ebf2" />
+                <stop offset="50%" stop-color="#a8adb8" />
+                <stop offset="100%" stop-color="#333333" />
+              </linearGradient>
+            </defs>
+            <polygon points="10,10 24,10 54,54 40,54" fill="url(#xevqorGradA)" />
+            <polygon points="54,10 40,10 10,54 24,54" fill="url(#xevqorGradB)" />
+            <polygon points="27,26 32,20 37,26 32,32" fill="#ffffff" fill-opacity="0.9" />
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">XEVQOR // QR</div>
+          <div class="brand-sub">Zero-Knowledge Client-Side Encoder</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <a href="/" class="back-link">← XEVQOR</a>
+        <div class="security-pill">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          CLIENT-SIDE • OFFLINE READY
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Two-Column Workspace -->
+    <main class="workspace">
+      <!-- Left Column: Controls -->
+      <div class="stack">
+        <!-- 1. Payload Input Card -->
+        <section class="card" aria-labelledby="sec-payload">
+          <div class="card-header">
+            <h2 class="card-title" id="sec-payload">01 // Payload Data</h2>
+            <span class="card-meta" id="byteCounter">0 UTF-8 BYTES</span>
+          </div>
+          <label class="field-label" for="payloadInput">URI, TEXT, EMAIL, OR CRYPTOGRAPHIC STRING</label>
+          <textarea
+            id="payloadInput"
+            class="payload-input"
+            spellcheck="false"
+            placeholder="INSERT PAYLOAD DATA..."
+          ></textarea>
+
+          <div class="quick-pills">
+            <button type="button" class="pill-btn" id="clearPayloadBtn">
+              Clear Data
+            </button>
+          </div>
+        </section>
+
+        <!-- 2. Center Logo Overlay Card -->
+        <section class="card" aria-labelledby="sec-logo">
+          <div class="card-header">
+            <h2 class="card-title" id="sec-logo">02 // Center Logo Overlay</h2>
+            <span class="card-meta" id="logoModeLabel">XEVQOR EMBLEM</span>
+          </div>
+
+          <label class="field-label">OVERLAY SOURCE MODE</label>
+          <div class="seg-group" id="logoModeGroup" role="group" aria-label="Logo overlay mode">
+            <button type="button" class="seg-btn active" data-mode="xevqor">XEVQOR</button>
+            <button type="button" class="seg-btn" data-mode="upload">Local File</button>
+            <button type="button" class="seg-btn" data-mode="none">Pure QR</button>
+          </div>
+
+          <!-- Local File Upload Panel -->
+          <div class="upload-zone hidden" id="uploadZone">
+            <div class="upload-info" id="uploadFileName">PNG, JPG, SVG, or WEBP (processed locally)</div>
+            <input type="file" id="logoFileInput" accept="image/png,image/jpeg,image/svg+xml,image/webp" hidden />
+            <button type="button" class="btn-secondary" id="triggerUploadBtn">Select Image</button>
+          </div>
+
+          <!-- Logo Geometry & Backing Controls -->
+          <div id="logoOptionsPanel" class="mt-md">
+            <div class="slider-header">
+              <label class="field-label" for="logoSizeSlider" class="mb-0">LOGO SCALE (LINEAR WIDTH)</label>
+              <span class="slider-val" id="logoSizeVal">19%</span>
+            </div>
+            <input type="range" id="logoSizeSlider" min="14" max="24" step="1" value="19" />
+
+            <div class="control-grid two-col mt-md">
+              <div>
+                <label class="field-label">BACKING PLATE SHAPE</label>
+                <div class="seg-group" id="plateShapeGroup" role="group" aria-label="Backing plate shape">
+                  <button type="button" class="seg-btn active" data-shape="rounded">Rounded</button>
+                  <button type="button" class="seg-btn" data-shape="circle">Circle</button>
+                  <button type="button" class="seg-btn" data-shape="none">None</button>
+                </div>
+              </div>
+
+              <div>
+                <label class="field-label">MODULE SEPARATION</label>
+                <div class="toggle-row">
+                  <div>
+                    <span class="toggle-text">White Padding</span>
+                    <span class="toggle-sub">Protects edge contrast</span>
+                  </div>
+                  <label class="switch" aria-label="Toggle white logo padding">
+                    <input type="checkbox" id="logoPaddingToggle" checked />
+                    <span class="slider-track"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. ISO Encoding & Optical Contrast Card -->
+        <section class="card" aria-labelledby="sec-encoding">
+          <div class="card-header">
+            <h2 class="card-title" id="sec-encoding">03 // Reed-Solomon & Optics</h2>
+            <span class="card-meta">ISO/IEC 18004</span>
+          </div>
+
+          <label class="field-label">REED-SOLOMON ERROR CORRECTION LEVEL</label>
+          <div class="seg-group four-col" id="ecLevelGroup" role="group" aria-label="Error correction level">
+            <button type="button" class="seg-btn active" data-ec="H">H (30%)</button>
+            <button type="button" class="seg-btn" data-ec="Q">Q (25%)</button>
+            <button type="button" class="seg-btn" data-ec="M">M (15%)</button>
+            <button type="button" class="seg-btn" data-ec="L">L (7%)</button>
+          </div>
+
+          <div class="mt-md">
+            <div class="toggle-row">
+              <div>
+                <span class="toggle-text">Quiet Zone (4 Modules ISO Standard)</span>
+                <span class="toggle-sub">Mandatory outer optical margin for universal scanners</span>
+              </div>
+              <label class="switch" aria-label="Toggle 4-module ISO quiet zone">
+                <input type="checkbox" id="quietZoneToggle" checked />
+                <span class="slider-track"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="control-grid two-col mt-md">
+            <div>
+              <label class="field-label" for="fgColorInput">FOREGROUND (DARK MODULES)</label>
+              <div class="color-row">
+                <input type="color" id="fgColorInput" value="#000000" />
+                <span class="color-hex" id="fgColorHex">#000000</span>
+              </div>
+            </div>
+            <div>
+              <label class="field-label" for="bgColorInput">BACKGROUND (LIGHT FIELD)</label>
+              <div class="color-row">
+                <input type="color" id="bgColorInput" value="#ffffff" />
+                <span class="color-hex" id="bgColorHex">#FFFFFF</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-sm">
+            <button type="button" class="btn-secondary" id="resetContrastBtn" class="w-full">
+              Reset High-Contrast (#000 on #FFF)
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: Live Canvas Preview, Audit & Instant Exports -->
+      <div class="preview-sticky">
+        <section class="card" aria-labelledby="sec-preview">
+          <div class="card-header">
+            <h2 class="card-title" id="sec-preview">04 // Live Matrix Preview</h2>
+            <span class="card-meta" id="maskInfoLabel">MASK #0</span>
+          </div>
+
+          <!-- Responsive HTML5 Canvas Stage -->
+          <div class="canvas-stage" id="canvasStage">
+            <canvas id="qrCanvas"></canvas>
+          </div>
+
+          <!-- Real-Time Scannability & Reed-Solomon Safety Audit -->
+          <div class="audit-box" role="status" aria-live="polite">
+            <div class="audit-header">
+              <span class="audit-heading">SCANNABILITY &amp; RS SAFETY AUDIT</span>
+              <span class="status-badge" id="auditBadge">STANDBY</span>
+            </div>
+
+            <div class="audit-metrics">
+              <div class="metric-cell">
+                <div class="metric-label">QR Version</div>
+                <div class="metric-value" id="auditVersion">V1</div>
+              </div>
+              <div class="metric-cell">
+                <div class="metric-label">Matrix Size</div>
+                <div class="metric-value" id="auditMatrix">21×21</div>
+              </div>
+              <div class="metric-cell">
+                <div class="metric-label">Logo Coverage</div>
+                <div class="metric-value" id="auditCoverage">0.0% / 30%</div>
+              </div>
+            </div>
+
+            <div class="audit-note" id="auditNote">
+              Insert payload data to generate a scannable matrix.
+            </div>
+          </div>
+
+          <!-- Export Buttons -->
+          <div class="export-grid">
+            <button type="button" class="export-btn primary" id="exportPng1024">
+              1024px PNG
+            </button>
+            <button type="button" class="export-btn primary" id="exportPng2048">
+              2048px PNG
+            </button>
+            <button type="button" class="export-btn secondary full-span" id="exportSvgBtn">
+              Download Vector SVG
+            </button>
+          </div>
+
+          <div class="toast-bar" id="toastBar" role="status"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer-note">
+      XEVQOR // QR • Pure Vanilla JS ISO/IEC 18004 + GF(256) Reed-Solomon Engine • Zero Network Calls
+    </footer>
+  </div>
+
+  <script>
+    /**
+     * ============================================================================
+     * XEVQOR // QR — COMPLETE VANILLA JAVASCRIPT ISO/IEC 18004 QR CODE ENCODER
+     * ============================================================================
+     */
+    const QREncoder = (() => {
+      const GF_EXP = new Uint8Array(512);
+      const GF_LOG = new Uint8Array(256);
+      (() => {
+        let x = 1;
+        for (let i = 0; i < 255; i++) {
+          GF_EXP[i] = x;
+          GF_LOG[x] = i;
+          x <<= 1;
+          if (x & 0x100) x ^= 0x11d;
+        }
+        for (let i = 255; i < 512; i++) {
+          GF_EXP[i] = GF_EXP[i - 255];
+        }
+      })();
+
+      function gfMul(a, b) {
+        if (a === 0 || b === 0) return 0;
+        return GF_EXP[GF_LOG[a] + GF_LOG[b]];
+      }
+
+      const RS_GEN_CACHE = new Map();
+      function getRSGenerator(ecCount) {
+        if (RS_GEN_CACHE.has(ecCount)) return RS_GEN_CACHE.get(ecCount);
+        let poly = new Uint8Array([1]);
+        for (let i = 0; i < ecCount; i++) {
+          const next = new Uint8Array(poly.length + 1);
+          const factor = GF_EXP[i];
+          for (let j = 0; j < poly.length; j++) {
+            next[j] ^= poly[j];
+            next[j + 1] ^= gfMul(poly[j], factor);
+          }
+          poly = next;
+        }
+        RS_GEN_CACHE.set(ecCount, poly);
+        return poly;
+      }
+
+      function computeRSRemainder(data, ecCount) {
+        const gen = getRSGenerator(ecCount);
+        const rem = new Uint8Array(data.length + ecCount);
+        rem.set(data);
+        for (let i = 0; i < data.length; i++) {
+          const coef = rem[i];
+          if (coef !== 0) {
+            for (let j = 0; j < gen.length; j++) {
+              rem[i + j] ^= gfMul(gen[j], coef);
+            }
+          }
+        }
+        return rem.slice(data.length);
+      }
+
+      const ALIGNMENT_COORDS = [
+        [], [], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34], [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50], [6, 30, 54], [6, 32, 58], [6, 34, 62], [6, 26, 46, 66], [6, 26, 48, 70]
+      ];
+
+      const RS_BLOCK_TABLE = {
+        1:  { L: [7,  1, 19, 0, 0],  M: [10, 1, 16, 0, 0],  Q: [13, 1, 13, 0, 0],  H: [17, 1, 9,  0, 0] },
+        2:  { L: [10, 1, 34, 0, 0],  M: [16, 1, 28, 0, 0],  Q: [22, 1, 22, 0, 0],  H: [28, 1, 16, 0, 0] },
+        3:  { L: [15, 1, 55, 0, 0],  M: [26, 1, 44, 0, 0],  Q: [18, 2, 17, 0, 0],  H: [22, 2, 13, 0, 0] },
+        4:  { L: [20, 1, 80, 0, 0],  M: [18, 2, 32, 0, 0],  Q: [26, 2, 24, 0, 0],  H: [16, 4, 9,  0, 0] },
+        5:  { L: [26, 1, 108, 0, 0], M: [24, 2, 43, 0, 0],  Q: [18, 2, 15, 2, 16], H: [22, 2, 11, 2, 12] },
+        6:  { L: [18, 2, 68, 0, 0],  M: [16, 4, 27, 0, 0],  Q: [24, 4, 19, 0, 0],  H: [28, 4, 15, 0, 0] },
+        7:  { L: [20, 2, 78, 0, 0],  M: [18, 4, 31, 0, 0],  Q: [18, 2, 14, 4, 15], H: [26, 4, 13, 1, 14] },
+        8:  { L: [24, 2, 97, 0, 0],  M: [22, 2, 38, 2, 39], Q: [22, 4, 18, 2, 19], H: [26, 4, 14, 2, 15] },
+        9:  { L: [30, 2, 116, 0, 0], M: [22, 3, 36, 2, 37], Q: [20, 4, 16, 4, 17], H: [24, 4, 12, 4, 13] },
+        10: { L: [18, 2, 68, 2, 69], M: [26, 4, 43, 1, 44], Q: [24, 6, 19, 2, 20], H: [28, 6, 15, 2, 16] },
+        11: { L: [20, 4, 81, 0, 0],  M: [30, 1, 50, 4, 51], Q: [28, 4, 22, 4, 23], H: [24, 3, 12, 8, 13] },
+        12: { L: [24, 2, 92, 2, 93], M: [22, 6, 36, 2, 37], Q: [26, 4, 20, 6, 21], H: [28, 7, 14, 4, 15] },
+        13: { L: [26, 4, 107, 0, 0], M: [22, 8, 37, 1, 38], Q: [24, 8, 20, 4, 21], H: [22, 12, 11, 4, 12] },
+        14: { L: [30, 3, 115, 1, 116], M: [24, 4, 40, 5, 41], Q: [20, 11, 16, 5, 17], H: [24, 11, 12, 5, 13] },
+        15: { L: [22, 5, 87, 1, 88], M: [24, 5, 41, 5, 42], Q: [30, 5, 24, 7, 25], H: [24, 11, 12, 7, 13] }
+      };
+
+      const EC_LEVEL_BITS = { L: 1, M: 0, Q: 3, H: 2 };
+
+      function getTotalDataCodewords(version, ecLevel) {
+        const [, g1, g1d, g2, g2d] = RS_BLOCK_TABLE[version][ecLevel];
+        return g1 * g1d + g2 * g2d;
+      }
+
+      function selectVersion(byteLength, ecLevel) {
+        for (let v = 1; v <= 15; v++) {
+          const totalDataBytes = getTotalDataCodewords(v, ecLevel);
+          const countBits = v <= 9 ? 8 : 16;
+          const requiredBits = 4 + countBits + byteLength * 8;
+          if (requiredBits <= totalDataBytes * 8) return v;
+        }
+        return -1;
+      }
+
+      function buildDataCodewords(utf8Bytes, version, ecLevel) {
+        const totalDataBytes = getTotalDataCodewords(version, ecLevel);
+        const totalBits = totalDataBytes * 8;
+        const countBits = version <= 9 ? 8 : 16;
+        const bits = [];
+        const pushBits = (val, len) => { for (let i = len - 1; i >= 0; i--) bits.push((val >> i) & 1); };
+
+        pushBits(0b0100, 4);
+        pushBits(utf8Bytes.length, countBits);
+        for (let i = 0; i < utf8Bytes.length; i++) pushBits(utf8Bytes[i], 8);
+        pushBits(0, Math.min(4, totalBits - bits.length));
+        while (bits.length % 8 !== 0) bits.push(0);
+
+        const out = new Uint8Array(totalDataBytes);
+        let byteIdx = 0;
+        for (let i = 0; i < bits.length; i += 8) {
+          let b = 0;
+          for (let j = 0; j < 8; j++) b = (b << 1) | bits[i + j];
+          out[byteIdx++] = b;
+        }
+
+        let padToggle = true;
+        while (byteIdx < totalDataBytes) { out[byteIdx++] = padToggle ? 0xec : 0x11; padToggle = !padToggle; }
+        return out;
+      }
+
+      function interleaveBlocks(dataCodewords, version, ecLevel) {
+        const [ecPerBlock, g1, g1d, g2, g2d] = RS_BLOCK_TABLE[version][ecLevel];
+        const blocks = [];
+        let offset = 0;
+        for (let i = 0; i < g1; i++) { const slice = dataCodewords.slice(offset, offset + g1d); offset += g1d; blocks.push({ data: slice, ec: computeRSRemainder(slice, ecPerBlock) }); }
+        for (let i = 0; i < g2; i++) { const slice = dataCodewords.slice(offset, offset + g2d); offset += g2d; blocks.push({ data: slice, ec: computeRSRemainder(slice, ecPerBlock) }); }
+        const totalCodewords = dataCodewords.length + (g1 + g2) * ecPerBlock;
+        const result = new Uint8Array(totalCodewords);
+        let ptr = 0;
+        const maxDataLen = Math.max(g1d, g2d);
+        for (let i = 0; i < maxDataLen; i++) { for (let b = 0; b < blocks.length; b++) { if (i < blocks[b].data.length) result[ptr++] = blocks[b].data[i]; } }
+        for (let i = 0; i < ecPerBlock; i++) { for (let b = 0; b < blocks.length; b++) result[ptr++] = blocks[b].ec[i]; }
+        return result;
+      }
+
+      function computeFormatBits(ecLevel, maskPattern) {
+        const data = (EC_LEVEL_BITS[ecLevel] << 3) | maskPattern;
+        let rem = data << 10;
+        for (let i = 14; i >= 10; i--) { if ((rem >> i) & 1) rem ^= 0x537 << (i - 10); }
+        return ((data << 10) | rem) ^ 0x5412;
+      }
+
+      function computeVersionBits(version) {
+        let rem = version << 12;
+        for (let i = 17; i >= 12; i--) { if ((rem >> i) & 1) rem ^= 0x1f25 << (i - 12); }
+        return (version << 12) | rem;
+      }
+
+      function createBaseMatrix(version) {
+        const size = version * 4 + 17;
+        const modules = Array.from({ length: size }, () => new Uint8Array(size));
+        const isFunc = Array.from({ length: size }, () => new Uint8Array(size));
+        const setFunc = (r, c, val) => { if (r >= 0 && r < size && c >= 0 && c < size) { modules[r][c] = val ? 1 : 0; isFunc[r][c] = 1; } };
+        const drawFinder = (topR, leftC) => {
+          for (let dr = -1; dr <= 7; dr++) {
+            for (let dc = -1; dc <= 7; dc++) {
+              const r = topR + dr, c = leftC + dc;
+              if (r < 0 || r >= size || c < 0 || c >= size) continue;
+              const inOuter = dr >= 0 && dr <= 6 && dc >= 0 && dc <= 6;
+              const isBorder = dr === 0 || dr === 6 || dc === 0 || dc === 6;
+              const isCore = dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4;
+              setFunc(r, c, inOuter && (isBorder || isCore) ? 1 : 0);
+            }
+          }
+        };
+        drawFinder(0, 0); drawFinder(0, size - 7); drawFinder(size - 7, 0);
+        const coords = ALIGNMENT_COORDS[version];
+        for (let i = 0; i < coords.length; i++) {
+          for (let j = 0; j < coords.length; j++) {
+            const cy = coords[i], cx = coords[j];
+            if ((cy === 6 && cx === 6) || (cy === 6 && cx === size - 7) || (cy === size - 7 && cx === 6)) continue;
+            for (let dy = -2; dy <= 2; dy++) {
+              for (let dx = -2; dx <= 2; dx++) {
+                const dist = Math.max(Math.abs(dy), Math.abs(dx));
+                setFunc(cy + dy, cx + dx, dist !== 1 ? 1 : 0);
+              }
+            }
+          }
+        }
+        for (let i = 8; i < size - 8; i++) { const bit = i % 2 === 0 ? 1 : 0; setFunc(6, i, bit); setFunc(i, 6, bit); }
+        setFunc(size - 8, 8, 1);
+        for (let i = 0; i <= 8; i++) { if (!isFunc[8][i]) setFunc(8, i, 0); if (!isFunc[i][8]) setFunc(i, 8, 0); }
+        for (let i = 0; i < 8; i++) setFunc(8, size - 1 - i, 0);
+        for (let i = 0; i < 7; i++) setFunc(size - 1 - i, 8, 0);
+        if (version >= 7) {
+          const verBits = computeVersionBits(version);
+          for (let i = 0; i < 18; i++) {
+            const bit = (verBits >> i) & 1, r = size - 11 + (i % 3), c = Math.floor(i / 3);
+            setFunc(r, c, bit); setFunc(c, r, bit);
+          }
+        }
+        return { size, modules, isFunc };
+      }
+
+      function placeCodewords(base, codewords) {
+        const { size, modules, isFunc } = base;
+        const totalBits = codewords.length * 8;
+        let bitIdx = 0, col = size - 1, upward = true;
+        while (col > 0) {
+          if (col === 6) col--;
+          for (let step = 0; step < size; step++) {
+            const row = upward ? size - 1 - step : step;
+            for (let dx = 0; dx < 2; dx++) {
+              const c = col - dx;
+              if (!isFunc[row][c]) {
+                let bit = 0;
+                if (bitIdx < totalBits) { bit = (codewords[bitIdx >> 3] >> (7 - (bitIdx & 7))) & 1; bitIdx++; }
+                modules[row][c] = bit;
+              }
+            }
+          }
+          col -= 2; upward = !upward;
+        }
+      }
+
+      function isMaskActive(mask, r, c) {
+        switch (mask) {
+          case 0: return (r + c) % 2 === 0;
+          case 1: return r % 2 === 0;
+          case 2: return c % 3 === 0;
+          case 3: return (r + c) % 3 === 0;
+          case 4: return (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0;
+          case 5: return ((r * c) % 2) + ((r * c) % 3) === 0;
+          case 6: return (((r * c) % 2) + ((r * c) % 3)) % 2 === 0;
+          case 7: return (((r + c) % 2) + ((r * c) % 3)) % 2 === 0;
+          default: return false;
+        }
+      }
+
+      function writeFormatInfo(modules, size, ecLevel, maskPattern) {
+        const fmt = computeFormatBits(ecLevel, maskPattern);
+        for (let i = 0; i < 15; i++) {
+          const bit = (fmt >> i) & 1;
+          if (i < 6) modules[i][8] = bit;
+          else if (i === 6) modules[7][8] = bit;
+          else if (i === 7) modules[8][8] = bit;
+          else if (i === 8) modules[8][7] = bit;
+          else modules[8][14 - i] = bit;
+          if (i < 8) modules[8][size - 1 - i] = bit;
+          else modules[size - 15 + i][8] = bit;
+        }
+      }
+
+      function evaluatePenalty(modules, size) {
+        let penalty = 0;
+        for (let r = 0; r < size; r++) {
+          let runColor = modules[r][0], runLen = 1;
+          for (let c = 1; c < size; c++) {
+            if (modules[r][c] === runColor) { runLen++; if (runLen === 5) penalty += 3; else if (runLen > 5) penalty += 1; }
+            else { runColor = modules[r][c]; runLen = 1; }
+          }
+        }
+        for (let c = 0; c < size; c++) {
+          let runColor = modules[0][c], runLen = 1;
+          for (let r = 1; r < size; r++) {
+            if (modules[r][c] === runColor) { runLen++; if (runLen === 5) penalty += 3; else if (runLen > 5) penalty += 1; }
+            else { runColor = modules[r][c]; runLen = 1; }
+          }
+        }
+        for (let r = 0; r < size - 1; r++) {
+          for (let c = 0; c < size - 1; c++) {
+            const v = modules[r][c];
+            if (v === modules[r][c + 1] && v === modules[r + 1][c] && v === modules[r + 1][c + 1]) penalty += 3;
+          }
+        }
+        const matchesFinderSeq = (arr, start) => {
+          const patA = arr[start] === 1 && arr[start + 1] === 0 && arr[start + 2] === 1 && arr[start + 3] === 1 && arr[start + 4] === 1 && arr[start + 5] === 0 && arr[start + 6] === 1 && arr[start + 7] === 0 && arr[start + 8] === 0 && arr[start + 9] === 0 && arr[start + 10] === 0;
+          const patB = arr[start] === 0 && arr[start + 1] === 0 && arr[start + 2] === 0 && arr[start + 3] === 0 && arr[start + 4] === 1 && arr[start + 5] === 0 && arr[start + 6] === 1 && arr[start + 7] === 1 && arr[start + 8] === 1 && arr[start + 9] === 0 && arr[start + 10] === 1;
+          return patA || patB;
+        };
+        const colBuf = new Uint8Array(size);
+        for (let r = 0; r < size; r++) for (let c = 0; c <= size - 11; c++) if (matchesFinderSeq(modules[r], c)) penalty += 40;
+        for (let c = 0; c < size; c++) { for (let r = 0; r < size; r++) colBuf[r] = modules[r][c]; for (let r = 0; r <= size - 11; r++) if (matchesFinderSeq(colBuf, r)) penalty += 40; }
+        let darkCount = 0;
+        for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) if (modules[r][c]) darkCount++;
+        const percent = (darkCount * 100) / (size * size);
+        penalty += Math.floor(Math.abs(percent - 50) / 5) * 10;
+        return penalty;
+      }
+
+      function encode(text, ecLevel = "H") {
+        const encoder = new TextEncoder(), utf8Bytes = encoder.encode(text), version = selectVersion(utf8Bytes.length, ecLevel);
+        if (version === -1) return { ok: false, byteLength: utf8Bytes.length, error: "Payload exceeds ISO Version 15 capacity." };
+        const dataCodewords = buildDataCodewords(utf8Bytes, version, ecLevel);
+        const finalCodewords = interleaveBlocks(dataCodewords, version, ecLevel);
+        const base = createBaseMatrix(version);
+        placeCodewords(base, finalCodewords);
+        let bestMask = 0, lowestPenalty = Infinity, bestModules = null;
+        for (let mask = 0; mask < 8; mask++) {
+          const candidate = base.modules.map((row) => new Uint8Array(row));
+          for (let r = 0; r < base.size; r++) {
+            for (let c = 0; c < base.size; c++) { if (!base.isFunc[r][c] && isMaskActive(mask, r, c)) candidate[r][c] ^= 1; }
+          }
+          writeFormatInfo(candidate, base.size, ecLevel, mask);
+          const penalty = evaluatePenalty(candidate, base.size);
+          if (penalty < lowestPenalty) { lowestPenalty = penalty; bestMask = mask; bestModules = candidate; }
+        }
+        return { ok: true, version, size: base.size, ecLevel, mask: bestMask, penalty: lowestPenalty, byteLength: utf8Bytes.length, modules: bestModules };
+      }
+
+      return { encode };
+    })();
+
+    (() => {
+      const XEVQOR_EMBLEM_INNER = `
+        <defs>
+          <radialGradient id="xevqorPlateGrad" cx="35%" cy="25%" r="75%">
+            <stop offset="0%" stop-color="#0a0a0c" />
+            <stop offset="100%" stop-color="#000000" />
+          </radialGradient>
+          <linearGradient id="xevqorBladeA" x1="16" y1="16" x2="84" y2="84" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ffffff" />
+            <stop offset="45%" stop-color="#c4c9d4" />
+            <stop offset="100%" stop-color="#6a6e7c" />
+          </linearGradient>
+          <linearGradient id="xevqorBladeB" x1="84" y1="16" x2="16" y2="84" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#e8ebf2" />
+            <stop offset="50%" stop-color="#a8adb8" />
+            <stop offset="100%" stop-color="#333333" />
+          </linearGradient>
+        </defs>
+        <rect x="4" y="4" width="92" height="92" rx="22" fill="url(#xevqorPlateGrad)" stroke="#444" stroke-width="2" />
+        <polygon points="22,22 37,22 78,78 63,78" fill="url(#xevqorBladeA)" />
+        <polygon points="78,22 63,22 22,78 37,78" fill="url(#xevqorBladeB)" />
+        <polygon points="43,43 50,35 57,43 50,51" fill="#ffffff" fill-opacity="0.9" />
+      `;
+
+      const XEVQOR_EMBLEM_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="256" height="256">${XEVQOR_EMBLEM_INNER}</svg>`;
+
+      const state = {
+        payload: "",
+        logoMode: "xevqor",
+        logoScalePct: 19,
+        plateShape: "rounded",
+        logoPadding: true,
+        ecLevel: "H",
+        quietZone: true,
+        fgColor: "#000000",
+        bgColor: "#ffffff",
+        uploadedDataUrl: null,
+        uploadedFileName: "",
+        xevqorImageObj: null,
+        uploadedImageObj: null,
+        lastQrResult: null
+      };
+
+      const el = {
+        payloadInput: document.getElementById("payloadInput"),
+        byteCounter: document.getElementById("byteCounter"),
+        clearPayloadBtn: document.getElementById("clearPayloadBtn"),
+        logoModeGroup: document.getElementById("logoModeGroup"),
+        logoModeLabel: document.getElementById("logoModeLabel"),
+        uploadZone: document.getElementById("uploadZone"),
+        uploadFileName: document.getElementById("uploadFileName"),
+        logoFileInput: document.getElementById("logoFileInput"),
+        triggerUploadBtn: document.getElementById("triggerUploadBtn"),
+        logoOptionsPanel: document.getElementById("logoOptionsPanel"),
+        logoSizeSlider: document.getElementById("logoSizeSlider"),
+        logoSizeVal: document.getElementById("logoSizeVal"),
+        plateShapeGroup: document.getElementById("plateShapeGroup"),
+        logoPaddingToggle: document.getElementById("logoPaddingToggle"),
+        ecLevelGroup: document.getElementById("ecLevelGroup"),
+        quietZoneToggle: document.getElementById("quietZoneToggle"),
+        fgColorInput: document.getElementById("fgColorInput"),
+        fgColorHex: document.getElementById("fgColorHex"),
+        bgColorInput: document.getElementById("bgColorInput"),
+        bgColorHex: document.getElementById("bgColorHex"),
+        resetContrastBtn: document.getElementById("resetContrastBtn"),
+        canvasStage: document.getElementById("canvasStage"),
+        qrCanvas: document.getElementById("qrCanvas"),
+        maskInfoLabel: document.getElementById("maskInfoLabel"),
+        auditBadge: document.getElementById("auditBadge"),
+        auditVersion: document.getElementById("auditVersion"),
+        auditMatrix: document.getElementById("auditMatrix"),
+        auditCoverage: document.getElementById("auditCoverage"),
+        auditNote: document.getElementById("auditNote"),
+        exportPng1024: document.getElementById("exportPng1024"),
+        exportPng2048: document.getElementById("exportPng2048"),
+        exportSvgBtn: document.getElementById("exportSvgBtn"),
+        toastBar: document.getElementById("toastBar")
+      };
+
+      function initXevqorImage() {
+        const blob = new Blob([XEVQOR_EMBLEM_SVG], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          state.xevqorImageObj = img;
+          URL.revokeObjectURL(url);
+          renderAll();
+        };
+        img.src = url;
+      }
+
+      function hexToRgb(hex) {
+        const clean = hex.replace("#", ""), num = parseInt(clean, 16);
+        return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+      }
+
+      function relativeLuminance({ r, g, b }) {
+        const srgb = [r, g, b].map((v) => { const c = v / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); });
+        return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+      }
+
+      function computeContrastInfo(fgHex, bgHex) {
+        const lumFg = relativeLuminance(hexToRgb(fgHex)), lumBg = relativeLuminance(hexToRgb(bgHex));
+        const lighter = Math.max(lumFg, lumBg), darker = Math.min(lumFg, lumBg);
+        return { ratio: (lighter + 0.05) / (darker + 0.05), isInverted: lumFg > lumBg };
+      }
+
+      let toastTimer = null;
+      function showToast(msg) {
+        el.toastBar.textContent = msg;
+        el.toastBar.classList.add("visible");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { el.toastBar.classList.remove("visible"); }, 2800);
+      }
+
+      function traceRoundedRect(ctx, x, y, w, h, r) {
+        const radius = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y); ctx.lineTo(x + w - radius, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+        ctx.lineTo(x + w, y + h - radius);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+        ctx.lineTo(x + radius, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+      }
+
+      function renderQRToCanvas(targetCanvas, pixelSize, qrResult) {
+        targetCanvas.width = pixelSize; targetCanvas.height = pixelSize;
+        const ctx = targetCanvas.getContext("2d");
+        ctx.fillStyle = state.bgColor; ctx.fillRect(0, 0, pixelSize, pixelSize);
+        if (!qrResult || !qrResult.ok) return;
+        const matrixSize = qrResult.size;
+        const marginModules = state.quietZone ? 4 : 0;
+        const totalModules = matrixSize + marginModules * 2;
+        const modPx = pixelSize / totalModules;
+        ctx.fillStyle = state.fgColor;
+        const bleed = modPx < 8 ? 0.35 : 0.15;
+        for (let r = 0; r < matrixSize; r++) {
+          for (let c = 0; c < matrixSize; c++) {
+            if (qrResult.modules[r][c]) {
+              const x = (c + marginModules) * modPx, y = (r + marginModules) * modPx;
+              ctx.fillRect(x, y, modPx + bleed, modPx + bleed);
+            }
+          }
+        }
+        const activeImg = state.logoMode === "xevqor" ? state.xevqorImageObj : state.logoMode === "upload" ? state.uploadedImageObj : null;
+        if (state.logoMode !== "none" && activeImg) {
+          const qrPixelSpan = matrixSize * modPx;
+          const logoOuterSize = qrPixelSpan * (state.logoScalePct / 100);
+          const center = pixelSize / 2, outerX = center - logoOuterSize / 2, outerY = center - logoOuterSize / 2;
+          if (state.plateShape !== "none") {
+            ctx.save(); ctx.fillStyle = state.bgColor;
+            if (state.plateShape === "circle") { ctx.beginPath(); ctx.arc(center, center, logoOuterSize / 2, 0, Math.PI * 2); ctx.closePath(); ctx.fill(); }
+            else { traceRoundedRect(ctx, outerX, outerY, logoOuterSize, logoOuterSize, logoOuterSize * 0.22); ctx.fill(); }
+            ctx.restore();
+          }
+          const padRatio = state.logoPadding ? 0.11 : 0.0;
+          const innerSize = logoOuterSize * (1 - padRatio * 2);
+          const innerX = center - innerSize / 2, innerY = center - innerSize / 2;
+          ctx.save();
+          if (state.plateShape === "circle") { ctx.beginPath(); ctx.arc(center, center, innerSize / 2, 0, Math.PI * 2); ctx.closePath(); ctx.clip(); }
+          else if (state.plateShape === "rounded") { traceRoundedRect(ctx, innerX, innerY, innerSize, innerSize, innerSize * 0.2); ctx.clip(); }
+          ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
+          ctx.drawImage(activeImg, innerX, innerY, innerSize, innerSize);
+          ctx.restore();
+        }
+      }
+
+      function generateStandaloneSVG(qrResult) {
+        if (!qrResult || !qrResult.ok) return "";
+        const matrixSize = qrResult.size;
+        const marginModules = state.quietZone ? 4 : 0;
+        const totalModules = matrixSize + marginModules * 2;
+        const viewBoxSize = 1000;
+        const modUnit = viewBoxSize / totalModules;
+        let rectsSvg = "";
+        for (let r = 0; r < matrixSize; r++) {
+          let c = 0;
+          while (c < matrixSize) {
+            if (qrResult.modules[r][c]) {
+              let run = 1;
+              while (c + run < matrixSize && qrResult.modules[r][c + run]) run++;
+              rectsSvg += `<rect x="${((c + marginModules) * modUnit).toFixed(3)}" y="${((r + marginModules) * modUnit).toFixed(3)}" width="${(run * modUnit).toFixed(3)}" height="${modUnit.toFixed(3)}"/>`;
+              c += run;
+            } else c++;
+          }
+        }
+        let defsSvg = "";
+        let overlaySvg = "";
+        const hasOverlay = (state.logoMode === "xevqor") || (state.logoMode === "upload" && state.uploadedDataUrl);
+        if (hasOverlay) {
+          const qrSpan = matrixSize * modUnit, outerSize = qrSpan * (state.logoScalePct / 100);
+          const center = viewBoxSize / 2, outerX = center - outerSize / 2, outerY = center - outerSize / 2;
+          if (state.plateShape === "circle") overlaySvg += `<circle cx="${center}" cy="${center}" r="${(outerSize / 2).toFixed(2)}" fill="${state.bgColor}"/>`;
+          else if (state.plateShape === "rounded") overlaySvg += `<rect x="${outerX.toFixed(2)}" y="${outerY.toFixed(2)}" width="${outerSize.toFixed(2)}" height="${outerSize.toFixed(2)}" rx="${(outerSize * 0.22).toFixed(2)}" fill="${state.bgColor}"/>`;
+          const padRatio = state.logoPadding ? 0.11 : 0.0;
+          const innerSize = outerSize * (1 - padRatio * 2), innerX = center - innerSize / 2, innerY = center - innerSize / 2;
+          if (state.logoMode === "xevqor") {
+            overlaySvg += `<g transform="translate(${innerX.toFixed(2)}, ${innerY.toFixed(2)}) scale(${(innerSize / 100).toFixed(5)})">${XEVQOR_EMBLEM_INNER}</g>`;
+          } else if (state.logoMode === "upload" && state.uploadedDataUrl) {
+            let clipAttr = "";
+            if (state.plateShape === "circle") {
+              defsSvg = `<defs><clipPath id="qrLogoClip"><circle cx="${center}" cy="${center}" r="${(innerSize / 2).toFixed(2)}"/></clipPath></defs>`;
+              clipAttr = ` clip-path="url(#qrLogoClip)"`;
+            } else if (state.plateShape === "rounded") {
+              defsSvg = `<defs><clipPath id="qrLogoClip"><rect x="${innerX.toFixed(2)}" y="${innerY.toFixed(2)}" width="${innerSize.toFixed(2)}" height="${innerSize.toFixed(2)}" rx="${(innerSize * 0.2).toFixed(2)}"/></clipPath></defs>`;
+              clipAttr = ` clip-path="url(#qrLogoClip)"`;
+            }
+            overlaySvg += `<image href="${state.uploadedDataUrl}" x="${innerX.toFixed(2)}" y="${innerY.toFixed(2)}" width="${innerSize.toFixed(2)}" height="${innerSize.toFixed(2)}" preserveAspectRatio="xMidYMid slice"${clipAttr}/>`;
+          }
+        }
+        return `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${viewBoxSize} ${viewBoxSize}" width="1024" height="1024">${defsSvg}<rect width="${viewBoxSize}" height="${viewBoxSize}" fill="${state.bgColor}"/><g fill="${state.fgColor}" shape-rendering="crispEdges">${rectsSvg}</g>${overlaySvg}</svg>`;
+      }
+
+      function updateSafetyAudit(qrResult) {
+        const ecCapacityMap = { H: 30, Q: 25, M: 15, L: 7 }, ecCeiling = ecCapacityMap[state.ecLevel];
+        if (!qrResult.ok) {
+          el.auditVersion.textContent = "OVF"; el.auditMatrix.textContent = ">77×77"; el.auditCoverage.textContent = "N/A";
+          el.auditBadge.textContent = "LIMIT EXCEEDED"; el.auditBadge.classList.add("warn"); el.auditNote.textContent = qrResult.error;
+          return;
+        }
+        el.auditVersion.textContent = `V${qrResult.version}`; el.auditMatrix.textContent = `${qrResult.size}×${qrResult.size}`; el.maskInfoLabel.textContent = `MASK #${qrResult.mask}`;
+        const hasLogo = state.logoMode === "xevqor" || (state.logoMode === "upload" && Boolean(state.uploadedImageObj));
+        const areaPct = hasLogo ? Math.pow(state.logoScalePct / 100, 2) * 100 : 0;
+        el.auditCoverage.textContent = hasLogo ? `${areaPct.toFixed(1)}% / ${ecCeiling}%` : `0.0% / ${ecCeiling}%`;
+        if (state.payload.length === 0) {
+          el.auditBadge.textContent = "STANDBY"; el.auditBadge.classList.remove("warn");
+          el.auditNote.textContent = "Insert payload data to generate a scannable matrix.";
+          return;
+        }
+        const contrast = computeContrastInfo(state.fgColor, state.bgColor), warnings = [];
+        if (contrast.isInverted) warnings.push("Inverted polarity may fail on legacy scanners.");
+        else if (contrast.ratio < 4.5) warnings.push(`Low contrast (${contrast.ratio.toFixed(1)}:1).`);
+        if (!state.quietZone) warnings.push("Quiet Zone disabled.");
+        if (hasLogo && (state.ecLevel === "L" || state.ecLevel === "M")) warnings.push(`Logo active with Level ${state.ecLevel}. Use H for best results.`);
+        if (warnings.length === 0) {
+          el.auditBadge.textContent = "READY"; el.auditBadge.classList.remove("warn");
+          el.auditNote.textContent = hasLogo ? `Level ${state.ecLevel} parity recovers up to ${ecCeiling}% damage. Logo covers ${areaPct.toFixed(1)}% with 4-module Quiet Zone.` : `Pure ISO matrix with Level ${state.ecLevel} parity and ${contrast.ratio.toFixed(1)}:1 contrast.`;
+        } else {
+          el.auditBadge.textContent = "ADVISORY"; el.auditBadge.classList.add("warn"); el.auditNote.textContent = warnings[0];
+        }
+      }
+
+      function renderAll() {
+        const rawText = state.payload.length > 0 ? state.payload : "";
+        const utf8ByteLen = new TextEncoder().encode(rawText).length;
+        el.byteCounter.textContent = `${utf8ByteLen} UTF-8 BYTES`;
+        const qrResult = QREncoder.encode(rawText, state.ecLevel);
+        state.lastQrResult = qrResult;
+        const stageRect = el.canvasStage.getBoundingClientRect();
+        const cssSide = Math.max(240, Math.floor(stageRect.width - 24));
+        const dpr = Math.min(window.devicePixelRatio || 1, 3);
+        renderQRToCanvas(el.qrCanvas, Math.round(cssSide * dpr), qrResult);
+        updateSafetyAudit(qrResult);
+      }
+
+      function downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob), a = document.createElement("a");
+        a.href = url; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      function exportPNG(targetSize) {
+        if (!state.payload || state.payload.length === 0) return showToast("Insert payload data first.");
+        if (!state.lastQrResult || !state.lastQrResult.ok) return showToast("Payload exceeds capacity.");
+        const offscreen = document.createElement("canvas");
+        renderQRToCanvas(offscreen, targetSize, state.lastQrResult);
+        offscreen.toBlob((blob) => { if (blob) { downloadBlob(blob, `xevqor-qr-${targetSize}x${targetSize}.png`); showToast(`Exported ${targetSize}px PNG.`); } }, "image/png");
+      }
+
+      function exportSVG() {
+        if (!state.payload || state.payload.length === 0) return showToast("Insert payload data first.");
+        if (!state.lastQrResult || !state.lastQrResult.ok) return showToast("Payload exceeds capacity.");
+        downloadBlob(new Blob([generateStandaloneSVG(state.lastQrResult)], { type: "image/svg+xml;charset=utf-8" }), "xevqor-qr-vector.svg");
+        showToast("Exported Vector SVG.");
+      }
+
+      function bindSegmentedGroup(groupEl, attrName, onChange) {
+        groupEl.addEventListener("click", (e) => {
+          const btn = e.target.closest("button[data-" + attrName + "]");
+          if (!btn) return;
+          groupEl.querySelectorAll(".seg-btn").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active"); onChange(btn.getAttribute("data-" + attrName));
+        });
+      }
+
+      el.payloadInput.addEventListener("input", () => { state.payload = el.payloadInput.value; renderAll(); });
+      el.clearPayloadBtn.addEventListener("click", () => { el.payloadInput.value = ""; state.payload = ""; el.payloadInput.focus(); renderAll(); });
+      bindSegmentedGroup(el.logoModeGroup, "mode", (mode) => {
+        state.logoMode = mode;
+        const labels = { xevqor: "XEVQOR EMBLEM", upload: "LOCAL FILE", none: "PURE QR" };
+        el.logoModeLabel.textContent = labels[mode];
+        el.uploadZone.classList.toggle("hidden", mode !== "upload");
+        el.logoOptionsPanel.style.opacity = mode === "none" ? "0.45" : "1";
+        el.logoOptionsPanel.style.pointerEvents = mode === "none" ? "none" : "auto";
+        renderAll();
+      });
+
+      el.triggerUploadBtn.addEventListener("click", () => el.logoFileInput.click());
+      el.logoFileInput.addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const dataUrl = ev.target.result, img = new Image();
+          img.onload = () => {
+            state.uploadedDataUrl = dataUrl;
+            state.uploadedImageObj = img;
+            state.uploadedFileName = file.name;
+            el.uploadFileName.textContent = `Loaded: ${file.name}`;
+            el.logoFileInput.value = "";
+            renderAll();
+            showToast("Loaded local image.");
+          };
+          img.src = dataUrl;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      el.logoSizeSlider.addEventListener("input", () => { state.logoScalePct = parseInt(el.logoSizeSlider.value, 10); el.logoSizeVal.textContent = `${state.logoScalePct}%`; renderAll(); });
+      bindSegmentedGroup(el.plateShapeGroup, "shape", (shape) => { state.plateShape = shape; renderAll(); });
+      el.logoPaddingToggle.addEventListener("change", () => { state.logoPadding = el.logoPaddingToggle.checked; renderAll(); });
+      bindSegmentedGroup(el.ecLevelGroup, "ec", (ec) => { state.ecLevel = ec; renderAll(); });
+      el.quietZoneToggle.addEventListener("change", () => { state.quietZone = el.quietZoneToggle.checked; renderAll(); });
+      el.fgColorInput.addEventListener("input", () => { state.fgColor = el.fgColorInput.value; el.fgColorHex.textContent = state.fgColor.toUpperCase(); renderAll(); });
+      el.bgColorInput.addEventListener("input", () => { state.bgColor = el.bgColorInput.value; el.bgColorHex.textContent = state.bgColor.toUpperCase(); renderAll(); });
+      el.resetContrastBtn.addEventListener("click", () => {
+        state.fgColor = "#000000"; state.bgColor = "#ffffff";
+        el.fgColorInput.value = "#000000"; el.bgColorInput.value = "#ffffff";
+        el.fgColorHex.textContent = "#000000"; el.bgColorHex.textContent = "#FFFFFF";
+        renderAll(); showToast("Restored maximum contrast.");
+      });
+
+      el.exportPng1024.addEventListener("click", () => exportPNG(1024));
+      el.exportPng2048.addEventListener("click", () => exportPNG(2048));
+      el.exportSvgBtn.addEventListener("click", exportSVG);
+
+      let resizeRaf = null;
+      window.addEventListener("resize", () => { if (resizeRaf) cancelAnimationFrame(resizeRaf); resizeRaf = requestAnimationFrame(renderAll); });
+      window.addEventListener("load", () => { initXevqorImage(); renderAll(); });
+
+      if (location.protocol === "https:" && "serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
+      }
+    })();
+  </script>
+</body>
+</html>
