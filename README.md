@@ -31,9 +31,9 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 
 > *"What you do here, stays here."*
 
-* **100% Client-Side Execution:** Key derivation, encryption, hashing, token inspection, compression, and binary/Unicode payload encoding run locally in browser memory via the native **W3C Web Crypto API (`window.crypto.subtle`)**.
+* **100% Client-Side Execution:** Key derivation, encryption, hashing, forensic metadata sanitization, compression, and binary/Unicode payload encoding run locally in browser memory via the native **W3C Web Crypto API (`window.crypto.subtle`)**.
 * **Zero Application-Level Trackers:** No embedded analytics, cookies, external font CDNs, or third-party QR APIs in source code (any Cloudflare edge RUM beacon injected on `xevqor.org` is blocked from executing by strict `script-src` SHA-256 CSP). Typography uses local system font stacks, and donation QR codes render locally via an embedded **Reed-Solomon SVG generator (`OfflineQR`)**.
-* **Browser-Enforced CSP Lockdown:** Enforces `Content-Security-Policy` (`connect-src 'none'`, `form-action 'none'`, `object-src 'none'`) and `referrer="no-referrer"`, blocking outbound network calls at the browser engine level after initial load.
+* **Browser-Enforced CSP Lockdown:** Enforces `Content-Security-Policy` (`connect-src 'none'`, `form-action 'none'`, `object-src 'none'`) and `Referrer-Policy: no-referrer`, blocking outbound network calls at the browser engine level after initial load.
 * **Zero Data Persistence:** No backend servers, no databases, and no `localStorage` credential retention. Inputs and keys stay strictly in volatile browser tab RAM.
 * **Offline Capable (PWA):** Backed by a same-origin Service Worker (`sw.js`) caching static app-shell assets for air-gapped operation without caching user secrets or URL `#` fragments.
 
@@ -72,7 +72,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 
        curl -fsSL -A "Mozilla/5.0" https://xevqormyid.pages.dev | sha256sum
        curl -fsSL -A "Mozilla/5.0" https://xevqor.github.io | sha256sum
-       sha256sum -c SHA256SUMS.txt  # run inside cloned repo (23 files incl. edge-only _headers)
+       sha256sum -c SHA256SUMS.txt  # run inside cloned repo (22 files tracked in manifest, incl. edge-only _headers)
 
    *(Note: On `https://xevqor.org`, Cloudflare's custom-domain proxy appends its `beacon.min.js` analytics tag before `</body>` on `.html` responses—blocked at runtime by CSP—while all non-HTML assets and raw origin mirrors match `SHA256SUMS.txt` byte-for-byte.)*
 
@@ -116,7 +116,7 @@ To maintain strict cryptographic transparency, **XEVQOR** explicitly defines wha
 | `/nano/` | **Nano** | Compresses plaintext via `deflate-raw`, encrypts with `AES-256-GCM`, and encodes as compact Base64. |
 | `/keypass/` | **Keypass** | Deterministic `PBKDF2-SHA256` (600,000 iterations). Service labels are case-normalized (`lowercase`); **Output A** and **Output B** are independently derived via separate PBKDF2 calls using domain-separated salts (`xevqor.keypass.v2:<label>` and `xevqor.keypass.v2:slot-b:<label>`). Output strength depends on Brain Key entropy. Best-effort clipboard auto-clear after 45s (when browser clipboard read/write permission is granted). |
 | `/hash/` | **Hash** | Local `crypto.subtle.digest` calculator for **SHA-256**, **SHA-512**, and **SHA-1 (Legacy Non-Security Checksum)**. |
-| `/scrub/` | **SCRUB** | **Fail-Closed Forensic Metadata Sanitizer.** Strips EXIF/GPS/XMP, PDF `/Info` & `/Metadata`, Office `docProps`, MP4 `udta`/`meta`, and ID3 tags in tab RAM (plus optional Canvas pixel re-encode for single-frame images). |
+| `/scrub/` | **SCRUB** | **Fail-Closed Forensic Metadata Sanitizer.** Strips EXIF/GPS/XMP, PNG ancillary chunks, PDF `/Info` & `/Metadata`, Office/ZIP `docProps` & timestamps, MP4 `udta`/`meta`, and ID3 tags in tab RAM (plus optional Canvas pixel re-encode for single-frame images). Rejects encrypted/password-protected containers and does not remove visual watermarks or document body text. |
 | `/dice/` | **Dice** | Unbiased CSPRNG (`crypto.getRandomValues` with rejection sampling `uint32 < 4294967292`). |
 | `/qr/` | **QR** | Pure client-side ISO/IEC 18004 matrix encoder with GF(256) Reed-Solomon parity (`L`/`M`/`Q`/`H`), optional local logo overlay, and `connect-src 'none'` isolation. |
 
