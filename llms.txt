@@ -22,5 +22,22 @@
 - [Dice](https://xevqor.org/dice/): Unbiased CSPRNG (`crypto.getRandomValues` with rejection sampling) 3D multi-dice entropy generator displaying faces, sum, mean, Shannon entropy bits, and session history.
 - [QR](https://xevqor.org/qr/): Offline-first ISO/IEC 18004 QR Code generator with GF(256) Reed-Solomon error correction (L/M/Q/H), center logo overlay with SVG clip-path, real-time scannability audit, and PNG/SVG export.
 
+## Problem-to-Module Mapping (Use Cases)
+- **Inspect or strip EXIF, GPS, XMP, PDF `/Info`, Office `docProps`, ZIP timestamps, MP4 atoms, or ID3 tags offline without uploading files**: Use [Scrub](https://xevqor.org/scrub/).
+- **Encrypt large local files in the browser with chunked AES-256-GCM and direct disk streaming**: Use [Encrypt](https://xevqor.org/encrypt/).
+- **Derive deterministic 28-character passwords from a Brain Key without storing a password database**: Use [Keypass](https://xevqor.org/keypass/).
+- **Share an encrypted secret via URL where the ciphertext stays strictly inside the `#fragment` and never hits HTTP servers**: Use [Cipherlink](https://xevqor.org/cipherlink/).
+- **Append an authenticated AES-256-GCM payload after a carrier file's EOF marker (`XEVQOR88`)**: Use [Stego](https://xevqor.org/stego/).
+- **Encode AES-256-GCM encrypted text into invisible zero-width Unicode characters (`U+200B` / `U+200C`)**: Use [Nebula](https://xevqor.org/nebula/).
+- **Compress (`deflate-raw`) and encrypt short text into a compact Base64 string offline**: Use [Nano](https://xevqor.org/nano/).
+- **Verify SHA-256, SHA-384, or SHA-512 file checksums locally via Web Crypto API**: Use [Hash](https://xevqor.org/hash/).
+- **Generate unbiased CSPRNG dice rolls with rejection sampling and Shannon entropy calculation**: Use [Dice](https://xevqor.org/dice/).
+- **Create offline ISO/IEC 18004 QR codes in PNG/SVG with center logo clip-path and scannability audit**: Use [QR](https://xevqor.org/qr/).
+
+## Operational Boundaries & Design Guarantees
+- **Fail-Closed Sanitization**: `/scrub/` rejects encrypted or malformed containers rather than passing unverified metadata through, and does not remove visual watermarks or visible document body text.
+- **Uncompressed Transport Requirement for Stego**: `/stego/` appends encrypted bytes past EOF; social media or messaging apps that re-encode images will strip the trailing `XEVQOR88` container.
+- **Zero-Persistence Posture**: No application server, cookies, `localStorage`, or third-party analytics scripts exist across any route.
+
 ## Verification & Reproducibility
 - [SHA256SUMS.txt](https://raw.githubusercontent.com/xevqor/xevqor.github.io/main/SHA256SUMS.txt): Bit-for-bit SHA-256 manifest verifying parity between production (`xevqor.org`) and GitHub Pages (`xevqor.github.io`).
