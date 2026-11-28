@@ -1,0 +1,39 @@
+# XEVQOR (xevqor.org) — Search & AI Indexing Policy
+User-agent: *
+Allow: /
+
+# Major Search Engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# AI Search & LLM Retrieval Crawlers
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Sitemaps & AI Manifests
+Sitemap: https://xevqor.org/sitemap.xml
+# LLM-ready documentation: https://xevqor.org/llms.txt and https://xevqor.org/llms-full.txt

@@ -1,0 +1,106 @@
+# XEVQOR — Complete Technical & Architectural Reference
+
+> Canonical Domain: https://xevqor.org
+> Architecture: 100% Client-Side Static Progressive Web App (Zero Backend, Zero Database, Zero Analytics)
+> Last Updated: 2026-11-28
+
+## 1. Platform Overview
+XEVQOR is a browser-native security, cryptography, and digital forensics toolkit designed for high-assurance client-side execution. Unlike conventional web utilities that upload files or transmit parameters to cloud APIs, XEVQOR executes all Web Crypto API primitives, binary container parsers, and canvas pixel operations strictly inside local RAM.
+
+## 2. Hardened Browser Sandbox & Verification
+- **Content Security Policy (CSP Level 3)**: Every route enforces strict `default-src 'none'`, explicit `'sha256-...'` inline script hashes, `connect-src 'none'` (blocking `fetch`, `XMLHttpRequest`, `WebSocket`, and `EventSource`), `base-uri 'none'`, `form-action 'none'`, and `frame-ancestors 'none'`.
+- **Offline Service Worker**: Once loaded, all 10 modules operate completely offline without network access.
+- **Reproducible Asset Parity**: All deployed files match `SHA256SUMS.txt` sorted under POSIX `LC_ALL=C` byte order.
+
+## 3. Detailed Module Directory
+
+### 3.1. XEVQOR // KEYPASS
+- **URL**: https://xevqor.org/keypass/
+- **Category**: Cryptographic Key & Password Derivation
+- **Summary**: Stateless, zero-backend deterministic password and cryptographic key generator running 100% in browser memory with Web Crypto API and strict CSP isolation.
+- **Key Capabilities**:
+  - Stateless deterministic key derivation
+  - Web Crypto PBKDF2/SHA-256 engine
+  - Zero network transmission (connect-src 'none')
+
+### 3.2. XEVQOR // HASH
+- **URL**: https://xevqor.org/hash/
+- **Category**: Cryptographic Integrity & Digest Verification
+- **Summary**: Browser-native cryptographic digest calculator and file integrity verifier supporting SHA-256, SHA-384, SHA-512, and HMAC verification completely offline.
+- **Key Capabilities**:
+  - Streaming local file hashing
+  - Constant-time digest comparison
+  - Offline PWA execution
+
+### 3.3. XEVQOR // CIPHERLINK
+- **URL**: https://xevqor.org/cipherlink/
+- **Category**: Zero-Knowledge Encrypted Secret Sharing
+- **Summary**: Create self-contained encrypted payload links where decryption keys remain strictly inside the URL hash fragment (#) and never touch any server.
+- **Key Capabilities**:
+  - AES-256-GCM authenticated encryption
+  - URL fragment (#) key isolation
+  - Zero server storage or telemetry
+
+### 3.4. XEVQOR // NANO
+- **URL**: https://xevqor.org/nano/
+- **Category**: Ephemeral Encrypted Scratchpad
+- **Summary**: Minimalist client-side encrypted scratchpad and secure note vault operating purely in local browser memory with zero cloud sync or external requests.
+- **Key Capabilities**:
+  - In-memory AES-GCM note encryption
+  - Zero persistence leak protection
+  - Offline-first architecture
+
+### 3.5. XEVQOR // NEBULA
+- **URL**: https://xevqor.org/nebula/
+- **Category**: Browser-Native File & Payload Encryption
+- **Summary**: Encrypt and decrypt sensitive files and binary payloads locally inside your browser using authenticated symmetric cryptography without uploading bytes.
+- **Key Capabilities**:
+  - Local binary file encryption
+  - Authenticated AEAD cipher suite
+  - Strict Content Security Policy isolation
+
+### 3.6. XEVQOR // ENCRYPT
+- **URL**: https://xevqor.org/encrypt/
+- **Category**: Authenticated Symmetric Cryptography
+- **Summary**: Zero-backend encryption and decryption workbench powered by native browser Web Crypto API for confidential text and binary data.
+- **Key Capabilities**:
+  - Native Web Crypto AES-256-GCM
+  - PBKDF2 high-iteration key stretching
+  - 100% client-side execution
+
+### 3.7. XEVQOR // STEGO
+- **URL**: https://xevqor.org/stego/
+- **Category**: Digital Steganography & Covert Embedding
+- **Summary**: Embed and extract encrypted hidden payloads inside lossless PNG pixel channels directly in browser memory without server-side image processing.
+- **Key Capabilities**:
+  - Lossless LSB pixel embedding
+  - Optional pre-embed AES encryption
+  - Offline canvas processing
+
+### 3.8. XEVQOR // DICE
+- **URL**: https://xevqor.org/dice/
+- **Category**: CSPRNG Entropy & Passphrase Generation
+- **Summary**: Generate high-entropy cryptographic passphrases, hex seeds, and unbiased random numbers using crypto.getRandomValues() completely offline.
+- **Key Capabilities**:
+  - Unbiased rejection-sampled CSPRNG
+  - Multi-word Diceware passphrases
+  - Zero network connectivity
+
+### 3.9. XEVQOR // QR
+- **URL**: https://xevqor.org/qr/
+- **Category**: Air-Gapped QR Matrix Encoding
+- **Summary**: Generate crisp, high-error-correction QR codes for URLs, cryptographic keys, and offline air-gapped transfers without leaking inputs to third-party APIs.
+- **Key Capabilities**:
+  - Local deterministic QR matrix rendering
+  - Zero external API calls
+  - High error-correction support
+
+### 3.10. XEVQOR // SCRUB
+- **URL**: https://xevqor.org/scrub/
+- **Category**: Binary Forensic Metadata Sanitization
+- **Summary**: Fail-closed binary parser and lossless metadata sanitizer for JPEG, PNG/APNG, PDF, ZIP/Office/ODF, MP4/MOV/M4A, and MP3 with independent post-scrub forensic verification.
+- **Key Capabilities**:
+  - In-place zero-shift PDF & MP4 neutralization
+  - IFD1 hidden thumbnail detector
+  - Independent post-scrub binary audit
+

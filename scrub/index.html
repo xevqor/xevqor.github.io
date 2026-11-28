@@ -3569,7 +3569,7 @@
           const latin1 = bytesToLatin1(bytes);
           const verMatch = latin1.slice(0, 32).match(/%PDF-(\d+\.\d+)/);
           const pdfVer = verMatch ? verMatch[1] : "1.x";
-          const pageMatches = latin1.match(/\/Type\s*\/Page\b(?!s)/g);
+          const pageMatches = (() => { const rx = /\/Type\s*\/Page\b(?!s)/g; let m, cnt = 0; const ranges = typeof streamRanges !== 'undefined' ? streamRanges : []; while ((m = rx.exec(latin1)) !== null) { const pos = m.index; const inStream = ranges.some(r => { const s = Array.isArray(r) ? r[0] : r.start; const e = Array.isArray(r) ? r[1] : r.end; return pos >= s && pos < e; }); if (!inStream) cnt++; } return Array(cnt); })();
           const pageCount = pageMatches ? pageMatches.length : 0;
           const eofMatches = latin1.match(/%%EOF/g);
           const revisionCount = eofMatches ? eofMatches.length : 0;

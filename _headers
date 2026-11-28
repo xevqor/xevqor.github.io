@@ -32,7 +32,7 @@
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-WZpHovMy3hdi8maeSlxpVa6+pr1q24TUFMeDrFW6ISQ=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /scrub
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-HyjQoec0jgaEpwjD6w2H33Utnx0YqSf3TQzseaIg1Uo=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-L/9ZxiATmeaDad0qXVG3VKmMlhKEhp1qToNHy/7Jp7c=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /scrub/
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-HyjQoec0jgaEpwjD6w2H33Utnx0YqSf3TQzseaIg1Uo=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
