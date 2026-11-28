@@ -1,4 +1,4 @@
-const CACHE_NAME = 'xevqor-vault-v3-qr';
+const CACHE_NAME = 'xevqor-vault-v4-scrub';
 
 const CORE_ASSETS = [
   '/',
@@ -9,7 +9,7 @@ const CORE_ASSETS = [
   '/icon-512.png',
   '/keypass',
   '/hash',
-  '/jwt',
+  '/scrub',
   '/cipherlink',
   '/nano',
   '/nebula',

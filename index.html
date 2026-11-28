@@ -9,8 +9,8 @@
   <meta name="referrer" content="no-referrer" />
 
   <title>XEVQOR — Trust-No-One Client-Side Cryptography</title>
-  <meta name="description" content="XEVQOR — Trust-No-One Client-Side Cryptography. A client-side, zero-application-backend open-source cryptography and privacy suite auditable at https://xevqor.github.io, featuring domain-separated PBKDF2 password generation (Keypass), SHA-256/512 file hashing (Hash), local JWT inspection (JWT), stateless URL-fragment dead-drops (Cipherlink), deflate-raw AES-256-GCM text cipher (Nano), zero-width Unicode encoding (Nebula), chunked .xqr file encryption (Encrypt), XEVQOR88 EOF container injection (Stego), unbiased 3D dice CSPRNG (Dice), and offline ISO/IEC 18004 QR Code generation (QR)." />
-  <meta name="keywords" content="XEVQOR, zero application backend, client side, open source cryptography, client-side cryptography, privacy tools, deterministic password generator, keypass, sha256 hash, jwt inspector, serverless cipherlink dead-drops, aes-256-gcm, deflate-raw cipher, nano, zero-width steganography, nebula, chunked file encryption, eof container injection, stego, cryptographic rng, offline qr generator, reed-solomon, xevqor.github.io" />
+  <meta name="description" content="XEVQOR — Trust-No-One Client-Side Cryptography. A client-side, zero-application-backend open-source cryptography and privacy suite auditable at https://xevqor.github.io, featuring domain-separated PBKDF2 password generation (Keypass), SHA-256/512 file hashing (Hash), client-side forensic metadata sanitization (Scrub), stateless URL-fragment dead-drops (Cipherlink), deflate-raw AES-256-GCM text cipher (Nano), zero-width Unicode encoding (Nebula), chunked .xqr file encryption (Encrypt), XEVQOR88 EOF container injection (Stego), unbiased 3D dice CSPRNG (Dice), and offline ISO/IEC 18004 QR Code generation (QR)." />
+  <meta name="keywords" content="XEVQOR, zero application backend, client side, open source cryptography, client-side cryptography, privacy tools, deterministic password generator, keypass, sha256 hash, forensic metadata sanitizer, exif remover, pdf metadata scrubber, serverless cipherlink dead-drops, aes-256-gcm, deflate-raw cipher, nano, zero-width steganography, nebula, chunked file encryption, eof container injection, stego, cryptographic rng, offline qr generator, reed-solomon, xevqor.github.io" />
   <meta name="author" content="XEVQOR" />
   <link rel="canonical" href="https://xevqor.org" />
 
@@ -46,7 +46,7 @@
     "featureList": [
       "Keypass (/keypass): Deterministic dual 28-character password generator derived from Brain Key and Identity Label using separate PBKDF2-SHA256 (600,000 iterations) calls with domain-separated salts.",
       "Hash (/hash): Client-side cryptographic file and text integrity checksum generator supporting SHA-256, SHA-384, and SHA-512.",
-      "JWT (/jwt): Local Base64Url JSON Web Token header/payload decoder and expiration (exp) claim inspector (signature verification status explicitly noted).",
+      "Scrub (/scrub): Client-side forensic metadata inspector and fail-closed sanitizer stripping EXIF, GPS, XMP, PDF /Info, Office docProps, and container telemetry across images, PDFs, Office archives, and media.",
       "Cipherlink (/cipherlink/): Stateless client-side encrypted URL fragment (#) notes using deflate-raw compression, AES-256-GCM encryption, and active browser address-bar scrubbing.",
       "Nano (/nano): Client-side text compressor and cipher combining deflate-raw compression, AES-256-GCM encryption, and compact Base64 encoding.",
       "Nebula (/nebula): Zero-width Unicode text encoder embedding AES-256-GCM encrypted messages into invisible characters (U+200B and U+200C).",
@@ -658,7 +658,7 @@
     <nav class="tools-grid" aria-label="XEVQOR Utilities">
       <a href="/keypass" class="tool-btn">/KEYPASS</a>
       <a href="/hash" class="tool-btn">/HASH</a>
-      <a href="/jwt" class="tool-btn">/JWT</a>
+      <a href="/scrub" class="tool-btn">/SCRUB</a>
       <a href="/cipherlink/" class="tool-btn">/CIPHERLINK</a>
       <a href="/nano" class="tool-btn">/NANO</a>
       <a href="/nebula" class="tool-btn">/NEBULA</a>
@@ -689,7 +689,7 @@
       <ul>
         <li><strong>Keypass (/keypass):</strong> Deterministic dual 28-character cryptographic password generator derived locally from a user Brain Key and Identity Label via separate PBKDF2-SHA256 (600,000 iterations) calls with domain-separated salts (effective strength depends on Brain Key entropy).</li>
         <li><strong>Hash (/hash):</strong> Client-side cryptographic file and text integrity checksum calculator supporting SHA-256, SHA-384, and SHA-512 algorithms directly in browser memory.</li>
-        <li><strong>JWT (/jwt):</strong> Offline Base64Url JSON Web Token header and payload decoder with real-time expiration (exp) timestamp inspection (notes unverified signature status).</li>
+        <li><strong>Scrub (/scrub):</strong> Client-side forensic metadata inspector and fail-closed sanitizer for JPEG, PNG/APNG, WebP, PDF, DOCX/XLSX/PPTX/ODF, ZIP, MP4/MOV/M4A, and MP3.</li>
         <li><strong>Cipherlink (/cipherlink/):</strong> Stateless client-side encrypted notes combining deflate-raw compression and authenticated AES-256-GCM encryption stored inside local URL hash fragments (#) with active address-bar scrubbing upon decryption.</li>
         <li><strong>Nano (/nano):</strong> Client-side text compressor and cipher combining deflate-raw compression, AES-256-GCM encryption, and compact Base64 encoding.</li>
         <li><strong>Nebula (/nebula):</strong> Zero-width Unicode text carrier encoding AES-256-GCM encrypted payloads into invisible Unicode characters (U+200B and U+200C) embedded within ordinary cover text.</li>

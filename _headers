@@ -31,14 +31,14 @@
 /hash/index.html
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-WZpHovMy3hdi8maeSlxpVa6+pr1q24TUFMeDrFW6ISQ=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
-/jwt
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-I+OS9715JSyPCVBh6mcya0msja+hhCb/ecgMuf/lzQ4=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+/scrub
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-HyjQoec0jgaEpwjD6w2H33Utnx0YqSf3TQzseaIg1Uo=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
-/jwt/
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-I+OS9715JSyPCVBh6mcya0msja+hhCb/ecgMuf/lzQ4=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+/scrub/
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-HyjQoec0jgaEpwjD6w2H33Utnx0YqSf3TQzseaIg1Uo=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
-/jwt/index.html
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-I+OS9715JSyPCVBh6mcya0msja+hhCb/ecgMuf/lzQ4=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+/scrub/index.html
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-HyjQoec0jgaEpwjD6w2H33Utnx0YqSf3TQzseaIg1Uo=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /cipherlink
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-D2x6cpeeWPnVsjw5gXwoAyU6rP5CmnweSSj2eM0iH58=' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'

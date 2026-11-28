@@ -44,7 +44,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 * **Deterministic Key Derivation (`/keypass`):** Uses `PBKDF2` (`HMAC-SHA-256`, **600,000 iterations**) via `SubtleCrypto.deriveBits`. The case-normalized (`lowercase`) domain-prefixed UTF-8 *Identity Label* derives two independent 28-character outputs via separate `PBKDF2-SHA256` calls using domain-separated salts (`xevqor.keypass.v2:<label>` for Slot A's Base64-derived 62-character alphanumeric mapping (`+`, `/`, `=` replaced with `X`, `Z`, `Y`) and `xevqor.keypass.v2:slot-b:<label>` for Slot B's 88-character uniform rejection-sampled alphabet), paired with a live Brain Key entropy indicator and best-effort 45-second clipboard auto-clear.
 * **Authenticated Encryption (`/encrypt`, `/nano`, `/cipherlink`, `/stego`, `/nebula`):** Uses `AES-256-GCM` with fresh 96-bit random IVs and 128-bit per-payload CSPRNG salts (`PBKDF2-SHA256`, 600,000 iterations across all 5 AEAD encryption modules and Keypass). Because `/cipherlink` is 100% stateless with no server database, decryption scrubs the URL fragment from the active session address bar (`history.replaceState`), while distributed copies remain the sender's responsibility.
 * **Entropy Source (`/dice`):** Uses OS-level CSPRNG (`window.crypto.getRandomValues()`) with unbiased rejection sampling (`uint32 < 4294967292`) rather than `Math.random()`.
-* **Service Worker (`sw.js`):** Same-origin `GET` cache handler (`xevqor-vault-v3-qr`) caches same-origin HTTP 200 GET responses for offline availability (never caching URL # fragments or user secrets).
+* **Service Worker (`sw.js`):** Same-origin `GET` cache handler (`xevqor-vault-v4-scrub`) caches same-origin HTTP 200 GET responses for offline availability (never caching URL # fragments or user secrets).
 
 ---
 
@@ -54,7 +54,7 @@ XEVQOR is deployed across independent edge networks serving the exact same stati
 | :--- | :--- | :--- |
 | **KEYPASS** | `/keypass` | Deterministic dual-slot password generator (independent `PBKDF2-SHA256` derivations + entropy meter). |
 | **HASH** | `/hash` | `SHA-256`, `SHA-512`, and `SHA-1 (Legacy Checksum)` file and text digest verifier. |
-| **JWT** | `/jwt` | Offline JSON Web Token decoder and expiry inspector (`unverified signature`). |
+| **SCRUB** | `/scrub` | Forensic metadata inspector and fail-closed binary sanitizer for images, PDFs, Office archives, and media. |
 | **CIPHERLINK** | `/cipherlink` | Stateless encrypted links via URL fragment (`#`) with active address-bar scrubbing. |
 | **NANO** | `/nano` | `deflate-raw` compressor and `AES-256-GCM` text cipher. |
 | **NEBULA** | `/nebula` | Zero-width Unicode (`U+200B`/`U+200C`) covert text carrier. |
@@ -116,7 +116,7 @@ To maintain strict cryptographic transparency, **XEVQOR** explicitly defines wha
 | `/nano/` | **Nano** | Compresses plaintext via `deflate-raw`, encrypts with `AES-256-GCM`, and encodes as compact Base64. |
 | `/keypass/` | **Keypass** | Deterministic `PBKDF2-SHA256` (600,000 iterations). Service labels are case-normalized (`lowercase`); **Output A** and **Output B** are independently derived via separate PBKDF2 calls using domain-separated salts (`xevqor.keypass.v2:<label>` and `xevqor.keypass.v2:slot-b:<label>`). Output strength depends on Brain Key entropy. Best-effort clipboard auto-clear after 45s (when browser clipboard read/write permission is granted). |
 | `/hash/` | **Hash** | Local `crypto.subtle.digest` calculator for **SHA-256**, **SHA-512**, and **SHA-1 (Legacy Non-Security Checksum)**. |
-| `/jwt/` | **JWT** | Local Base64URL header/payload decoder (`UNVERIFIED SIGNATURE` — does not perform cryptographic signature verification). |
+| `/scrub/` | **SCRUB** | **Fail-Closed Forensic Metadata Sanitizer.** Strips EXIF/GPS/XMP, PDF `/Info` & `/Metadata`, Office `docProps`, MP4 `udta`/`meta`, and ID3 tags in tab RAM (plus optional Canvas pixel re-encode for single-frame images). |
 | `/dice/` | **Dice** | Unbiased CSPRNG (`crypto.getRandomValues` with rejection sampling `uint32 < 4294967292`). |
 | `/qr/` | **QR** | Pure client-side ISO/IEC 18004 matrix encoder with GF(256) Reed-Solomon parity (`L`/`M`/`Q`/`H`), optional local logo overlay, and `connect-src 'none'` isolation. |
 
